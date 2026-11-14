@@ -446,6 +446,7 @@ document.getElementById("updated").textContent = document.getElementById("runat"
 // One semi-transparent cylinder per site; height is hours discharging.
 const kind = s => VERDICT[s.verdict] ? s.verdict : "no_gauge";
 let selected = null, selectedAt = 0;
+const SPHERE = DASH ? new luma.SphereGeometry({ nlat: 24, nlong: 48 }) : null;  // the domed column caps
 const easeOut = t => 1 - Math.pow(1 - Math.min(Math.max(t, 0), 1), 3);
 
 // 2D: the showcase site's dots. Area ~ hours, soft glow, pulsing ring on dry spills, white edge.
@@ -511,13 +512,25 @@ function layers() {
     // dry ones red, the selected one gold with its hours floating above it, rain-explained and no-gauge ones faint.
     const rise = !selected ? 0 : REDUCED ? 1 : easeOut((performance.now() - selectedAt - 700) / 1500);
     const tall = s => (1.2 + Math.sqrt(Math.max(s.hours || 0, 0))) * 22 * m;  // square-root scale: short spills still read as columns
-    const column = (id, data, r, fill) => new deck.ColumnLayer({ id, data, diskResolution: 32, extruded: true, radius: r * m, elevationScale: rise,
-      getPosition: s => [s.lon, s.lat], getElevation: tall, getFillColor: fill, material: { ambient: 0.45, diffuse: 0.7, shininess: 40, specularColor: [255, 255, 255] },
-      pickable: true, updateTriggers: { getFillColor: sel, getElevation: m } });
+    // Each spill: a soft ground shadow, a smooth lit cylinder and a domed cap (a sphere sunk into the top), so it reads as a capsule.
+    const MAT = { ambient: 0.42, diffuse: 0.62, shininess: 96, specularColor: [255, 255, 255] };
+    const show = rise > 0.02;
+    const column = (id, data, r, fill) => [
+      new deck.ScatterplotLayer({ id: id + "-shadow", data: show ? data : [], getPosition: s => [s.lon, s.lat], radiusUnits: "meters",
+        getRadius: r * 2.1 * m, getFillColor: [20, 32, 43, 26 * rise], parameters: NO_DEPTH }),
+      new deck.ScatterplotLayer({ id: id + "-shadow2", data: show ? data : [], getPosition: s => [s.lon, s.lat], radiusUnits: "meters",
+        getRadius: r * 1.4 * m, getFillColor: [20, 32, 43, 38 * rise], parameters: NO_DEPTH }),
+      new deck.ColumnLayer({ id, data: show ? data : [], diskResolution: 64, extruded: true, radius: r * m, elevationScale: rise,
+        getPosition: s => [s.lon, s.lat], getElevation: tall, getFillColor: fill, material: MAT,
+        pickable: true, updateTriggers: { getFillColor: sel, getElevation: m } }),
+      new deck.SimpleMeshLayer({ id: id + "-cap", data: show ? data : [], mesh: SPHERE, material: MAT,
+        getPosition: s => [s.lon, s.lat, tall(s) * rise], getScale: [r * m, r * m, r * m], getColor: fill,
+        pickable: true, updateTriggers: { getPosition: [rise, m], getScale: m, getColor: sel } }),
+    ];
     const cols = !selected ? [] : [
-      ...(dryOnly ? [] : [column("ctx-cols", sites.filter(s => s.verdict !== "dry_spill_candidate"), 3.5, s => VERDICT[kind(s)].fill)]),
-      column("dash-cols", dry, 5, s => s.id === sel ? GOLD : [200, 16, 46, 215]),
-      new deck.TextLayer({ id: "sel-label", data: rise > 0.05 ? [selected] : [], getPosition: s => [s.lon, s.lat, tall(s) * rise + 14 * m],
+      ...(dryOnly ? [] : column("ctx-cols", sites.filter(s => s.verdict !== "dry_spill_candidate"), 3, s => VERDICT[kind(s)].fill)),
+      ...column("dash-cols", dry, 4.2, s => s.id === sel ? GOLD : [200, 16, 46, 230]),
+      new deck.TextLayer({ id: "sel-label", data: rise > 0.05 ? [selected] : [], getPosition: s => [s.lon, s.lat, tall(s) * rise + 4.2 * m + 10 * m],
         getText: s => `${hrs(s)} h`, getSize: 17, getColor: [255, 255, 255, 255], fontFamily: "Inter Tight, system-ui, sans-serif", fontWeight: 700,
         background: true, getBackgroundColor: [18, 53, 91, 235], backgroundPadding: [8, 4], getTextAnchor: "middle", getAlignmentBaseline: "bottom",
         parameters: { depthCompare: "always" }, updateTriggers: { getPosition: [rise, m] } }),
@@ -556,6 +569,7 @@ map.on("style.load", () => {
 
 const overlay = new deck.MapboxOverlay({
   layers: layers(),
+  useDevicePixels: DASH ? Math.max(2, window.devicePixelRatio || 1) : true,  // render at 2x or more: smoother column edges
   effects: DASH ? [new deck.LightingEffect({  // soft key light from the north-west so the columns read as solid
     ambient: new deck.AmbientLight({ color: [255, 255, 255], intensity: 1.15 }),
     key: new deck.DirectionalLight({ color: [255, 248, 235], intensity: 1.1, direction: [-1, -2, -2.5] }),
