@@ -24,7 +24,7 @@ from sentinels.memory import CaseMemory  # noqa: E402
 top_n = int(sys.argv[1]) if len(sys.argv) > 1 else 1
 run = json.loads((root / "data" / "latest_run.json").read_text())
 cands = sorted((a for a in run["assessed"] if a["verdict"] == "dry_spill_candidate"),
-               key=lambda a: -a["duration_hours"])[:top_n]
+               key=lambda a: -(a["duration_hours"] or -1))[:top_n]
 memory = CaseMemory()
 out_dir = root / "data" / "reports"
 out_dir.mkdir(parents=True, exist_ok=True)

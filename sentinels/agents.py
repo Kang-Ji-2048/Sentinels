@@ -19,7 +19,7 @@ except ImportError:  # pragma: no cover
 
 def _case_brief(spill: dict) -> str:
     keep = ["id", "company", "receivingwatercourse", "latitude", "longitude", "status",
-            "latesteventstart", "latesteventend", "duration_hours", "gauges",
+            "latesteventstart", "latesteventend", "duration_hours", "monitor_offline", "gauges",
             "max_mm_0_24h_before", "max_mm_24_48h_before", "max_mm_during", "verdict"]
     return json.dumps({k: spill.get(k) for k in keep}, default=str, indent=1)
 

@@ -50,7 +50,11 @@ def assess(spill: dict, gauges: list[dict], readings_by_station: dict[str, list[
            cfg: DetectConfig) -> dict:
     """Rainfall context and a verdict for one spill."""
     t0 = spill["latesteventstart"]
-    end = spill["latesteventend"] or datetime.now(timezone.utc)
+    now = datetime.now(timezone.utc)
+    # Status -1 = monitor offline. With no recorded end we can't know how long it spilled:
+    # report the duration as unknown rather than counting up to now (which inflates it).
+    offline = spill.get("status") == -1
+    end = spill["latesteventend"] or (None if offline else now)
     per_gauge = []
     for g in gauges:
         rd = readings_by_station.get(g["station"], [])
@@ -63,10 +67,11 @@ def assess(spill: dict, gauges: list[dict], readings_by_station: dict[str, list[
         per_gauge.append({
             "station": g["station"], "km": round(g["km"], 1),
             "mm_0_24h_before": before_24, "mm_24_48h_before": before_48,
-            "mm_during": _sum(rd, t0, end) or 0.0,
+            "mm_during": _sum(rd, t0, end or now) or 0.0,
         })
     out = dict(spill)
-    out["duration_hours"] = round((end - t0).total_seconds() / 3600, 1)
+    out["duration_hours"] = None if end is None else round((end - t0).total_seconds() / 3600, 1)
+    out["monitor_offline"] = offline
     out["gauges"] = per_gauge
     if not per_gauge:
         out["verdict"] = "no_gauge"
@@ -81,6 +86,25 @@ def assess(spill: dict, gauges: list[dict], readings_by_station: dict[str, list[
     return out
 
 
+def fetch_readings(stations, since: datetime, errors: dict | None = None, workers: int = 8) -> dict:
+    """Rain readings for many gauges in parallel (sequential takes ~10 min for ~200 gauges)."""
+    errors = {} if errors is None else errors
+
+    def _get(st):
+        try:
+            return st, feeds.fetch_rain_readings(st, since), None
+        except Exception as e:  # noqa: BLE001
+            return st, [], str(e)
+
+    readings = {}
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        for st, rd, err in pool.map(_get, sorted(stations)):
+            readings[st] = rd
+            if err:
+                errors[f"gauge {st}"] = err
+    return readings
+
+
 def run(cfg: DetectConfig | None = None, now: datetime | None = None) -> dict:
     """End-to-end live run: fetch feeds and rainfall, return every recent spill with a verdict."""
     cfg = cfg or DetectConfig()
@@ -92,19 +116,7 @@ def run(cfg: DetectConfig | None = None, now: datetime | None = None) -> dict:
     gauges_for = {s["id"]: nearest_gauges(s, stations, cfg) for s in spills}
     needed = {g["station"] for gs in gauges_for.values() for g in gs}
     since = now - timedelta(hours=cfg.lookback_hours + 48)
-    readings = {}
-
-    def _get(st):
-        try:
-            return st, feeds.fetch_rain_readings(st, since), None
-        except Exception as e:  # noqa: BLE001
-            return st, [], str(e)
-
-    with ThreadPoolExecutor(max_workers=8) as pool:
-        for st, rd, err in pool.map(_get, sorted(needed)):
-            readings[st] = rd
-            if err:
-                errors[f"gauge {st}"] = err
+    readings = fetch_readings(needed, since, errors)
 
     assessed = [assess(s, gauges_for[s["id"]], readings, cfg) for s in spills]
     return {"run_at": now, "overflows": len(rows), "recent_spills": len(spills),
