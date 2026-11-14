@@ -44,6 +44,10 @@ token = w.config.authenticate()["Authorization"].split(" ", 1)[1]
 if dbutils.widgets.get("skeptic_model").strip():
     llm.SKEPTIC_CLIENT = llm.gateway_client(w.config.host, token)
     llm.SKEPTIC_DATABRICKS_MODEL = dbutils.widgets.get("skeptic_model").strip()
+    try:  # names the gateway will actually serve (the catalog list below can include unserved ones)
+        print("Gateway serves:", sorted(m.id for m in llm.SKEPTIC_CLIENT.models.list()))
+    except Exception as e:
+        print("Gateway model list unavailable:", e)
 else:
     print("No skeptic_model set: skeptic falls back to Claude Haiku")
 
