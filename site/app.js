@@ -57,62 +57,69 @@ function setupMap(spills, caseSpill) {
   let pulse = 0;
 
   const views = [
-    { ...ENGLAND, pitch: 25 },
-    { ...ENGLAND, pitch: 48, bearing: -14 },
-    { ...ENGLAND, pitch: 55, bearing: 10, zoom: ENGLAND.zoom + .25 },
-    { longitude: caseSpill.longitude, latitude: caseSpill.latitude, zoom: isSmall ? 10.2 : 11.2, pitch: 60, bearing: -28 },
+    { ...ENGLAND, pitch: 20 },
+    { ...ENGLAND, pitch: 35, bearing: -10, zoom: ENGLAND.zoom + .1 },
+    { ...ENGLAND, pitch: 40, bearing: 8, zoom: ENGLAND.zoom + .2 },
+    { longitude: caseSpill.longitude, latitude: caseSpill.latitude, zoom: isSmall ? 10 : 10.6, pitch: 45, bearing: -18 },
   ];
 
-  // Column size follows zoom so columns read the same on screen at every scale.
-  const zoomK = z => Math.pow(2, (ENGLAND.zoom - z) * 0.7);
   const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const size = d => Math.min(2.6 + 1.9 * Math.sqrt(Math.max(d.duration_hours || 0, 0.2)), 13);   // px, area ~ hours
+  const links = spills.flatMap(d => (d.gauges || []).filter(g => g.lat != null)
+    .map(g => ({ from: [d.longitude, d.latitude], to: [g.lon, g.lat], dry: d.verdict === "dry_spill_candidate", isCase: d.id === caseSpill.id, g })));
+  const gauges = [...new Map([...links].sort((a, b) => a.isCase - b.isCase).map(l => [l.g.station, l])).values()];  // case links win
+  const caseLinks = links.filter(l => l.isCase);
+  const T = { duration: 900, easing: t => t * (2 - t) };
 
   const layers = () => {
-    const k = cam ? zoomK(cam.zoom) : 1;
     const s = Math.max(step, 0);
+    const spillAlpha = d => (s >= 2 && d.verdict !== "dry_spill_candidate") ? 50 : (s === 3 && d.id !== caseSpill.id) ? 110 : 235;
+    const colour = d => s === 0 ? NEUTRAL : (COL[d.verdict] || NEUTRAL);
+    const linkAlpha = l => s === 0 ? 0 : s === 1 ? 90 : s === 2 ? (l.dry ? 80 : 12) : (l.isCase ? 220 : 10);
     return [
-      new deck.ScatterplotLayer({
-        id: "halo", data: s >= 2 ? dry : [], radiusUnits: "meters", stroked: true, filled: true,
-        getPosition: d => [d.longitude, d.latitude],
-        getRadius: d => (d.id === caseSpill.id && s === 3 ? 9000 : 5200),
-        radiusScale: k * (1 + 0.55 * pulse),
-        getFillColor: [239, 91, 69, Math.round(28 * (1 - pulse))],
-        getLineColor: [239, 91, 69, Math.round(150 * (1 - pulse))],
-        lineWidthUnits: "pixels", getLineWidth: 1.2,
-        updateTriggers: { getRadius: s },
+      new deck.LineLayer({
+        id: "links", data: links, getSourcePosition: l => l.from, getTargetPosition: l => l.to,
+        getColor: l => [106, 166, 216, linkAlpha(l)], getWidth: l => (s === 3 && l.isCase ? 2 : 1), widthUnits: "pixels",
+        updateTriggers: { getColor: s, getWidth: s }, transitions: { getColor: T },
       }),
-      new deck.ColumnLayer({
-        id: "spills", data: spills, diskResolution: 36, radius: (isSmall ? 4000 : 3200) * k, extruded: true,
-        pickable: true, autoHighlight: true, highlightColor: [255, 255, 255, 80],
-        material: { ambient: .55, diffuse: .6, shininess: 40, specularColor: [255, 240, 220] },
-        elevationScale: k,
-        getPosition: d => [d.longitude, d.latitude],
-        getElevation: d => {
-          const h = Math.max(d.duration_hours || 0, 0.4);
-          if (s === 0) return 1200;
-          if (s >= 2 && d.verdict !== "dry_spill_candidate") return 350;
-          return h * 1900;
-        },
-        getFillColor: d => {
-          if (s === 0) return [...NEUTRAL, 210];
-          const c = COL[d.verdict] || NEUTRAL;
-          if (s >= 2 && d.verdict !== "dry_spill_candidate") return [...c, 40];
-          if (s === 3 && d.id !== caseSpill.id) return [...c, 110];
-          return [...c, 245];
-        },
-        updateTriggers: { getElevation: s, getFillColor: s },
-        transitions: {
-          getElevation: { duration: 1600, easing: t => 1 - Math.pow(1 - t, 4) },
-          getFillColor: { duration: 1000, easing: t => t * (2 - t) },
-        },
+      new deck.ScatterplotLayer({
+        id: "gauges", data: gauges, getPosition: l => l.to, radiusUnits: "pixels",
+        getRadius: l => (s === 3 && l.isCase ? 5 : 2.2), stroked: true, lineWidthUnits: "pixels", getLineWidth: 1,
+        getFillColor: l => [106, 166, 216, s === 0 ? 0 : (s === 3 && !l.isCase ? 30 : 210)],
+        getLineColor: l => [15, 20, 27, s === 0 ? 0 : 200],
+        updateTriggers: { getRadius: s, getFillColor: s, getLineColor: s }, transitions: { getFillColor: T, getRadius: T },
+      }),
+      new deck.ScatterplotLayer({   // 10 km search radius around the followed case
+        id: "radius", data: s === 3 ? [caseSpill] : [], getPosition: d => [d.longitude, d.latitude],
+        getRadius: 10000, radiusUnits: "meters", stroked: true, filled: true,
+        getFillColor: [106, 166, 216, 14], getLineColor: [208, 183, 132, 140], lineWidthUnits: "pixels", getLineWidth: 1,
+      }),
+      new deck.ScatterplotLayer({   // soft glow
+        id: "glow", data: spills, getPosition: d => [d.longitude, d.latitude], radiusUnits: "pixels",
+        getRadius: d => size(d) * 2.1, getFillColor: d => [...colour(d), spillAlpha(d) * 0.16],
+        updateTriggers: { getFillColor: s }, transitions: { getFillColor: T },
+      }),
+      new deck.ScatterplotLayer({   // pulse ring on dry-day spills
+        id: "pulse", data: s >= 2 ? dry : [], getPosition: d => [d.longitude, d.latitude], radiusUnits: "pixels",
+        getRadius: d => size(d), radiusScale: 1 + 1.6 * pulse, stroked: true, filled: false,
+        lineWidthUnits: "pixels", getLineWidth: 1.2, getLineColor: d => [239, 91, 69, (s === 3 && d.id !== caseSpill.id ? 40 : 170) * (1 - pulse)],
+        updateTriggers: { getLineColor: s },
+      }),
+      new deck.ScatterplotLayer({
+        id: "spills", data: spills, getPosition: d => [d.longitude, d.latitude], radiusUnits: "pixels",
+        getRadius: d => size(d) * (s === 3 && d.id === caseSpill.id ? 1.4 : 1), pickable: true, autoHighlight: true,
+        highlightColor: [255, 255, 255, 70], stroked: true, lineWidthUnits: "pixels", getLineWidth: 1,
+        getFillColor: d => [...colour(d), spillAlpha(d)], getLineColor: d => [255, 255, 255, spillAlpha(d) * 0.35],
+        updateTriggers: { getFillColor: s, getLineColor: s, getRadius: s }, transitions: { getFillColor: T, getRadius: T },
+      }),
+      new deck.TextLayer({
+        id: "labels", data: s === 3 ? caseLinks : [], getPosition: l => l.to,
+        getText: l => `${l.g.km} km · ${Math.max(l.g.mm_0_24h_before, l.g.mm_24_48h_before)} mm`,
+        getSize: 12, getColor: [174, 182, 194, 255], getPixelOffset: [0, -16], fontFamily: "JetBrains Mono, monospace",
+        outlineWidth: 4, outlineColor: [15, 20, 27, 255], fontSettings: { sdf: true }, characterSet: "auto",
       }),
     ];
   };
-
-  const lighting = new deck.LightingEffect({
-    ambient: new deck.AmbientLight({ color: [255, 255, 255], intensity: 1.15 }),
-    sun: new deck.DirectionalLight({ color: [255, 244, 228], intensity: 1.6, direction: [-2, -4, -3] }),
-  });
 
   const box = document.getElementById("deck");
   const dg = new deck.DeckGL({
@@ -121,7 +128,6 @@ function setupMap(spills, caseSpill) {
     viewState: views[0],
     controller: false,          // the camera is driven by scrolling
     useDevicePixels: true,      // full retina resolution
-    effects: [lighting],
     layers: layers(),
     onHover: ({ object, x, y }) => {
       if (!object) { tip.hidden = true; return; }

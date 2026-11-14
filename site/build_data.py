@@ -18,6 +18,18 @@ out = {
     "by_company": Counter(a["company"] for a in run["assessed"] if a["verdict"] == "dry_spill_candidate"),
     "spills": spills,
 }
+# Add gauge coordinates so the map can draw each spill's link to its rain gauges.
+try:
+    import sys
+    sys.path.insert(0, str(root))
+    from sentinels import feeds
+    where = {st["station"]: st for st in feeds.fetch_rain_stations()}
+    for sp in spills:
+        for g in sp.get("gauges") or []:
+            if g["station"] in where:
+                g["lat"], g["lon"] = where[g["station"]]["lat"], where[g["station"]]["lon"]
+except Exception as e:  # noqa: BLE001  (map still works without the links)
+    print("gauge locations unavailable:", e)
 dest = root / "site" / "data"
 dest.mkdir(parents=True, exist_ok=True)
 (dest / "run.json").write_text(json.dumps(out, default=str, separators=(",", ":")))
