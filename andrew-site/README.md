@@ -29,7 +29,7 @@ python andrew-site/serve.py                       # open http://localhost:8000
 - **Reports tab:** the drafted evidence packs. A reviewer can edit the draft, approve it (with their name) or
   reject it (with a reason), download the approved pack as Markdown, mark it as sent, or undo. Nothing is
   emailed: a person sends the downloaded pack.
-- **Ask tab:** plain-English follow-up questions to the Sentinels Genie agent on Databricks, which writes and
+- **Ask Genie box** (bottom right of the map, click to open): plain-English follow-up questions to the Sentinels Genie agent on Databricks, which writes and
   runs the SQL. Each answer shows the text, a results table and the SQL. Needs `serve.py` running with these
   set in the shell (never commit them):
 
@@ -40,7 +40,7 @@ python andrew-site/serve.py                       # open http://localhost:8000
   python andrew-site/serve.py
   ```
 
-  Without them, or on the hosted static copy, the tab says it is off.
+  Without them, or on the hosted static copy, the box says it is off.
 
 ## Files it writes (all git-ignored)
 

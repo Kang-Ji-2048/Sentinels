@@ -100,7 +100,7 @@
   .case .empty p { margin: 0; color: var(--muted); }
   .foot { padding: 16px 24px; color: var(--muted); border-top: 1px solid var(--rule); }
 
-  .body[hidden], .cases[hidden], .reports[hidden], .ask[hidden] { display: none; }
+  .body[hidden], .cases[hidden], .reports[hidden] { display: none; }
   .cases { flex: 1; min-height: 0; overflow-y: auto; background: var(--paper); padding: 28px 36px 48px; }
   .cases h1 { margin: 0; font: 700 40px var(--serif); }
   .cases .intro { margin: 4px 0 0; color: var(--muted); max-width: 70ch; }
@@ -176,44 +176,65 @@
   .count { border-radius: 6px; box-shadow: 0 10px 30px rgba(18, 53, 91, .12); }
   .reset { border-radius: 6px; }
   .gauge-label, .site-label { border-radius: 6px; }
-  /* Ask tab: questions to the Databricks Genie agent, through serve.py */
-  .ask { flex: 1; min-height: 0; overflow-y: auto; background: var(--paper); padding: 28px 36px 48px; }
-  .ask > * { max-width: 900px; }
-  .ask h1 { margin: 0; font: 700 40px var(--serif); }
-  .ask .intro { margin: 4px 0 16px; color: var(--muted); max-width: 70ch; }
-  .ask .api-off { margin: 0 0 16px; padding: 10px 12px; background: #fbf3d4; border: 1px solid var(--gold); border-radius: 6px; }
-  .ask .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-  .ask .chips button { padding: 6px 12px; border: 1px solid var(--navy); border-radius: 999px; background: #fff; color: var(--navy); cursor: pointer; }
-  .ask .chips button:hover { background: rgba(232, 197, 71, .25); }
-  .ask form { display: flex; gap: 8px; margin-bottom: 20px; }
-  .ask input { flex: 1; min-width: 0; padding: 9px 12px; font: inherit; border: 1px solid var(--rule); border-radius: 6px; background: #fff; }
-  .ask input:focus-visible, .ask .chips button:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
-  .ask .btn { border-radius: 6px; }
-  .turn { padding: 16px 0; border-top: 1px solid var(--rule); }
-  .turn .q { margin: 0 0 8px; font-weight: 600; }
+  /* Ask Genie: a small collapsible chat on the map, through serve.py -> Databricks Genie */
+  .askbox { position: absolute; z-index: 3; right: 56px; bottom: 20px; width: min(380px, calc(100% - 76px)); max-height: calc(100% - 40px);
+            display: flex; flex-direction: column; background: rgba(255, 255, 255, .97); border-radius: 6px; box-shadow: 0 10px 30px rgba(18, 53, 91, .18); }
+  .askbox.closed { width: auto; }
+  .askbox [hidden] { display: none !important; }  /* map controls sit to the right of the box */
+  .askbox .ask-toggle { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; border: 0; background: var(--navy); color: #fff; font-weight: 600; cursor: pointer; border-radius: 6px; }
+  .askbox:not(.closed) .ask-toggle { border-radius: 6px 6px 0 0; }
+  .askbox .ask-toggle:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .askbox .ask-body { display: flex; flex-direction: column; gap: 8px; min-height: 0; padding: 10px 12px 12px; }
+  .askbox.closed .ask-body { display: none; }
+  .askbox .api-off { margin: 0; padding: 8px 10px; background: #fbf3d4; border: 1px solid var(--gold); border-radius: 6px; font-size: 13px; }
+  .askbox .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .askbox .chips button { padding: 4px 10px; border: 1px solid var(--navy); border-radius: 999px; background: #fff; color: var(--navy); font-size: 13px; cursor: pointer; }
+  .askbox .chips button:hover { background: rgba(232, 197, 71, .25); }
+  .askbox form { display: flex; gap: 6px; }
+  .askbox input { flex: 1; min-width: 0; padding: 7px 10px; font: inherit; border: 1px solid var(--rule); border-radius: 6px; background: #fff; }
+  .askbox input:focus-visible, .askbox .chips button:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+  .askbox .btn { padding: 7px 12px; border-radius: 6px; }
+  .askbox .new { align-self: flex-start; padding: 0; border: 0; background: none; color: var(--navy); font-size: 13px; text-decoration: underline; cursor: pointer; }
+  .askbox .new[hidden] { display: none; }
+  #ask-log { overflow-y: auto; min-height: 0; max-height: 46vh; }
+  .turn { padding: 10px 0; border-top: 1px solid var(--rule); font-size: 14px; }
+  .turn .q { margin: 0 0 4px; font-weight: 600; }
   .turn .a { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
   .turn .a.err { color: var(--crimson); }
   .turn .a.wait { color: var(--muted); }
-  .turn .tbl { margin-top: 10px; overflow-x: auto; }
-  .turn table { border-collapse: collapse; font-size: 14px; background: #fff; }
-  .turn th, .turn td { padding: 5px 10px; border: 1px solid var(--rule); text-align: left; white-space: nowrap; }
+  .turn .meta { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+  .turn .tbl { margin-top: 8px; overflow-x: auto; }
+  .turn table { border-collapse: collapse; font-size: 13px; background: #fff; }
+  .turn th, .turn td { padding: 4px 8px; border: 1px solid var(--rule); text-align: left; white-space: nowrap; }
   .turn th { background: #e9eee7; font-weight: 600; }
-  .turn details { margin-top: 8px; } .turn summary { cursor: pointer; font-weight: 500; color: var(--navy); }
-  .turn pre { margin: 6px 0 0; padding: 10px; background: #fff; border: 1px solid var(--rule); border-radius: 6px; font: 13px/1.45 ui-monospace, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
-  @media (max-width: 720px) { .ask { padding: 20px 16px 40px; } .ask form { flex-wrap: wrap; } }
+  .turn details { margin-top: 6px; } .turn summary { cursor: pointer; font-weight: 500; color: var(--navy); }
+  .turn pre { margin: 4px 0 0; padding: 8px; background: #f7f9f6; border: 1px solid var(--rule); border-radius: 6px; font: 12px/1.45 ui-monospace, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
 </style>
 </head>
 <body>
 <header class="top">
   <div class="brand">
     <span class="logo">Sentinels</span>
-    <nav class="nav"><a href="#map" data-view="map" class="on">Map</a><a href="#cases" data-view="cases">Cases</a><a href="#reports" data-view="reports">Reports</a><a href="#ask" data-view="ask">Ask</a></nav>
+    <nav class="nav"><a href="#map" data-view="map" class="on">Map</a><a href="#cases" data-view="cases">Cases</a><a href="#reports" data-view="reports">Reports</a></nav>
   </div>
   <span class="updated" id="updated"></span>
 </header>
 <main class="body">
   <div class="map">
     <button class="reset" id="reset" hidden>Show all of England</button>
+    <section class="askbox closed" id="askbox" aria-label="Ask Genie">
+      <button class="ask-toggle" id="ask-toggle" aria-expanded="false" aria-controls="ask-body"><span>Ask Genie about this data</span><span aria-hidden="true" id="ask-chev">▴</span></button>
+      <div class="ask-body" id="ask-body">
+        <p class="api-off" id="ask-off" hidden></p>
+        <div id="ask-log"></div>
+        <div class="chips" id="ask-chips"></div>
+        <form id="ask-form">
+          <input id="ask-q" maxlength="500" placeholder="Ask a question about the spills" aria-label="Your question" autocomplete="off">
+          <button class="btn" id="ask-go">Ask</button>
+        </form>
+        <button class="new" type="button" id="ask-new" hidden>New conversation</button>
+      </div>
+    </section>
     <div id="map" role="img" aria-label="3D map of England: one column per spilling overflow, height is hours discharging"></div>
     <div class="count">
       <div class="n" id="n"></div>
@@ -262,18 +283,6 @@
     <div id="queue"></div>
   </div>
   <div class="detail" id="detail"></div>
-</main>
-<main class="ask" id="ask-view" hidden>
-  <h1>Ask the data</h1>
-  <p class="intro">Ask a follow-up question in plain English. The Sentinels Genie agent on Databricks writes the SQL against our tables, runs it and answers. Check the SQL under each answer.</p>
-  <p class="api-off" id="ask-off" hidden></p>
-  <div class="chips" id="ask-chips"></div>
-  <form id="ask-form">
-    <input id="ask-q" maxlength="500" placeholder="e.g. Which water company has the most dry spills?" aria-label="Your question" autocomplete="off">
-    <button class="btn" id="ask-go">Ask</button>
-    <button class="btn ghost" type="button" id="ask-new" hidden>New conversation</button>
-  </form>
-  <div id="ask-log"></div>
 </main>
 <script>
 const RUN = /*DATA*/null;
@@ -530,7 +539,7 @@ if (dry[0]) showLabel(dry[0], false);
 
 // ---------- Cases tab ----------
 const pctN = x => Math.round(x * 100);
-const views = { map: document.querySelector("main.body"), cases: document.getElementById("cases-view"), reports: document.getElementById("reports-view"), ask: document.getElementById("ask-view") };
+const views = { map: document.querySelector("main.body"), cases: document.getElementById("cases-view"), reports: document.getElementById("reports-view") };
 function show(v) {
   if (!views[v]) v = "map";
   for (const [k, node] of Object.entries(views)) node.hidden = k !== v;
@@ -766,9 +775,9 @@ function downloadPack(s, d) {
   document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
 
-// ---------- Ask tab ----------
+// ---------- Ask Genie (small chat on the map) ----------
 // Questions go to POST /api/genie on serve.py, which asks the Databricks Genie agent. Everything Genie returns
-// is shown with textContent only. Without serve.py (e.g. the hosted static copy) the tab says it is off.
+// is shown with textContent only. Without serve.py (e.g. the hosted static copy) the box says it is off.
 {
   const off = document.getElementById("ask-off"), form = document.getElementById("ask-form"), q = document.getElementById("ask-q");
   const go = document.getElementById("ask-go"), fresh = document.getElementById("ask-new"), log = document.getElementById("ask-log");
@@ -780,15 +789,18 @@ function downloadPack(s, d) {
   setOff("Checking for the Genie connection…");
   fetch("/api/genie").then(r => r.ok ? r.json() : Promise.reject())
     .then(d => setOff(d.configured ? "" : "Genie isn't set up on this machine. Set DATABRICKS_HOST, DATABRICKS_TOKEN and GENIE_SPACE_ID, then restart python andrew-site/serve.py."))
-    .catch(() => setOff("Asking questions needs the local server: start the page with python andrew-site/serve.py."));
-  fresh.onclick = () => { conv = null; log.replaceChildren(); fresh.hidden = true; q.focus(); };
+    .catch(() => setOff("Needs the local server: start the page with python andrew-site/serve.py."));
+  const box = document.getElementById("askbox"), tog = document.getElementById("ask-toggle"), chipBox = document.getElementById("ask-chips");
+  tog.onclick = () => { const open = box.classList.toggle("closed") === false; tog.setAttribute("aria-expanded", open);
+                        document.getElementById("ask-chev").textContent = open ? "▾" : "▴"; if (open && !q.disabled) q.focus(); };
+  fresh.onclick = () => { conv = null; log.replaceChildren(); fresh.hidden = true; chipBox.hidden = false; q.focus(); };
   form.onsubmit = async e => {
     e.preventDefault();
     const question = q.value.trim();
     if (!question || busy) return;
     busy = true; go.disabled = true; q.value = "";
     const turn = el("div", "turn"), a = el("p", "a wait", "Genie is working on it. This can take up to a minute.");
-    turn.append(el("p", "q", question), a); log.prepend(turn);
+    turn.append(el("p", "q", question), a); log.append(turn); chipBox.hidden = true; turn.scrollIntoView({ block: "nearest" });
     try {
       const r = await fetch("/api/genie", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ question, conversation_id: conv }) });
       const d = await r.json();
@@ -810,7 +822,7 @@ function downloadPack(s, d) {
         det.append(el("pre", null, d.sql)); turn.append(det);
       }
     } catch (err) { a.className = "a err"; a.textContent = `Not answered: ${err.message}`; }
-    busy = false; go.disabled = false; q.focus();
+    busy = false; go.disabled = false; q.focus(); log.scrollTop = turn.offsetTop - log.offsetTop;
   };
 }
 show(location.hash.slice(1) || "map");
