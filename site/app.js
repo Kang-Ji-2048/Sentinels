@@ -1,6 +1,6 @@
 /* Sentinels showcase: loads data/run.json (+ data/case.json if present) and drives the page. */
-const COL = { dry_spill_candidate: [239, 91, 69], rain_explained: [106, 166, 216], no_gauge: [125, 135, 150] };
-const NEUTRAL = [208, 183, 132];
+const COL = { dry_spill_candidate: [200, 16, 46], rain_explained: [18, 53, 91], no_gauge: [110, 120, 125] };   // Figma tokens
+const NEUTRAL = [18, 53, 91];
 const fmt = n => Number(n).toLocaleString("en-GB");
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const title = s => String(s || "").toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
@@ -92,20 +92,20 @@ function setupMap(spills, caseSpill) {
     return [
       new deck.LineLayer({
         id: "links", parameters: NO_DEPTH, data: links, getSourcePosition: l => l.from, getTargetPosition: l => l.to,
-        getColor: l => [106, 166, 216, linkAlpha(l)], getWidth: l => (s === 3 && l.isCase ? 2 : 1), widthUnits: "pixels",
+        getColor: l => [18, 53, 91, linkAlpha(l)], getWidth: l => (s === 3 && l.isCase ? 2 : 1), widthUnits: "pixels",
         updateTriggers: { getColor: s, getWidth: s }, transitions: { getColor: T },
       }),
       new deck.ScatterplotLayer({
         id: "gauges", parameters: NO_DEPTH, billboard: true, data: gauges, getPosition: l => l.to, radiusUnits: "pixels",
         getRadius: l => (s === 3 && l.isCase ? 5 : 2.2), stroked: true, lineWidthUnits: "pixels", getLineWidth: 1,
-        getFillColor: l => [106, 166, 216, s === 0 ? 0 : (s === 3 && !l.isCase ? 30 : 210)],
-        getLineColor: l => [15, 20, 27, s === 0 ? 0 : 200],
+        getFillColor: l => [243, 246, 241, s === 0 ? 0 : (s === 3 && !l.isCase ? 40 : 255)],
+        getLineColor: l => [18, 53, 91, s === 0 ? 0 : (s === 3 && !l.isCase ? 60 : 255)],
         updateTriggers: { getRadius: s, getFillColor: s, getLineColor: s }, transitions: { getFillColor: T, getRadius: T },
       }),
       new deck.ScatterplotLayer({   // 10 km search radius around the followed case
         id: "radius", parameters: NO_DEPTH, data: s === 3 ? [caseSpill] : [], getPosition: d => [d.longitude, d.latitude],
         getRadius: 10000, radiusUnits: "meters", stroked: true, filled: true,
-        getFillColor: [106, 166, 216, 14], getLineColor: [208, 183, 132, 140], lineWidthUnits: "pixels", getLineWidth: 1,
+        getFillColor: [232, 197, 71, 60], getLineColor: [184, 146, 20, 255], lineWidthUnits: "pixels", getLineWidth: 1,
       }),
       new deck.ScatterplotLayer({   // soft glow
         id: "glow", parameters: NO_DEPTH, billboard: true, data: spills, getPosition: d => [d.longitude, d.latitude], radiusUnits: "pixels",
@@ -115,21 +115,21 @@ function setupMap(spills, caseSpill) {
       new deck.ScatterplotLayer({   // pulse ring on dry-day spills
         id: "pulse", parameters: NO_DEPTH, billboard: true, data: s >= 2 ? dry : [], getPosition: d => [d.longitude, d.latitude], radiusUnits: "pixels",
         getRadius: d => size(d), radiusScale: 1 + 1.6 * pulse, stroked: true, filled: false,
-        lineWidthUnits: "pixels", getLineWidth: 1.2, getLineColor: d => [239, 91, 69, (s === 3 && d.id !== caseSpill.id ? 40 : 170) * (1 - pulse)],
+        lineWidthUnits: "pixels", getLineWidth: 1.2, getLineColor: d => [200, 16, 46, (s === 3 && d.id !== caseSpill.id ? 40 : 170) * (1 - pulse)],
         updateTriggers: { getLineColor: s },
       }),
       new deck.ScatterplotLayer({
         id: "spills", parameters: NO_DEPTH, billboard: true, data: spills, getPosition: d => [d.longitude, d.latitude], radiusUnits: "pixels",
         getRadius: d => size(d) * (s === 3 && d.id === caseSpill.id ? 1.4 : 1), pickable: true, autoHighlight: true,
         highlightColor: [255, 255, 255, 70], stroked: true, lineWidthUnits: "pixels", getLineWidth: 1,
-        getFillColor: d => [...colour(d), spillAlpha(d)], getLineColor: d => [255, 255, 255, spillAlpha(d) * 0.35],
+        getFillColor: d => [...colour(d), spillAlpha(d)], getLineColor: d => [255, 255, 255, spillAlpha(d) * 0.8],
         updateTriggers: { getFillColor: s, getLineColor: s, getRadius: s }, transitions: { getFillColor: T, getRadius: T },
       }),
       new deck.TextLayer({
         id: "labels", parameters: NO_DEPTH, data: s === 3 ? caseLinks : [], getPosition: l => l.to,
         getText: l => `${l.g.km} km · ${Math.max(l.g.mm_0_24h_before, l.g.mm_24_48h_before)} mm`,
-        getSize: 12, getColor: [174, 182, 194, 255], getPixelOffset: [0, -16], fontFamily: "JetBrains Mono, monospace",
-        outlineWidth: 4, outlineColor: [15, 20, 27, 255], fontSettings: { sdf: true }, characterSet: "auto",
+        getSize: 13, getColor: [20, 32, 43, 255], getPixelOffset: [0, -16], fontFamily: "Archivo, sans-serif", fontWeight: 600,
+        outlineWidth: 5, outlineColor: [243, 246, 241, 255], fontSettings: { sdf: true }, characterSet: "auto",
       }),
     ];
   };
@@ -140,7 +140,7 @@ function setupMap(spills, caseSpill) {
   const v0 = views[0];
   const map = new maplibregl.Map({
     container: "deck",
-    style: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
+    style: "https://basemaps.cartocdn.com/gl/positron-nolabels-gl-style/style.json",
     center: [v0.longitude, v0.latitude], zoom: v0.zoom, pitch: v0.pitch, bearing: v0.bearing,
     interactive: false,             // the camera is driven by scrolling
     attributionControl: { compact: true },
