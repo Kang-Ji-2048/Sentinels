@@ -16,19 +16,38 @@
 
 # COMMAND ----------
 
-import os
-# Keys: a secret scope is best (databricks secrets create-scope sentinels). Falls back to widgets.
+import os, json
+# Keys are looked up in order: secret scope "sentinels" -> a private keys file in your workspace home
+# (outside the Git folder, so pulls never touch it) -> the widget boxes. Paste keys into the boxes once:
+# they're saved to the keys file and reused on every later run.
 dbutils.widgets.text("anthropic_key", "")
 dbutils.widgets.text("linkup_key", "")
 dbutils.widgets.text("top_n", "3")
 dbutils.widgets.text("skeptic_model", "system.ai.databricks-gpt-5-5")
-def _secret(key, widget):
+
+_user = spark.sql("SELECT current_user()").first()[0]
+KEYS_FILE = f"/Workspace/Users/{_user}/.sentinels_keys.json"
+try:
+    _saved = json.load(open(KEYS_FILE))
+except Exception:
+    _saved = {}
+
+def _key(name, widget):
     try:
-        return dbutils.secrets.get("sentinels", key)
+        return dbutils.secrets.get("sentinels", name)
     except Exception:
-        return dbutils.widgets.get(widget)
-os.environ["ANTHROPIC_API_KEY"] = _secret("anthropic", "anthropic_key")
-os.environ["LINKUP_API_KEY"] = _secret("linkup", "linkup_key")
+        pass
+    typed = dbutils.widgets.get(widget).strip()
+    if typed and typed != _saved.get(name):
+        _saved[name] = typed
+        with open(KEYS_FILE, "w") as f:
+            json.dump(_saved, f)
+    return typed or _saved.get(name, "")
+
+os.environ["ANTHROPIC_API_KEY"] = _key("anthropic", "anthropic_key")
+os.environ["LINKUP_API_KEY"] = _key("linkup", "linkup_key")
+print("Anthropic key:", "set" if os.environ["ANTHROPIC_API_KEY"] else "MISSING",
+      "| Linkup key:", "set" if os.environ["LINKUP_API_KEY"] else "MISSING", f"| saved in {KEYS_FILE}")
 
 # COMMAND ----------
 
