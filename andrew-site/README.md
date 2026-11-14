@@ -41,9 +41,9 @@ python andrew-site/serve.py                       # open http://localhost:8000
 
 ## Things to know
 
-- **`demo_case.json` is made up.** It is an example agent conversation for Carnon River (SBB00211) so the
-  layout can be seen before real agent runs exist. The page shows it under a red "Example conversation"
-  banner and every line is marked as an example. Delete the file to remove it.
+- **Agent conversations are real runs** (`data/example_case.json`, exported from `notebooks/03_agents.py`).
+  The made-up placeholder has been removed. `build.py` still accepts `andrew-site/demo_*.json` files flagged
+  `"illustrative": true`, shown under a red "Example conversation" banner, but a real run always wins.
 - **Gauge dots need gauge coordinates** in the detector output. The shared `sentinels/detect.py` doesn't save
   them yet; Andrew's local copy adds `"lat"` and `"lon"` to each gauge in `assess()`. Without that, the
   page works but shows no gauge dots.

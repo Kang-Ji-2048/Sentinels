@@ -422,10 +422,10 @@ function renderCase() {
   } else gauges.append(el("p", "lede", "No Environment Agency gauge within 10 km, so rain can't be ruled in or out."));
   const agents = el("section");
   if (!s.case) agents.append(el("span", "tag", "Agents"), el("p", "lede", "No agent case for this site in this run yet."));
-  c.replaceChildren(head, verdict, gauges, ...(s.case ? agentSections(s.case) : [agents]));
+  c.replaceChildren(head, verdict, gauges, ...(s.case ? agentSections(s.case, s) : [agents]));
 }
 // The agent conversation, in the order it happened. All text is model or web output: textContent only.
-function agentSections(k) {
+function agentSections(k, s) {
   const pct = x => x == null ? "n/a" : Math.round(x * 100) + "%";
   const turn = (who, ...body) => { const sec = el("section"); sec.append(el("span", "tag", who), ...body.filter(Boolean)); return sec; };
   const para = t => t ? el("p", null, t) : null;
@@ -438,6 +438,12 @@ function agentSections(k) {
   }
   out.push(turn(`Agents' verdict: ${k.final_verdict.replace(/_/g, " ")}, ${pct(k.breach_confidence)} confident`));
   out.at(-1).firstChild.classList.toggle("dry", k.final_verdict === "likely_breach");
+  // The agents may have worked from an earlier detector run than the map shows: say so when the facts differ.
+  const seen = k.spill && Array.isArray(k.spill.gauges) ? k.spill : null;
+  if (s && seen && (seen.gauges.length !== s.gauges.length || seen.duration_hours !== s.hours)) {
+    const h = seen.duration_hours == null ? "an unknown time" : `${fmt(seen.duration_hours)} h`;
+    out.at(-1).append(el("p", "lede", `The agents worked from an earlier detector run: ${seen.gauges.length} gauge${seen.gauges.length === 1 ? "" : "s"} within 10 km and ${h} discharging. The map and gauge list above are from a later run.`));
+  }
   if (k.case) out.push(turn(`Investigator · severity ${k.case.severity}`, para(k.case.summary), list(k.case.breach_indicators)));
   if (k.skeptic) out.push(turn(`Skeptic · ${k.skeptic.model || "model unknown"} · ${pct(k.skeptic.breach_confidence)} genuine`,
     para(k.skeptic.strongest_objection), list(k.skeptic.innocent_explanations, x => `${x.explanation} (${x.plausibility} plausibility)`)));
