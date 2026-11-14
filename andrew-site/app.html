@@ -106,19 +106,67 @@
   .cases .intro { margin: 4px 0 0; color: var(--muted); max-width: 70ch; }
   .cases h2 { margin: 32px 0 4px; font-size: 15px; font-weight: 600; letter-spacing: .9px; text-transform: uppercase; }
   .cases .sub { margin: 0 0 12px; color: var(--muted); max-width: 60ch; }
-  .board { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(210px, 1fr); gap: 12px; overflow-x: auto; padding-bottom: 8px; }
-  .col { display: flex; flex-direction: column; gap: 8px; min-height: 140px; max-height: min(480px, 60vh); padding: 10px; background: #e9eee7; border-top: 3px solid var(--c, var(--ink)); }
-  .col .cards { display: flex; flex-direction: column; gap: 8px; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 2px; margin: -2px; }
-  .col h3 { margin: 0; display: flex; justify-content: space-between; font-size: 15px; font-weight: 600; }
-  .col h3 span, .col .none { color: var(--muted); font-weight: 400; }
-  .col .none { margin: 0; font-size: 14px; }
-  .card { display: grid; gap: 2px; padding: 8px 10px; text-align: left; background: #fff; border: 1px solid var(--rule); cursor: pointer; }
-  .card:hover, .pick:hover { border-color: var(--ink); }
-  .card:focus-visible, .pick:focus-visible { outline: 2px solid var(--navy); outline-offset: 1px; }
-  .card b, .pick b { font-weight: 600; }
-  .card .meta, .pick .meta { color: var(--muted); font-size: 14px; }
+  .pick:hover { border-color: var(--ink); }
+  .pick:focus-visible { outline: 2px solid var(--navy); outline-offset: 1px; }
+  .pick b { font-weight: 600; }
+  .pick .meta { color: var(--muted); font-size: 14px; }
   .chip { justify-self: start; padding: 0 5px; font-size: 12px; font-weight: 600; letter-spacing: .6px; text-transform: uppercase; color: var(--crimson); border: 1px dashed var(--crimson); }
   .two { display: grid; grid-template-columns: 1fr 1fr; gap: 0 48px; }
+  /* Cases tab: funnel, agent case files, table of every dry spill */
+  .cases > h1, .cases > .intro, .cases > h2, .cases > div, .cases > section { max-width: 1340px; margin-left: auto; margin-right: auto; }
+  .cases .panel, .funnel, .file, .ctable { background: #fff; border: 1px solid #e3e8ee; border-radius: 12px; box-shadow: 0 1px 2px rgba(18,53,91,.05), 0 6px 18px rgba(18,53,91,.05); }
+  .funnel { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 18px; }
+  .funnel div { padding: 14px 18px; border-left: 1px solid #e3e8ee; position: relative; }
+  .funnel div:first-child { border-left: 0; }
+  .funnel div + div::before { content: "→"; position: absolute; left: -8px; top: 50%; transform: translateY(-50%); background: #fff; color: #9aa7b4; }
+  .funnel b { display: block; font-size: 28px; line-height: 1.1; color: var(--navy); }
+  .funnel div:first-child b { color: var(--crimson); }
+  .funnel span { font-size: 13px; color: var(--muted); }
+  .files { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 16px; }
+  .file { padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; }
+  .file .fhead { display: flex; justify-content: space-between; gap: 10px; }
+  .file h3 { margin: 0; font-size: 19px; font-weight: 600; }
+  .file .meta { font-size: 13px; color: var(--muted); }
+  .file .hrs { font-size: 30px; color: var(--crimson); font-weight: 600; line-height: 1; text-align: right; white-space: nowrap; }
+  .file .hrs small { display: block; font-size: 11px; color: var(--muted); font-weight: 400; margin-top: 3px; }
+  .file .verdict { display: flex; gap: 8px; align-items: center; font-size: 13px; color: var(--muted); }
+  .chain { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .chain div { background: #f4f6f9; border-radius: 8px; padding: 9px 10px; font-size: 12px; color: var(--muted); }
+  .chain b { display: block; font-size: 17px; color: var(--ink); font-weight: 600; }
+  .chain div:last-child { background: var(--navy); color: #c9d6e4; } .chain div:last-child b { color: #fff; }
+  .file .track { margin: 0 6px; }
+  .obj { font-size: 13px; border-left: 3px solid var(--gold); padding: 2px 0 2px 10px; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+  .obj i { font-style: normal; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 2px; }
+  .file .src { font-size: 12px; color: var(--muted); }
+  .file .ffoot { display: flex; gap: 8px; align-items: center; justify-content: space-between; border-top: 1px solid #eef1f4; padding-top: 12px; margin-top: auto; }
+  .file .acts { display: flex; gap: 6px; }
+  .cbtn { white-space: nowrap; border: 1px solid var(--navy); border-radius: 8px; padding: 8px 12px; font: inherit; font-size: 13px; font-weight: 600; background: var(--navy); color: #fff; cursor: pointer; }
+  .cbtn.ghost { background: #fff; color: var(--navy); border-color: #c8d3df; }
+  .cbtn:hover { filter: brightness(1.1); } .cbtn.ghost:hover { border-color: var(--navy); }
+  .rpill { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 99px; background: #eef1f4; color: var(--muted); white-space: nowrap; }
+  .rpill.draft { background: #fff4cc; color: #6d5300; } .rpill.approved, .rpill.sent { background: #e2ecf5; color: var(--navy); }
+  .ctable { overflow: hidden; }
+  .cfilt { display: flex; gap: 8px; padding: 12px 14px; border-bottom: 1px solid #e3e8ee; flex-wrap: wrap; align-items: center; }
+  .cfilt input, .cfilt select { border: 1px solid #c8d3df; border-radius: 8px; padding: 7px 11px; font: inherit; font-size: 13px; background: #fff; color: var(--ink); }
+  .cfilt input { min-width: 220px; flex: 0 1 260px; }
+  .cfilt .fchip { border: 1px solid #c8d3df; border-radius: 99px; padding: 6px 12px; font: inherit; font-size: 13px; background: #fff; color: var(--ink); cursor: pointer; }
+  .cfilt .fchip[aria-pressed="true"] { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .tscroll { overflow-x: auto; }
+  .ctable table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .ctable th { text-align: left; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 600; padding: 0; border-bottom: 1px solid #e3e8ee; background: #fafbfc; white-space: nowrap; }
+  .ctable th > span, .ctable th > button { display: block; padding: 10px 14px; }
+  .ctable th button { width: 100%; border: 0; background: none; font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit; text-align: left; cursor: pointer; }
+  .ctable th button:hover, .ctable th[aria-sort] button { color: var(--navy); }
+  .ctable td { padding: 10px 14px; border-bottom: 1px solid #eef1f4; vertical-align: middle; }
+  .ctable tbody tr { cursor: pointer; } .ctable tbody tr:hover td { background: #f7f9fb; }
+  .ctable tbody tr:focus-visible { outline: 2px solid var(--navy); outline-offset: -2px; }
+  .ctable .nm { font-weight: 600; } .ctable .co { font-size: 12px; color: var(--muted); }
+  .ctable .num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .hbar { display: flex; align-items: center; gap: 8px; } .hbar i { display: block; height: 6px; border-radius: 3px; background: var(--crimson); opacity: .8; }
+  .ctable .track { width: 110px; margin: 0; }
+  .swing { display: flex; gap: 10px; align-items: center; }
+  .tmore { display: block; width: 100%; padding: 12px; border: 0; background: #fafbfc; font: inherit; font-size: 13px; font-weight: 600; color: var(--navy); cursor: pointer; }
+  .cempty { padding: 24px 14px; color: var(--muted); }
   .pick { display: grid; gap: 4px; width: 100%; padding: 12px 10px; text-align: left; background: none; border: 1px solid transparent; border-top-color: var(--rule); cursor: pointer; }
   .track { position: relative; height: 22px; margin: 2px 6px; }
   .track i { position: absolute; display: block; }
@@ -163,6 +211,8 @@
     .reports { grid-template-columns: 1fr; overflow-y: auto; } .queue { border-right: 0; border-bottom: 1px solid var(--ink); }
     .queue, .detail { overflow: visible; padding: 20px 16px; } .detail .cols { grid-template-columns: 1fr; }
     .cases { padding: 20px 16px 40px; } .two { grid-template-columns: 1fr; }
+    .funnel { grid-template-columns: repeat(2, 1fr); } .funnel div:nth-child(3) { border-left: 0; } .funnel div:nth-child(3)::before { content: none; } .funnel div:nth-child(n+3) { border-top: 1px solid #e3e8ee; }
+    .files { grid-template-columns: 1fr; } .cfilt input { flex: 1 1 100%; }
     .body { flex-direction: column; overflow-y: auto; }
     .map { flex: none; height: 70vh; }
     .side { width: 100%; border-left: 0; border-top: 1px solid var(--ink); overflow: visible; }
@@ -397,21 +447,17 @@
 </main>
 <main class="cases" id="cases-view" hidden>
   <h1>Cases</h1>
-  <p class="intro">Every dry-spill candidate from the latest run, and where the agents and reviewers have got to with it. Click a case to open it: ones with a drafted report open on the Reports tab, the rest on the map.</p>
-  <h2>Status</h2>
-  <div class="board" id="board"></div>
-  <div class="two">
-    <section>
-      <h2>Confidence swing</h2>
-      <p class="sub">How far the web evidence moved each case. Hollow dot: the skeptic's view. Solid dot: the final call after the evidence check. Ticks mark 40% (needs review) and 65% (likely breach).</p>
-      <div id="swings"></div>
-    </section>
-    <section>
-      <h2>Repeat sites</h2>
-      <p class="sub" id="repeat-sub"></p>
-      <div id="repeats"></div>
-    </section>
-  </div>
+  <p class="intro">What the agents did with each dry spill. A skeptic argues the spill was innocent, a researcher checks the web with cited sources, and a judge makes the final call. A person decides what gets sent.</p>
+  <div class="funnel" id="funnel"></div>
+  <h2>Checked by the agents</h2>
+  <div class="files" id="files"></div>
+  <h2>All dry spills</h2>
+  <div class="ctable" id="ctable"></div>
+  <section>
+    <h2>Repeat sites</h2>
+    <p class="sub" id="repeat-sub"></p>
+    <div id="repeats"></div>
+  </section>
 </main>
 <main class="reports" id="reports-view" hidden>
   <div class="queue">
@@ -877,64 +923,124 @@ function openOnMap(s) { show("map"); if (selected !== s) select(s); }
 const siteLine = s => `${s.company} · ${s.id}`;
 const example = s => s.case && s.case.illustrative ? el("span", "chip", "Example") : null;
 
-const STATUS = [
-  ["new", "New", "var(--crimson)", "No agent has looked at these yet."],
-  ["innocent", "Ruled innocent", "var(--muted)", "No cases ruled innocent yet."],
-  ["review", "Needs review", "var(--gold)", "No cases waiting for review."],
-  ["drafted", "Report drafted", "var(--navy)", "No evidence packs drafted yet."],
-  ["approved", "Approved", "var(--ink)", "Nothing approved yet. Approve drafts on the Reports tab."],
-  ["rejected", "Rejected", "var(--ink)", "Nothing rejected yet."],
-];
-function statusOf(s) {
-  if (!s.case) return s.verdict === "dry_spill_candidate" ? "new" : null;
-  const d = decisionOf(s).status;
-  if (d === "approved" || d === "sent") return "approved";
-  if (d === "rejected") return "rejected";
-  if (s.case.final_verdict === "likely_innocent") return "innocent";
-  return s.case.report ? "drafted" : "review";
-}
-function card(s, extra) {
-  const b = el("button", "card");
-  b.append(el("b", null, title(s.name)), el("span", "meta", `${siteLine(s)} · ${hrs(s)} h`));
-  if (extra) b.append(el("span", "meta", extra));
-  const ex = example(s); if (ex) b.append(ex);
-  b.onclick = () => s.case && s.case.report ? openInReports(s) : openOnMap(s);
-  return b;
-}
 function openInReports(s) { openReport = s; rejecting = false; errorText = ""; show("reports"); }
-function renderBoard() {
-  const groups = Object.fromEntries(STATUS.map(([k]) => [k, []]));
-  for (const s of dry.concat(sites.filter(s => s.case && !dry.includes(s)))) { const k = statusOf(s); if (k) groups[k].push(s); }
-  document.getElementById("board").replaceChildren(...STATUS.map(([k, name, colour, none]) => {
-    const col = el("div", "col"); col.style.setProperty("--c", colour);
-    const h = el("h3", null, name); h.append(el("span", null, String(groups[k].length)));
-    const list = el("div", "cards");
-    if (!groups[k].length) list.append(el("p", "none", none));
-    for (const s of groups[k]) list.append(card(s, s.case ? `${s.case.final_verdict.replace(/_/g, " ")}, ${pctN(s.case.breach_confidence)}% confident` : null));
-    col.append(h, list);
-    return col;
-  }));
+const decidedN = () => sites.filter(s => s.case && ["approved", "sent", "rejected"].includes(decisionOf(s).status)).length;
+function openCase(s) { s.case && s.case.report ? openInReports(s) : openOnMap(s); }
+function swingTrack(from, to) {
+  const track = el("div", "track");
+  const at = (cls, x, w) => { const i = el("i", cls); i.style.left = `${x * 100}%`; if (w != null) i.style.width = `${w * 100}%`; return i; };
+  track.append(at("rail", 0), at("tick", .4), at("tick", .65), at("move", Math.min(from, to), Math.abs(to - from)), at("from", from), at("to", to));
+  return track;
 }
-function renderSwings() {
-  const cased = sites.filter(s => s.case && typeof s.case.skeptic_confidence === "number" && typeof s.case.breach_confidence === "number")
-    .sort((a, b) => Math.abs(b.case.breach_confidence - b.case.skeptic_confidence) - Math.abs(a.case.breach_confidence - a.case.skeptic_confidence));
-  const box = document.getElementById("swings");
+function reportPill(s) {
+  if (!s.case) return el("span", "co", "—");
+  if (!s.case.report) return el("span", "rpill", "No report needed");
+  const d = decisionOf(s).status;
+  return el("span", "rpill " + d, d === "draft" ? "Report drafted" : STATE[d]);
+}
+function renderFunnel() {
+  const f = document.getElementById("funnel"), cased = sites.filter(s => s.case);
+  f.replaceChildren(...[[dry.length, "dry spills flagged"], [cased.length, "checked by the agents"],
+    [cased.filter(s => s.case.report).length, "evidence packs drafted"], [decidedN(), "decided by a reviewer"]]
+    .map(([n, label]) => { const d = el("div"); d.append(el("b", null, n), el("span", null, label)); return d; }));
+}
+function renderFiles() {
+  const box = document.getElementById("files");
+  const cased = sites.filter(s => s.case).sort((a, b) => b.case.breach_confidence - a.case.breach_confidence);
   if (!cased.length) return box.replaceChildren(el("p", "sub", "No agent cases yet. Run scripts/agents.py to investigate the top candidates."));
   box.replaceChildren(...cased.map(s => {
-    const from = s.case.skeptic_confidence, to = s.case.breach_confidence, d = pctN(to) - pctN(from);
-    const row = el("button", "pick");
-    const head = el("span"); head.append(el("b", null, title(s.name)), " ", el("span", "meta", siteLine(s)));
-    const track = el("div", "track");
-    const at = (cls, x, w) => { const i = el("i", cls); i.style.left = `${x * 100}%`; if (w != null) i.style.width = `${w * 100}%`; return i; };
-    track.append(at("rail", 0), at("tick", .4), at("tick", .65), at("move", Math.min(from, to), Math.abs(to - from)), at("from", from), at("to", to));
-    const said = s.case.evidence
-      ? `Skeptic ${pctN(from)}% → final ${pctN(to)}%: ${d > 0 ? "+" : ""}${d} points after the evidence check`
-      : `Skeptic ${pctN(from)}%: dismissed before any web search`;
-    row.append(head, track, el("span", "meta", said));
-    const ex = example(s); if (ex) row.append(ex);
-    row.onclick = () => openOnMap(s);
-    return row;
+    const c = s.case, f = el("article", "file");
+    const head = el("div", "fhead"), left = el("div"), big = el("div", "hrs", hrs(s));
+    left.append(el("h3", null, title(s.name)), el("div", "meta", siteLine(s)));
+    big.append(el("small", null, "hours discharging")); head.append(left, big);
+    const v = el("div", "verdict"); v.append(el("span", "vchip " + c.final_verdict, VERDICT_NAME[c.final_verdict] || c.final_verdict.replace(/_/g, " ")), `${pctN(c.breach_confidence)}% likely a breach`);
+    const step = (label, val) => { const d = el("div"); d.append(label, el("b", null, val)); return d; };
+    const chain = el("div", "chain");
+    chain.append(step("1 · Skeptic", typeof c.skeptic_confidence === "number" ? `${pctN(c.skeptic_confidence)}%` : "—"),
+                 step("2 · Web evidence", c.evidence ? `${c.n_sources ?? "?"} sources` : "skipped"),
+                 step("3 · Final call", `${pctN(c.breach_confidence)}%`));
+    f.append(head, v, chain);
+    if (typeof c.skeptic_confidence === "number") f.append(swingTrack(c.skeptic_confidence, c.breach_confidence));
+    const standing = c.ruling?.objections_standing || [], refuted = c.ruling?.objections_refuted || [];
+    const objText = standing[0] ? standing[0].split(": ")[0] : c.strongest_objection;
+    if (objText) { const o = el("div", "obj"); o.append(el("i", null, standing[0] ? "Objection still standing" : "Strongest objection"), objText.replace(/\.?$/, ".")); f.append(o); }
+    const src = [];
+    if (c.citations) src.push(`${c.citations.verified} of ${c.citations.checked} citations verified`);
+    src.push(`${refuted.length} objection${refuted.length === 1 ? "" : "s"} refuted`);
+    f.append(el("div", "src", src.join(" · ")));
+    const ex = example(s); if (ex) f.append(ex);
+    const foot = el("div", "ffoot"), acts = el("div", "acts"), onMap = el("button", "cbtn ghost", "On the map");
+    onMap.onclick = () => openOnMap(s); acts.append(onMap);
+    if (c.report) { const r = el("button", "cbtn", "Evidence pack →"); r.onclick = () => openInReports(s); acts.append(r); }
+    foot.append(reportPill(s), acts); f.append(foot);
+    return f;
   }));
+}
+// table of every dry spill (plus any agent case that's no longer dry): search, filter chips, company, sortable columns
+const tbl = { q: "", f: "all", co: "", sort: "hours", dir: -1, all: false };
+const TFILTERS = [["all", "All", () => true], ["checked", "Checked by agents", s => !!s.case],
+  ["likely_breach", "Likely breach", s => s.case?.final_verdict === "likely_breach"],
+  ["needs_review", "Needs review", s => s.case?.final_verdict === "needs_review"],
+  ["likely_innocent", "Ruled innocent", s => s.case?.final_verdict === "likely_innocent"],
+  ["unchecked", "Not checked yet", s => !s.case]];
+const TSORT = { hours: s => s.hours ?? -1, rain: s => s.rain48 ?? -1, conf: s => s.case ? s.case.breach_confidence : -1 };
+function renderTable() {
+  const box = document.getElementById("ctable");
+  const pool = dry.concat(sites.filter(s => s.case && !dry.includes(s)));
+  if (!box.firstChild) {  // controls are built once so the search box keeps focus while typing
+    const bar = el("div", "cfilt"), q = el("input"), co = el("select");
+    q.type = "search"; q.placeholder = "Search site, river, company or id"; q.setAttribute("aria-label", "Search dry spills");
+    q.oninput = () => { tbl.q = q.value.trim().toLowerCase(); renderRows2(); };
+    co.setAttribute("aria-label", "Company");
+    co.append(new Option("All companies", ""), ...[...new Set(pool.map(s => s.company))].sort().map(c => new Option(c, c)));
+    co.onchange = () => { tbl.co = co.value; renderRows2(); };
+    const chips = el("span", "chips"); chips.style.display = "contents";
+    bar.append(q, chips, co);
+    const wrap = el("div", "tscroll"), t = el("table"), thead = el("thead"), tr = el("tr");
+    for (const [label, key] of [["#"], ["Site"], ["Hours", "hours"], ["Rain 48 h", "rain"], ["Agents' verdict"], ["Skeptic → final", "conf"], ["Report"]]) {
+      const th = el("th");
+      if (key) { const b = el("button", null, label); b.dataset.key = key; b.onclick = () => { tbl.dir = tbl.sort === key ? -tbl.dir : -1; tbl.sort = key; renderRows2(); }; th.append(b); }
+      else th.append(el("span", null, label));
+      tr.append(th);
+    }
+    thead.append(tr); t.append(thead, el("tbody")); wrap.append(t);
+    box.append(bar, wrap, el("div", "tfoot"));
+  }
+  renderRows2();
+  function renderRows2() {
+    const chips = box.querySelector(".chips");
+    chips.replaceChildren(...TFILTERS.map(([k, label, fn]) => {
+      const n = pool.filter(fn).length; if (!n && k !== "all") return "";
+      const b = el("button", "fchip", `${label} · ${n}`); b.setAttribute("aria-pressed", tbl.f === k);
+      b.onclick = () => { tbl.f = k; tbl.all = false; renderRows2(); }; return b;
+    }));
+    box.querySelectorAll("th").forEach(th => { const k = th.querySelector("button")?.dataset.key; if (k === tbl.sort) th.setAttribute("aria-sort", tbl.dir < 0 ? "descending" : "ascending"); else th.removeAttribute("aria-sort"); const b = th.querySelector("button"); if (b) b.textContent = b.textContent.replace(/ [↓↑]$/, "") + (k === tbl.sort ? (tbl.dir < 0 ? " ↓" : " ↑") : ""); });
+    const fn = TFILTERS.find(f => f[0] === tbl.f)[2];
+    const rank = new Map(dry.map((s, i) => [s, i + 1]));
+    const list = pool.filter(fn).filter(s => !tbl.co || s.company === tbl.co)
+      .filter(s => !tbl.q || `${s.name} ${s.company} ${s.id}`.toLowerCase().includes(tbl.q))
+      .sort((a, b) => tbl.dir * (TSORT[tbl.sort](a) - TSORT[tbl.sort](b)) || (b.hours ?? -1) - (a.hours ?? -1));
+    const max = Math.max(...pool.map(s => s.hours ?? 0), 1), LIMIT = 15;
+    const tb = box.querySelector("tbody");
+    tb.replaceChildren(...(tbl.all ? list : list.slice(0, LIMIT)).map(s => {
+      const r = el("tr"); r.tabIndex = 0;
+      const nm = el("td"); nm.append(el("div", "nm", title(s.name)), el("div", "co", siteLine(s)));
+      const h = el("td"), hb = el("div", "hbar"), bar = el("i"); bar.style.width = `${Math.max(3, 90 * (s.hours ?? 0) / max)}px`;
+      hb.append(bar, el("span", "num", `${hrs(s)} h`)); h.append(hb);
+      const vd = el("td"); vd.append(s.case ? el("span", "vchip " + s.case.final_verdict, VERDICT_NAME[s.case.final_verdict] || "checked") : el("span", "co", "Not checked yet"));
+      const sw = el("td");
+      if (s.case && typeof s.case.skeptic_confidence === "number") { const w = el("div", "swing"); w.append(swingTrack(s.case.skeptic_confidence, s.case.breach_confidence), el("span", "num co", `${pctN(s.case.skeptic_confidence)} → ${pctN(s.case.breach_confidence)}%`)); sw.append(w); }
+      else sw.append(el("span", "co", "—"));
+      const rp = el("td"); rp.append(reportPill(s));
+      r.append(el("td", "num co", rank.get(s) ?? "–"), nm, h, el("td", "num", s.rain48 == null ? "–" : `${fmt(s.rain48, 2)} mm`), vd, sw, rp);
+      r.onclick = () => openCase(s); r.onkeydown = e => { if (e.key === "Enter") openCase(s); };
+      return r;
+    }));
+    const foot = box.querySelector(".tfoot");
+    if (!list.length) foot.replaceChildren(el("p", "cempty", "No dry spills match."));
+    else if (list.length > LIMIT && !tbl.all) { const m = el("button", "tmore", `Show all ${list.length}`); m.onclick = () => { tbl.all = true; renderRows2(); }; foot.replaceChildren(m); }
+    else foot.replaceChildren();
+  }
 }
 function renderRepeats() {
   const H = RUN.history || { runs: [], events: [] };
@@ -960,7 +1066,7 @@ function renderRepeats() {
     return row;
   }));
 }
-function renderCases() { renderBoard(); renderSwings(); renderRepeats(); }
+function renderCases() { renderFunnel(); renderFiles(); renderTable(); renderRepeats(); }
 
 // ---------- Reports tab ----------
 // Decisions live in andrew-site/decisions.json, read and written through andrew-site/serve.py.
