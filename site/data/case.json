@@ -1,0 +1,304 @@
+{
+ "site_id": "SBB00211",
+ "company": "South West Water",
+ "watercourse": "CARNON RIVER",
+ "event_start": "2026-11-13 17:14:21+00:00",
+ "duration_hours": 21.1,
+ "final_verdict": "likely_breach",
+ "breach_confidence": 0.68,
+ "skeptic_confidence": 0.25,
+ "skeptic_model": "system.ai.gpt-oss-120b",
+ "strongest_objection": "The event lacks a confirmed end time and the rain gauges are >5 km from the outfall; such spacing can easily miss localized rain, while sensor or data‑feed glitches can produce a prolonged open signal, making the dry‑spill inference unreliable.",
+ "severity": "high",
+ "n_sources": 5,
+ "decided_at": "2026-11-14 15:24:22.596801+00:00",
+ "spill": {
+  "id": "SBB00211",
+  "company": "South West Water",
+  "receivingwatercourse": "CARNON RIVER",
+  "latitude": 50.218504,
+  "longitude": -5.103782,
+  "status": null,
+  "latesteventstart": "2026-11-13 17:14:21+00:00",
+  "latesteventend": null,
+  "duration_hours": 21.1,
+  "monitor_offline": false,
+  "gauges": [
+   {
+    "station": "48182",
+    "km": 5.7,
+    "mm_0_24h_before": 0.0,
+    "mm_24_48h_before": 0.0,
+    "mm_during": 0.0
+   },
+   {
+    "station": "48103",
+    "km": 6.5,
+    "mm_0_24h_before": 0.2,
+    "mm_24_48h_before": 0.0,
+    "mm_during": 0.0
+   }
+  ],
+  "max_mm_0_24h_before": 0.2,
+  "max_mm_24_48h_before": 0.0,
+  "max_mm_during": 0.0,
+  "verdict": "dry_spill_candidate"
+ },
+ "case": {
+  "summary": "Storm overflow SBB00211 (South West Water) discharging to the Carnon River began spilling at 2026-11-13 17:14:21 UTC. There is no recorded end time and the status is null, so the event was still open-ended at 21.1 hours when the data was pulled. The monitor is reported online (monitor_offline: false). Two Environment Agency rain gauges were checked. Station 48182 (5.7 km away) recorded 0.0 mm in the 24h before the spill, 0.0 mm in the 24-48h before, and 0.0 mm during the spill. Station 48103 (6.5 km away) recorded 0.2 mm in the 24h before, 0.0 mm in the 24-48h before, and 0.0 mm during. Across both gauges the maximum was 0.2 mm in the preceding 48 hours and 0.0 mm during a discharge of more than 21 hours. That is far too little rain to plausibly explain a storm discharge, and the feed flags it as a 'dry_spill_candidate'. This points to a possible permit breach (discharge without heavy rainfall), but it is not conclusive. Both gauges are more than 5 km from the outfall, so localised rain could have been missed, and the event record is unclosed. The two memory entries are earlier reviews of this same event, not separate prior spills. Those reviews reached 'likely_innocent' (confidence 0.35) and 'needs_review' (confidence 0.55), neither with any external sources (n_sources: 0). One prior objection said both gauges recorded zero rain in the preceding 48h; in fact station 48103 recorded 0.2 mm in the 0-24h window. That figure is still negligible.",
+  "breach_indicators": [
+   "Maximum rainfall during the spill was 0.0 mm at both gauges (48182 at 5.7 km, 48103 at 6.5 km).",
+   "Maximum rainfall in the 24h before the spill was only 0.2 mm (station 48103); station 48182 recorded 0.0 mm.",
+   "Maximum rainfall 24-48h before the spill was 0.0 mm at both gauges, so antecedent wet conditions are not evident from these gauges.",
+   "Discharge duration was 21.1 hours with no recorded end time, suggesting a prolonged, possibly ongoing release in dry conditions.",
+   "The monitor is reported online (monitor_offline: false), so the discharge signal is not obviously a monitor-offline artefact.",
+   "The automated verdict from the joined feed is 'dry_spill_candidate'.",
+   "Two independent gauges in different locations agree on near-zero rainfall."
+  ],
+  "repeat_offender": false,
+  "severity": "high",
+  "questions_for_evidence": [
+   "Does Met Office or Environment Agency rainfall radar for 2026-11-11 to 2026-11-14 show any localised rain over the Carnon River catchment upstream of the outfall (approx. 50.2185, -5.1038) that the gauges 5.7-6.5 km away could have missed?",
+   "Are there any rain gauges or weather stations closer to the outfall than 5.7 km with readings for 2026-11-12 to 2026-11-14?",
+   "What is the final status and end time of event SBB00211 starting 2026-11-13 17:14:21 in South West Water's live storm overflow map or EDM data, and what was the true total duration?",
+   "Did South West Water report any operational cause for this spill, such as a pump failure, power outage, blockage or emergency overflow, which would indicate a non-rainfall discharge?",
+   "Is there evidence of high groundwater or infiltration in the area in November 2026 that the company might cite as a cause? This would need checking against the near-zero 48h rainfall.",
+   "What does the EA-issued permit for overflow SBB00211 say, including any pass-forward flow conditions and the conditions under which spills are permitted?",
+   "Have the Environment Agency, Surfers Against Sewage or local groups (e.g. around Restronguet Creek/Carnon River) reported pollution or sewage observations around 13-14 November 2026?",
+   "Has this overflow recorded other dry-weather spill events on separate dates in South West Water's annual EDM returns, which would establish a genuine pattern?",
+   "Did tidal conditions or tide-locking affect the outfall on 13-14 November 2026, which could explain a discharge unrelated to rainfall?"
+  ]
+ },
+ "skeptic": {
+  "innocent_explanations": [
+   {
+    "explanation": "EDM sensor transient fault or short‑duration blip causing a false open signal",
+    "plausibility": "medium"
+   },
+   {
+    "explanation": "Localized convective rainfall missed by the two gauges that are 5.7–6.5 km away",
+    "plausibility": "medium"
+   },
+   {
+    "explanation": "Data‑feed or telemetry error that duplicated or failed to close the event record",
+    "plausibility": "medium"
+   },
+   {
+    "explanation": "Emergency manual discharge triggered by pump failure or power outage",
+    "plausibility": "high"
+   },
+   {
+    "explanation": "Tidal or back‑flow conditions at the outfall causing release unrelated to rainfall",
+    "plausibility": "low"
+   },
+   {
+    "explanation": "Groundwater infiltration or snow‑melt contribution in the catchment",
+    "plausibility": "low"
+   }
+  ],
+  "strongest_objection": "The event lacks a confirmed end time and the rain gauges are >5 km from the outfall; such spacing can easily miss localized rain, while sensor or data‑feed glitches can produce a prolonged open signal, making the dry‑spill inference unreliable.",
+  "breach_confidence": 0.25,
+  "model": "system.ai.gpt-oss-120b"
+ },
+ "evidence": {
+  "report": "# Evidence pack: SBB00211, South West Water, Carnon River (event start 2026-11-13 17:14 UTC)\n\n**Bottom line:** I found nothing online that clears this event, and nothing that confirms it as a breach. The case still rests on the gauge data. The dry-weather context is consistent with the gauges. I found no reported pump failure or other operational cause, but that doesn't prove there wasn't one. The open questions can only be answered with records from South West Water or the Environment Agency (EA). The searches did not turn up those records.\n\nI ran 5 searches. Every fact below is cited. Where I found nothing, I say so.\n\n## 1. What supports a breach\n\n- **Region-wide dry conditions.** On 5 Nov 2026, regulators said parts of the area South West Water serves \"remain in severe drought\" (https://manyangles.news/story/2026-11-05/south-west-waters-failure-to-fix-leaks-putting-customer-bopxq3; https://dailydigest.com/story/south-west-waters-failure-to-fix-leaks-putting-customer-supplies-at-risk-457072/). Devon County Council referred to \"the dry weather\" (https://www.devon.gov.uk/news/devon-county-council-statement-letter-regulators-revealing-south-west-waters-leakage-record-getting-worse-putting-supplies-risk-despite-being-warned-seven-successive-years/). This fits the near-zero gauge readings, but the sources don't say whether the drought covers the Carnon catchment.\n- **Weak local weather hint.** An events listing for Truro (about 5 km north) showed \"5°C · 0% rain\" for 12 Nov 2026 (https://eventslist.co.uk/truro/events/the-us-office-trivia-at-mason-brewing-co-2026-11-12). This is a forecast widget, not a measurement, and it covers the day before the spill.\n- **The company's record.** On 29 Sep 2026, South West Water was fined £7,867,733 plus £329,993 costs after pleading guilty to 18 EA charges for 2015–2021. Seventeen were illegal discharges, and one was failing to take remedial measures after a pumping-station failure (https://theintelligent.co.uk/environment/2026/south-west-water-fined-nearly-ps8-million-sewage-spills-across-devon-and-cornwall; https://www.cmscoms.com/south-west-water-guilty-of-six-years-of-illegal-sewage-discharges/). One of the sites was **Playing Place**, a village close to the Carnon catchment.\n  - **Caveat:** I can't confirm that any charged asset is SBB00211. The company said most charges \"concerned the use of overflows in storm conditions\" (https://www.thepost.uk.com/news/courts/south-west-water-hit-with-ps8-million-fine-for-sewage-pollution-959435). The case is not evidence of dry-weather spilling at this site.\n- **The \"dry spill\" threshold.** Reporting describes dry spills as discharges when rainfall is below 0.25 mm (summary returned by the search at https://theintelligent.co.uk/environment/2026/south-west-water-fined-nearly-ps8-million-sewage-spills-across-devon-and-cornwall). Every window in the gauge data is at or below 0.2 mm, which is under that threshold. The cited page doesn't state this definition explicitly, so check it before relying on it.\n- **Wider pattern.** Suspected dry-weather discharges reportedly rose sharply in early 2026 (https://lalumierecollective.com/article/water-companies-dry-weather-sewage-discharges-skyrocket-is-our-environment-at-risk). This is a low-quality aggregator and is background only.\n\n## 2. Testing the innocent explanations\n\n- **Pump failure or power outage (the skeptic rated this \"high\"):** I found **no report** of a pumping-station failure or power cut at Devoran, Bissoe or Carnon Downs in Nov 2026. The search turned up only leakage and drought stories. This doesn't rule out a failure, because these are often not publicised. It also matters legally: the 2026 prosecution shows a pump failure can be an offence in itself (failing to take remedial measures), not automatically an excuse.\n- **Localised rain the gauges missed:** I found **no weather report** of rain at Truro or the Carnon area on 13–14 Nov 2026. The search returned only US forecasts. This remains a theoretical objection with nothing supporting it.\n- **Pollution in the river from another source:** The Carnon River and Restronguet Creek are well known for **mine-water pollution**, including the 1992 Wheal Jane release and ongoing metal contamination (https://challenginghabitat.com/2023/10/17/restronguet-creek-revisited/; https://www.feockparishcouncil.gov.uk/ourcreek). That matters if anyone uses river colour or water quality as evidence, but it doesn't explain a signal from a sewage overflow monitor.\n- **Tide-locking:** Restronguet Creek is the tidal part of the river (https://en.wikipedia.org/wiki/Restronguet_Creek; https://www.feockparishcouncil.gov.uk/ourcreek). That makes tidal effects physically possible if the outfall is in or near the tidal reach. I have no evidence that it is.\n- **Monitor fault or a record that never closed:** I found nothing either way.\n\n## 3. Still unknown (needs requests to the company or the EA)\n\n- The final end time, status and total duration of the event from South West Water's live storm overflow map or monitoring data.\n- Any operational cause the company records (pump, power, blockage).\n- Rainfall radar for 11–14 Nov, and any gauge closer than 5.7 km.\n- The permit conditions for SBB00211, including how much flow must pass to treatment before it may spill.\n- Whether SBB00211 is linked to the Playing Place charges.\n- Earlier dry-day spills from this overflow on other dates.\n- Tide times and whether the outfall sits in the tidal reach.\n- Groundwater levels.\n- Any public pollution reports from 13–14 Nov. I found none.\n\n**Assessment:** The dry-weather background makes the rain-gauge evidence stronger. The skeptic's \"high\" rating for a pump failure is a hypothesis with no evidence behind it, and even a pump failure could itself be an offence. The skeptic's 0.25 breach confidence seems low, but this still falls short of conclusive. Treat it as a **credible dry-spill candidate**, and get the company's monitoring and operational logs and the permit before reaching a conclusion.",
+  "searches": [
+   {
+    "query": "South West Water sewage Carnon River November 2026",
+    "answer": "The information provided does **not** mention a South West Water sewage discharge into the Carnon River in November 2026. It reports broader dry-weather discharge figures for South West Water, but gives no Carnon River-specific incident or date.",
+    "sources": [
+     {
+      "name": "Water Companies' Dry Weather Sewage Discharges Skyrocket: Is Our Environment at Risk? (2026)",
+      "url": "https://lalumierecollective.com/article/water-companies-dry-weather-sewage-discharges-skyrocket-is-our-environment-at-risk",
+      "snippet": "## The Troubling Rise of Dry Weather Sewage Discharges  \nThe issue of water companies' sewage disposal practices has reached a boiling point, and it's high time we shed light on this environmental crisis. In the first five months of 2026, a shocking surge in suspected illegal discharges of raw sewage into rivers and seas during dry weather has been uncovered. This is not just an environmental conc"
+     },
+     {
+      "name": "Water Companies' Dry Weather Sewage Discharges Skyrocket: Is Our Environment at Risk? (2026)",
+      "url": "https://mowaterpolo.org/article/water-companies-dry-weather-sewage-discharges-skyrocket-is-our-environment-at-risk",
+      "snippet": "## The Troubling Rise of Dry Weather Sewage Discharges  \nThe issue of water companies' sewage disposal practices has reached a boiling point, and it's high time we shed light on this environmental crisis. In the first five months of 2026, a shocking surge in suspected illegal discharges of raw sewage into rivers and seas during dry weather has been uncovered. This is not just an environmental conc"
+     },
+     {
+      "name": "Water supplies at risk due to leaks, firm warned",
+      "url": "https://www.yahoo.com/news/world/articles/water-supplies-risk-due-leaks-100732884.html",
+      "snippet": "Regulators warn South West Water&#x27;s leakage rates are 18.5% above forecast.\nWater firm fined £8m for 'horrendous' sewage spills"
+     },
+     {
+      "name": "Anger at living with sewage smells for a decade",
+      "url": "https://www.yahoo.com/news/articles/anger-living-sewage-smells-decade-062153220.html",
+      "snippet": "Residents are asking South West Water to investigate and fix an ongoing problem of sewer odours."
+     },
+     {
+      "name": "South West Water’s failure to fix leaks ‘putting customer supplies at risk’ | World News | finwire.io",
+      "url": "https://finwire.io/news/world-news/south-west-waters-failure-to-fix-leaks-putting-customer-supplies-at-risk",
+      "snippet": "The joint letter says the failure to tackle leakage has reduced confidence in the company to ensure supplies and avoid emergency abstraction from rivers that will cause environmental damage.\nWith parts of region served by company in severe drought still, regulators give it six weeks to come up with action plan Repeated failures by South West Water to tackle leaks are putting customers at higher ri"
+     },
+     {
+      "name": "South West Water: England's Worst Environmental Offender? Sewage Scandal Exposed (2026)",
+      "url": "https://glowempowers.org/article/south-west-water-england-s-worst-environmental-offender-sewage-scandal-exposed",
+      "snippet": "## The Troubling Data  \nSouth West Water, operating across Devon, Cornwall, Dorset, and Somerset, has consistently ranked among the worst performers in England when it comes to environmental impact. The analysis, conducted by Friends of the Earth, evaluated water companies across six critical categories. South West Water stood out for all the wrong reasons, ranking in the top three for four of the"
+     }
+    ]
+   },
+   {
+    "query": "Cornwall weather rain 13 November 2026 Truro",
+    "answer": "I couldn’t find a rain forecast for Truro on 13 November 2026 in the available information. The weather item for that date is for a different region, and the Truro listing only gives conditions for 12 November.",
+    "sources": [
+     {
+      "name": "Best Time to Visit Cornwall, England (Jun &amp; Jul 2027)",
+      "url": "https://besttimestovisit.com/cornwall-england",
+      "snippet": "### Dec in Cornwall, England  \nWeather  \n9°C°C / 48°F°F  \n15 days rainy days • 105mmmm  \nWhat to Expect  \nCold, with highs around 9°C. Warm clothing and layers are essential. Occasional showers are likely, so a light rain jacket is handy. Highs run about 10°C below Jul, one of the year's warmest months. It also brings the most rain of any month here.  \nCrowd Level  \n🔴 High - Peak tourist season, b"
+     },
+     {
+      "name": "Current time in Truro",
+      "url": "https://en.true-time.com/truro/",
+      "snippet": "# Current time in Truro  \n*Live local time in Truro with seconds.*\n## United Kingdom, Cornwall, Truro — current time  \nTuesday, November 10, 2026  \n**Truro on the map**\n## Daylight saving time changes in Truro  \nCurrent time zone  \nUTC+00:00  \nSwitch to summer time UTC+01:00  \nSunday, March 29, 2026 at 1:00 am  \nSwitch to winter time UTC+00:00  \nSunday, October 25, 2026 at 2:00 am"
+     },
+     {
+      "name": "The US Office Trivia at Mason Brewing Co — Mason Brewing Co | 12 Nov 2026 | EventsList.co.uk",
+      "url": "https://eventslist.co.uk/truro/events/the-us-office-trivia-at-mason-brewing-co-2026-11-12",
+      "snippet": "# The US Office Trivia at Mason Brewing Co  \n5°C · 0% rain  \n[Find hotels near this venuecompare prices →](https://www.stay22.com/allez/roam?aid=eventslist&lat=50.262239&lng=-5.124720&currency=GBP&checkin=2026-11-12&checkout=2026-11-13&campaign=truro_ev12768895&lang=en)  \nSimilar events  \n[View all](https://eventslist.co.uk/truro/film)\n## More things to do in Truro  \n- [Aston Martin Replica DB5 Dr"
+     },
+     {
+      "name": "Evening weather forecast 11/13/26 | WAMC",
+      "url": "https://www.wamc.org/weather/2026-11-13/evening-weather-forecast-11-13-26",
+      "snippet": "Meteorologist Garett Argianas delivers the evening weather forecast for Friday, Nov. 13, 2026."
+     },
+     {
+      "name": "Seeker Daily Brief – November 11, 2026 - The Seeker Newsmagazine Cornwall",
+      "url": "https://theseeker.ca/2026/11/seeker-daily-brief-november-11-2026/",
+      "snippet": "## Cornwall’s outgoing council holds its final meeting  \nCornwall’s outgoing council met for the last time on November 9, with councillors saying their farewells around the table, The Seeker reported. Coun. Carilyne Hébert answered her last roll call after 12 years on council, and Mayor Justin Towndale looked back on 12 years at the table, including four as mayor, pointing to Sunday bus service an"
+     },
+     {
+      "name": "Morning Weather Forecast, 11/13/26 | WAMC",
+      "url": "https://www.wamc.org/weather/2026-11-13/morning-weather-forecast-11-13-26",
+      "snippet": "Published November 13, 2026 at 6:44 AM EST · Facebook · Twitter · LinkedIn · Bluesky · Listen • 7:07 · Image courtesy of WNYT · Chief Meteorologist Paul Caiano · Cloudy with rain and snow showers today. Highs in the lower 40s. Cloudy tonight. Lows in the upper 20s and lower 30s.\nMostly cloudy and breezy with a few rain and snow showers tomorrow."
+     }
+    ]
+   },
+   {
+    "query": "South West Water pumping station failure power cut Devoran Bissoe Carnon Downs November 2026",
+    "answer": "I couldn’t find a report in the available information about a South West Water pumping-station failure or power cut affecting Devoran, Bissoe or Carnon Downs in November 2026. The supplied reports concern leakage targets and drought-related supply risks, not a local power outage.",
+    "sources": [
+     {
+      "name": "South West Water Fined: The Truth Behind the £8m Penalty (2026)",
+      "url": "https://norcraftdesign.com/article/south-west-water-fined-the-truth-behind-the-8m-penalty",
+      "snippet": "The recent £8 million fine imposed on South West Water for sewage spills is a stark reminder of the environmental consequences of corporate negligence. This hefty penalty, the largest in the company's history, underscores the severity of the situation and the need for stricter accountability. But what does this case truly reveal about the state of our water systems and the challenges we face in en"
+     },
+     {
+      "name": "South West Water’s failure to fix leaks ‘putting customer supplies at risk’",
+      "url": "https://manyangles.news/story/2026-11-05/south-west-waters-failure-to-fix-leaks-putting-customer-bopxq3",
+      "snippet": "# South West Water’s failure to fix leaks ‘putting customer supplies at risk’  \nWith parts of region served by company in severe drought still, regulators give it six weeks to come up with action plan Repeated failures by South West Water to tackle leaks are putting customers at higher risks of losing water supplies as parts of the region remain in severe…\n## Read both sides  \n- [Left-leaningSouth"
+     },
+     {
+      "name": "South West Water warns leaks may jeopardize customer water supplies | Daily Digest",
+      "url": "https://dailydigest.com/story/south-west-waters-failure-to-fix-leaks-putting-customer-supplies-at-risk-457072/",
+      "snippet": "# South West Water warns leaks may jeopardize customer water supplies  \n[South West Water’s failure to fix leaks ‘putting customer supplies at risk’](https://www.theguardian.com/business/2026/nov/05/south-west-water-failure-fix-leaks-putting-customer-supplies-at-risk?utm_source=dailydigest)\n### At a Glance  \nThe earliest report we found was [The Guardian](https://dailydigest.com/source/guardian/)’"
+     },
+     {
+      "name": "South West Water ‘not doing its bit on leakage’ amid drought | dartmouth-today.co.uk",
+      "url": "https://www.dartmouth-today.co.uk/news/south-west-water-not-doing-its-bit-on-leakage-amid-drought-970117",
+      "snippet": "DEVON County Council has slammed South West Water after an official letter revealed the company is missing its leakage targets, and therefore putting customer supplies at risk, despite being warned for seven years in a row.\n© 2026 – Iliffe Media Group Ltd, Winship Road, Milton, Cambridge, CB24 6PP\nDevon County Council Leader Julian Brazil said: “Householders and businesses have been told to save w"
+     },
+     {
+      "name": "South West Water’s failure to fix leaks ‘putting customer supplies at risk’ | World News | finwire.io",
+      "url": "https://finwire.io/news/world-news/south-west-waters-failure-to-fix-leaks-putting-customer-supplies-at-risk",
+      "snippet": "With parts of region served by company in severe drought still, regulators give it six weeks to come up with action plan Repeated failures by South West Water to tackle leaks are putting customers at higher risks of losing water supplies as parts of the region remain in severe drought, regulators have said.\nThe leader of Devon county council, Julian Brazil, said: “Householders and businesses have "
+     },
+     {
+      "name": "Devon County Council statement on letter from regulators revealing South West Water's leakage record is getting worse and putting supplies at risk despite being warned for seven successive years - News",
+      "url": "https://www.devon.gov.uk/news/devon-county-council-statement-letter-regulators-revealing-south-west-waters-leakage-record-getting-worse-putting-supplies-risk-despite-being-warned-seven-successive-years/",
+      "snippet": "County leaders have criticised South West Water after an official letter revealed the monopoly supplier is still missing leakage targets and now putting\n“Householders and businesses have been told to save water to avoid worse drought restrictions and that was all down to the dry weather."
+     }
+    ]
+   },
+   {
+    "query": "Restronguet Creek Carnon River sewage storm overflow pollution",
+    "answer": "The information provided points to **mining pollution, not a sewage overflow**, as the documented pollution problem in Restronguet Creek and the Carnon River.\n\nIn 1992, more than 45 million litres of contaminated water escaped from the closed Wheal Jane mine after an adit collapsed. The discharge turned the river reddish and flowed into Restronguet Creek, killing fish. Metal contamination from historic mining has also affected creek sediments and wildlife; a treatment works was later installed to intercept and treat contaminated mine water.\n\nThe available sources do **not** identify a sewage storm overflow or provide details about sewage discharges.",
+    "sources": [
+     {
+      "name": "Mylor and Restronguet Creeks circular walk",
+      "url": "https://www.iwalkcornwall.co.uk/walk/mylor_and_restronguet_creeks?Mode=map",
+      "snippet": "Holly has separate male and female plants, so not all holly bushes produce berries - only female plants. In less biologically-enlightened Pagan times, holly was thought to be a male plant (the spikes symbolising aggression) whereas ivy was regarded as a female plant (symbolising attachment). The Christmas Carol \"The Holly and the Ivy\" is thought originally to derive from Pagan fertility myths onto"
+     },
+     {
+      "name": "Restronguet Creek Revisited | Challenging Habitat",
+      "url": "https://challenginghabitat.com/2023/10/17/restronguet-creek-revisited/",
+      "snippet": "Along the contamination plume, waters turned visibly reddish brown, killed fish and affected the bird population [4][5]. There was one positive outcome from this disaster: the first (and so far only) full-scale acid mine drainage (AMD) treatment ...\nMy first close encounter with pollution emanating from the abandoned mines in England’s Southwest occurred in the mid 1990s, when research for my unde"
+     },
+     {
+      "name": "Carnon River",
+      "url": "https://en.wikipedia.org/wiki/Carnon_River",
+      "snippet": "River in Cornwall, England  \n- date: April 2022  \nInfobox river:\n- name: Carnon River\n- image: Carnon River near Point Mills - geograph.org.uk - 1234714.jpg\n- image caption: Carnon River near Point Mills\n- pushpin map: Cornwall\n- pushpin map caption: Location within Cornwall\n- subdivision type1: Country\n- subdivision name1: England\n- subdivision type2: County\n- subdivision name2: Cornwall\n- source"
+     },
+     {
+      "name": "Carnon River &mdash; Wikipedia Republished // WIKI 2",
+      "url": "https://wiki2.org/en/Carnon_River",
+      "snippet": "| Carnon River |  |\n|---|---|\n| [![](/wikipedia/commons/thumb/7/7c/Carnon_River_near_Point_Mills_-_geograph.org.uk_-_1234714.jpg/250px-Carnon_River_near_Point_Mills_-_geograph.org.uk_-_1234714.jpg)](/en/File:Carnon_River_near_Point_Mills_-_geograph.org.uk_-_1234714_jpg)<br /><br /><br /><br />Carnon River near Point Mills |  |\n| [![Carnon River is located in Cornwall](/wikipedia/commons/thumb/4/47"
+     },
+     {
+      "name": "Wildlife of Restronguet Creek - Feock Trails Walking History",
+      "url": "https://www.feockparishcouncil.gov.uk/ourcreek",
+      "snippet": "Marine wildlife in the largest creek in the parish, Restronguet, is impoverished due to metal contamination, transported by river water from the mines in the Carnon Valley and as far away as the St Day mining area.\nRestronguet Creek forms an integral part of the larger Fal Estuary complex, and extends from Restronguet Point in the east to Perran Wharf in the west. The Creek is the tidal part of th"
+     },
+     {
+      "name": "Restronguet Creek",
+      "url": "https://en.wikipedia.org/wiki/Restronguet_Creek",
+      "snippet": "Tidal ria in south Cornwall, England\nRestronguet (disambiguation)  \n- date: April 2022  \nRestronguet Creek is a tidal ria in south Cornwall, United Kingdom. It is a tributary of Carrick Roads, the estuary of the River Fal, and is situated approximately four miles (6.5&nbsp;km) south of Truro and three miles (5&nbsp;km) north of Falmouth.  \nThe creek is approximately two miles (3&nbsp;km) long from"
+     }
+    ]
+   },
+   {
+    "query": "Environment Agency South West Water fine prosecution storm overflow dry spill 2026",
+    "answer": "South West Water pleaded guilty to 18 charges in an Environment Agency prosecution over pollution incidents in Devon and Cornwall between 2015 and 2021. On 29 September 2026, Plymouth Magistrates’ Court fined it **£7,867,733** and ordered it to pay **£329,993 in costs**. Seventeen charges concerned illegal discharges; one concerned failing to take reasonable remedial measures after a pumping-station failure.\n\nThe reports say most charges involved overflows used in storm conditions. They do not establish that the offences were specifically **dry-weather spills**. Dry spills are described as discharges when rainfall is below 0.25 mm; the supplied reporting does not say that threshold applied to these incidents.",
+    "sources": [
+     {
+      "name": "South West Water guilty of illegal sewage discharges - Ocean and Coastal Futures",
+      "url": "https://www.cmscoms.com/south-west-water-guilty-of-six-years-of-illegal-sewage-discharges/",
+      "snippet": "South West Water has pleaded guilty to 18 charges of water pollution spanning six years, in a prosecution brought by the Environment Agency that concluded at Plymouth Magistrates Court on 12 March 2026. Sentencing is expected on 4 June 2026. The charges relate to illegal discharges including raw sewage spills at five locations – Bodmin, Harlyn, Playing Place, Polperro and Plymouth – between Januar"
+     },
+     {
+      "name": "South West Water fined nearly £8 million for sewage spills across Devon and Cornwall",
+      "url": "https://theintelligent.co.uk/environment/2026/south-west-water-fined-nearly-ps8-million-sewage-spills-across-devon-and-cornwall",
+      "snippet": "South West Water was ordered to pay £7,867,733 at Plymouth Magistrates' Court on 29 September 2026 after pleading guilty to 18 charges of illegal sewage discharges and failing to take remedial action at sites including Bodmin, Harlyn, Playing Place, Polperro and Plymouth.  \nThe offences ran from January 2015 to July 2021. District Judge Jo Matson described the pollution as horrendous and very sign"
+     },
+     {
+      "name": "South West Water fined £8m for hundreds of sewage spills in Cornwall and Devon | Teakdoor",
+      "url": "https://teakdoor.com/threads/south-west-water-fined-8m-for-hundreds-of-sewage-spills-in-cornwall-and-devon.228825/",
+      "snippet": "#### [S Landreth](https://teakdoor.com/members/s-landreth.16069/)  \n##### Guest Member  \n**Newbie**  \n**Member**  \nJoined  \nSep 23, 2008  \nMessages  \n32,111  \n[South West Water fined £8m for hundreds of sewage spills in Cornwall and Devon](https://www.theguardian.com/environment/2026/sep/29/south-west-water-record-fine-sewage-spills-cornwall-devon)  \nA water company  \n[has been ordered to pay a re"
+     },
+     {
+      "name": "South West Water Fined £7.8 Million for Years of Illegal Sewage Spills | The Brief",
+      "url": "https://www.thebrief.news/en/standard/article/25496/south-west-water-fined-78-million-for-years-of-illegal-sewage-spills",
+      "snippet": "# South West Water Fined £7.8 Million for Years of Illegal Sewage Spills  \nSouth West Water was fined £7,867,733 at Plymouth Magistrates' Court on 29 September after pleading guilty to 18 charges relating to sewage pollution in Cornwall and Devon. [The Guardian](https://www.theguardian.com/environment/2026/sep/29/south-west-water-record-fine-sewage-spills-cornwall-devon)  \nThe prosecution was led "
+     },
+     {
+      "name": "South West Water hit with £7.8-million fine for sewage pollution | thepost.uk.com",
+      "url": "https://www.thepost.uk.com/news/courts/south-west-water-hit-with-ps8-million-fine-for-sewage-pollution-959435",
+      "snippet": "South West Water have been sentenced in a prosecution brought by the Environment Agency (Richard Harding)\nIn response, South West Water said: “These proceedings concern historic matters between 2015 and 2021 and the majority of the charges concerned the use of overflows in storm conditions. We’re investing £760-million to tackle storm overflows and have reduced spills by 17 per cent in the last ye"
+     },
+     {
+      "name": "South West Water hit with £7.8-million fine for sewage pollution | holsworthy-today.co.uk",
+      "url": "https://www.holsworthy-today.co.uk/news/courts/south-west-water-hit-with-ps8-million-fine-for-sewage-pollution-959435",
+      "snippet": "[SOUTH West Water](https://www.holsworthy-today.co.uk/topic/south-west-water) (SWW) has been sentenced at Plymouth Magistrates Court and hit with a hefty fine after pleading guilty to a slew of sewage pollution related charges.  \nFollowing the verdict the company issued and apology for “what happened in the past”.  \nSWW faced 18 charges across [Devon](https://www.holsworthy-today.co.uk/topic/devon"
+     }
+    ]
+   }
+  ]
+ },
+ "ruling": {
+  "final_confidence": 0.68,
+  "objections_refuted": [
+   "Localised convective rainfall missed by the gauges: two independent gauges both show near-zero rain, the fact-checker found no weather report of rain in the area, and regulators described regional drought and dry weather in early November 2026, so this is now weakly supported at best.",
+   "Groundwater infiltration or snow-melt: the area was in drought conditions and temperatures were around 5°C, so there is no support for either.",
+   "Pump failure or emergency discharge as an innocent cause: no reported failure was found. Even if one occurred, the 2026 prosecution shows that failing to take remedial measures after a pump failure can itself be an offence, so it would not clear the event for investigation purposes."
+  ],
+  "objections_standing": [
+   "EDM sensor fault or telemetry glitch: the event has no end time and a null status, and nothing found either confirms or rules out a monitor or data-feed artefact.",
+   "Tidal or back-flow influence: Restronguet Creek is the tidal reach of the river, so this is physically possible, though there is no evidence the outfall sits in the tidal reach.",
+   "Gauge distance of 5.7–6.5 km: this is a residual uncertainty without radar confirmation, though no evidence of rain was found.",
+   "Permit conditions and the true duration of the event are unknown."
+  ],
+  "reasoning": "Both gauges recorded at or below 0.2 mm across every window, which is below the commonly cited 0.25 mm dry-spill threshold. The monitor is online, and the spill lasted more than 21 hours. Web evidence points to regional drought and dry weather, which supports the gauge readings. The skeptic's highest-rated explanation, a pump failure, has no supporting evidence and would not excuse the event anyway. The main open caveats are the unclosed event record, which leaves a sensor or telemetry artefact possible, and possible tidal influence, both of which are unverified. This is a credible dry-spill candidate that warrants investigation, but it is not conclusive."
+ },
+ "report": "# Evidence pack: possible dry-weather spill, SBB00211 (South West Water, Carnon River)\n\n## Summary\n\n- **Pipeline verdict:** `likely_breach`. Adjudicator confidence is 0.68.\n- **The event:** Storm overflow SBB00211 began discharging to the Carnon River at 2026-11-13 17:14:21 UTC. It had run for 21.1 hours with no recorded end when the data was pulled.\n- **Rainfall:** Two rain gauges 5.7 km and 6.5 km away recorded at most 0.2 mm in the 48 hours before the spill and 0.0 mm during it.\n- **Online evidence:** Searches found no report of a pump failure, power cut or local rain. Regulators described parts of the South West Water region as still in \"severe drought\" on 5 Nov 2026.\n- **Open caveats:** The event record is unclosed (status null, no end time). The gauges are more than 5 km away. A sensor or telemetry fault and tidal influence have not been ruled out.\n- **Disagreement between assessments:** The skeptic model put breach confidence at 0.25. Two earlier reviews of this same event reached `likely_innocent` (0.35) and `needs_review` (0.55), neither using external sources.\n- **Recommendation:** Refer to the Environment Agency as a **possible** breach for investigation. This is not a confirmed breach.\n\n## The spill (data)\n\n| Field | Value |\n|---|---|\n| Overflow ID | SBB00211 |\n| Company | South West Water |\n| Receiving watercourse | Carnon River |\n| Location | 50.218504, -5.103782 |\n| Event start | 2026-11-13 17:14:21 UTC |\n| Event end | **None recorded** |\n| Status | **null** |\n| Duration at data pull | 21.1 h (lower bound, event still open) |\n| Monitor offline | false |\n| Feed verdict | `dry_spill_candidate` |\n| Repeat offender flag | false |\n\nThe time of the data pull is not given, so the true total duration is unknown.\n\n## Rainfall context\n\n| Gauge | Distance | 24–48 h before | 0–24 h before | During spill |\n|---|---|---|---|---|\n| 48182 | 5.7 km | 0.0 mm | 0.0 mm | 0.0 mm |\n| 48103 | 6.5 km | 0.0 mm | 0.2 mm | 0.0 mm |\n| **Max** | | **0.0 mm** | **0.2 mm** | **0.0 mm** |\n\n**What the gauges show**\n- Both gauges agree on near-zero rainfall across every window.\n- An earlier review stated that both gauges recorded zero rain over the preceding 48 hours. This is slightly wrong: station 48103 recorded 0.2 mm in the 0–24 h window. That amount is still negligible.\n\n**Supporting context from the web (not measurements at the site)**\n- On 5 Nov 2026, regulators said parts of the region served by South West Water \"remain in severe drought\":\n  - https://manyangles.news/story/2026-11-05/south-west-waters-failure-to-fix-leaks-putting-customer-bopxq3\n  - https://dailydigest.com/story/south-west-waters-failure-to-fix-leaks-putting-customer-supplies-at-risk-457072/\n- Devon County Council referred to \"the dry weather\": https://www.devon.gov.uk/news/devon-county-council-statement-letter-regulators-revealing-south-west-waters-leakage-record-getting-worse-putting-supplies-risk-despite-being-warned-seven-successive-years/\n- These sources do not say whether the drought covers the Carnon catchment.\n- An events listing for Truro, about 5 km north, shows \"5°C · 0% rain\" for 12 Nov 2026: https://eventslist.co.uk/truro/events/the-us-office-trivia-at-mason-brewing-co-2026-11-12\n  - This is a forecast widget, not a measurement, and it covers the day before the spill. It is weak evidence.\n- The weather search returned only results for other places named Cornwall or for US forecasts. These were disregarded.\n\n**Not available:** rainfall radar, or any gauge closer than 5.7 km.\n\n## Innocent explanations considered\n\n| Explanation | Skeptic rating | Status after evidence |\n|---|---|---|\n| Pump failure or power outage causing an emergency discharge | high | **No supporting evidence found.** The search found no reported failure at Devoran, Bissoe or Carnon Downs in Nov 2026. Such failures are often not publicised, so this is not ruled out. A pump failure may not excuse the event: one of the 18 charges in the 2026 prosecution was failing to take remedial measures after a pumping-station failure (https://theintelligent.co.uk/environment/2026/south-west-water-fined-nearly-ps8-million-sewage-spills-across-devon-and-cornwall). |\n| Monitor (EDM) sensor fault or false \"open\" signal | medium | **Standing.** The monitor is reported online, but nothing confirms or rules out an artefact. |\n| Telemetry or data-feed error that failed to close the event | medium | **Standing.** The null status and missing end time are consistent with this. |\n| Localised rain missed by gauges 5.7–6.5 km away | medium | **Weakened, not eliminated.** Both gauges read near zero, no weather report of rain was found, and the region was described as in drought. There is no radar confirmation. |\n| Tide-locking or back-flow | low | **Standing as physically possible.** Restronguet Creek is the tidal part of the river (https://en.wikipedia.org/wiki/Restronguet_Creek; https://www.feockparishcouncil.gov.uk/ourcreek). It is unverified whether the outfall sits in the tidal reach. |\n| Groundwater infiltration or snow-melt | low | **Unsupported.** This is inconsistent with the drought conditions reported. The ~5°C figure comes only from a forecast widget. |\n\n**Skeptic's strongest objection (verbatim):**\n> \"The event lacks a confirmed end time and the rain gauges are >5 km from the outfall; such spacing can easily miss localized rain, while sensor or data‑feed glitches can produce a prolonged open signal, making the dry‑spill inference unreliable.\"\n\nThis objection has not been fully answered. The rainfall side is partly addressed by two agreeing gauges and the drought context. The sensor and telemetry side is not addressed at all and can only be resolved with South West Water's own monitoring records.\n\n**Separate point on river pollution:** The Carnon River and Restronguet Creek carry long-standing mine-water metal pollution, including the 1992 Wheal Jane release (https://challenginghabitat.com/2023/10/17/restronguet-creek-revisited/; https://www.feockparishcouncil.gov.uk/ourcreek). This does not explain an overflow monitor signal. However, river colour or water quality should not be used as evidence of sewage here without testing.\n\n## Web evidence (cited)\n\n**Company record**\n- On 29 Sep 2026, South West Water was fined £7,867,733 plus £329,993 costs after pleading guilty to 18 Environment Agency charges for 2015–2021. Seventeen were illegal discharges and one was failing to take remedial measures after a pumping-station failure. Sources:\n  - https://theintelligent.co.uk/environment/2026/south-west-water-fined-nearly-ps8-million-sewage-spills-across-devon-and-cornwall\n  - https://www.cmscoms.com/south-west-water-guilty-of-six-years-of-illegal-sewage-discharges/\n- Sites named in the charges include Playing Place (cmscoms link above).\n  - The claim that Playing Place is close to the Carnon catchment is **not cited**. Verify it before using it.\n  - There is **no evidence that SBB00211 was a charged asset.**\n- South West Water said \"the majority of the charges concerned the use of overflows in storm conditions\": https://www.thepost.uk.com/news/courts/south-west-water-hit-with-ps8-million-fine-for-sewage-pollution-959435\n  - The prosecution is therefore **not** evidence of dry-weather spilling at this site.\n\n**Dry-spill threshold**\n- A search summary describes dry spills as discharges when rainfall is below 0.25 mm. It attributes this to reporting at the theintelligent.co.uk link above.\n- The cited page is not confirmed to state this definition. **Verify before relying on it.**\n- If the definition holds, all gauge windows here (≤0.2 mm) fall below it.\n\n**Excluded sources**\n- A report of rising dry-weather discharges in 2026 came from a low-quality aggregator (https://lalumierecollective.com/article/water-companies-dry-weather-sewage-discharges-skyrocket-is-our-environment-at-risk). It is background only and excluded from the draft.\n\n**Nothing found on:**\n- an operational cause for this event\n- local rain on 13–14 Nov\n- public pollution reports for 13–14 Nov\n- the permit for SBB00211\n- earlier dry-day spills at this overflow\n\n## Confidence and recommendation\n\n**Confidence scores from each stage**\n\n| Source | Assessment | Confidence |\n|---|---|---|\n| Adjudicator / final pipeline | likely_breach | 0.68 |\n| Skeptic | breach confidence | 0.25 |\n| Earlier review 1 (same event, no sources) | likely_innocent | 0.35 |\n| Earlier review 2 (same event, no sources) | needs_review | 0.55 |\n\nThe spread is wide. The rise from earlier reviews is driven mainly by the drought context and the absence of any reported operational cause. Neither of these is direct evidence about this outfall.\n\n**Recommendation:** Send as a report of a **possible** breach, asking the Environment Agency to obtain the following.\n\n1. South West Water's EDM record for SBB00211, including the final end time, total duration and any fault or alarm flags.\n2. Operational logs for 13–14 Nov 2026, covering pumps, power, blockages and any emergency discharge.\n3. The permit conditions for SBB00211, especially the pass-forward flow requirement and the conditions under which spills are allowed.\n4. Rainfall radar for 11–14 Nov over the catchment.\n5. Whether the outfall is in the tidal reach, and tide levels at the time.\n6. Any earlier dry-weather spills at this overflow on other dates.\n\n**Checks for the reviewer before sending:**\n- Confirm the 0.25 mm definition against a primary source.\n- Do not rely on the Playing Place proximity claim unless verified.\n\n## Draft message to the Environment Agency\n\n> **Subject:** Report of a POSSIBLE storm overflow permit breach for investigation – SBB00211, South West Water, Carnon River, 13 Nov 2026\n>\n> Dear Environment Agency,\n>\n> I am reporting a **possible** breach of permit conditions at a storm overflow, for your investigation. I am not asserting that a breach has occurred. The information below comes from public monitoring and rainfall data and has not been confirmed with the operator.\n>\n> **Asset:** Storm overflow SBB00211, South West Water, discharging to the Carnon River (approx. 50.218504, -5.103782).\n>\n> **Event:** Discharge recorded as starting 2026-11-13 17:14:21 UTC. When the data was retrieved, the event had lasted 21.1 hours with no recorded end time and a null status. The monitor was reported online.\n>\n> **Rainfall:** The two nearest rain gauges we checked recorded:\n> - Station 48182 (5.7 km): 0.0 mm in the 48 h before the spill and 0.0 mm during it.\n> - Station 48103 (6.5 km): 0.2 mm in the 24 h before, 0.0 mm in the 24–48 h before, and 0.0 mm during.\n>\n> Public reporting on 5 November 2026 described parts of South West Water's region as remaining in severe drought (e.g. https://dailydigest.com/story/south-west-waters-failure-to-fix-leaks-putting-customer-supplies-at-risk-457072/).\n>\n> **Why this may warrant investigation:** A discharge of more than 21 hours with near-zero recorded rainfall may indicate spilling outside permitted storm conditions.\n>\n> **Uncertainties we have not been able to resolve:**\n> - The event record is unclosed, so a monitor or telemetry fault cannot be excluded.\n> - Both gauges are more than 5 km from the outfall, and we have no radar data.\n> - The Carnon River becomes tidal at Restronguet Creek, and we do not know whether the outfall is tide-affected.\n> - We found no public report of a pump failure or other operational cause, but such events are not always publicised.\n>\n> **We would be grateful if you could check:**\n> - South West Water's EDM data and fault flags for this event, including its end time.\n> - Operational logs for 13–14 November 2026.\n> - The permit conditions for SBB00211, including pass-forward flow.\n> - Rainfall radar for the catchment.\n> - Tidal influence at the outfall.\n> - Whether this overflow has other dry-weather discharges on record.\n>\n> Kind regards,\n> [Name]\n> [Contact details]"
+}

@@ -37,7 +37,8 @@ async function main() {
   fillStats(run, dry.length);
   bars(run.by_company);
   document.getElementById("bars-cap").textContent = `Fig. 3 — Dry-day spill candidates by water company, 48 h to ${when(run.run_at)}`;
-  renderCase(caseSpill, caseData);
+  // The data panel shows the spill exactly as the agents saw it (case.spill) when a real run exists.
+  renderCase(caseData && caseData.spill ? { ...caseSpill, ...caseData.spill } : caseSpill, caseData);
   setupMap(run.spills, caseSpill);
   reveals();
 }
@@ -223,7 +224,7 @@ function setupMap(spills, caseSpill) {
 /* ---------------- Case ---------------- */
 function renderCase(s, c) {
   document.getElementById("case-title").textContent = `${title(s.receivingwatercourse)} · ${s.company}`;
-  const statusTxt = { 1: "discharging", 0: "stopped", "-1": "monitor offline" }[s.status] ?? s.status;
+  const statusTxt = { 1: "discharging", 0: "stopped", "-1": "monitor offline" }[s.status] ?? "not reported";
   document.getElementById("case-kv").outerHTML = `<dl class="kv">
     <dt>Overflow</dt><dd>${esc(s.id)}</dd>
     <dt>Spill started</dt><dd>${when(s.latesteventstart)}</dd>
@@ -254,7 +255,9 @@ function renderCase(s, c) {
       <div class="conf"><span>skeptic: breach likely?</span><div class="track"><div class="fill" style="width:${conf * 100}%"></div></div><span>${conf.toFixed(2)}</span></div>`);
   }
   if (c.evidence) {
-    const srcs = c.evidence.searches.flatMap(q => q.sources || []).filter((x, i, a) => x.url && a.findIndex(y => y.url === x.url) === i).slice(0, 8);
+    const all = c.evidence.searches.flatMap(q => q.sources || []).filter((x, i, a) => x.url && a.findIndex(y => y.url === x.url) === i);
+    const cited = all.filter(x => (c.evidence.report || "").includes(x.url));   // only sources the evidence pack actually cites
+    const srcs = (cited.length ? cited : all).slice(0, 8);
     set("evidence", `<p>${c.evidence.searches.length} live searches.</p>
       <ul>${c.evidence.searches.map(q => `<li>${esc(q.query)}</li>`).join("")}</ul>
       <p><b>Sources cited</b></p><ul class="sources">${srcs.map(x => `<li><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.name || x.url)}</a></li>`).join("")}</ul>`);
