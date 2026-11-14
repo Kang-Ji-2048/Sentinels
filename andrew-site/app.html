@@ -240,7 +240,6 @@
   body.dash .mcard .sw { display: inline-block; }
   body.dash .mcard .reset { left: auto; right: 14px; top: 14px; bottom: auto; border-radius: 10px; }
   body.dash .mfoot { margin: 10px 2px 0; color: var(--muted); font-size: 13px; }
-  body.dash .askbox { bottom: 64px; }
 
   body.dash .side { flex: 1 1 0; width: auto; min-width: 340px; max-width: 520px; border-left: 1px solid #dde4ea; padding: 18px 20px 4px; }
   body.dash .shead { display: flex; align-items: center; justify-content: space-between; padding: 4px 4px 14px; }
@@ -268,7 +267,7 @@
   body.dash .side .foot { border-top: 0; padding: 14px 4px; font-size: 13px; }
   @media (max-width: 900px) {
     body.dash .body { padding: 12px; gap: 12px; } body.dash .mcard { flex: none; padding: 16px 14px 12px; } body.dash .mcard .map { flex: none; height: 62vh; }
-    body.dash .side { flex: none; max-width: none; min-width: 0; } body.dash .mhead { flex-direction: column; } body.dash .mmeta { flex-direction: column; gap: 4px; } body.dash .askbox { bottom: 92px; }
+    body.dash .side { flex: none; max-width: none; min-width: 0; } body.dash .mhead { flex-direction: column; } body.dash .mmeta { flex-direction: column; gap: 4px; }
   }
 
 
@@ -300,10 +299,14 @@
   @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
   @media (prefers-reduced-motion: reduce) { body.dash .side .case { animation: none; } body.dash .pin { transition: none; } }
   body.dash .side > * { flex-shrink: 0; }  /* the card scrolls; nothing inside it gets squashed */
-  body.dash .side .askbox { position: static; width: auto; max-height: none; margin-top: 16px; box-shadow: none; border: 1px solid #dde4ea; border-radius: 12px; }
-  body.dash .side .askbox .ask-toggle { border-radius: 11px; }
-  body.dash .side .askbox:not(.closed) .ask-toggle { border-radius: 11px 11px 0 0; }
-  body.dash .side #ask-log { max-height: 320px; }
+  body.dash .askbox { position: fixed; z-index: 20; right: 28px; bottom: 28px; width: min(400px, calc(100vw - 32px)); max-height: min(640px, calc(100vh - 110px));
+                     border-radius: 14px; box-shadow: 0 14px 40px rgba(18, 53, 91, .28); }
+  body.dash .askbox.closed { width: auto; border-radius: 999px; }
+  body.dash .askbox.closed .ask-toggle { border-radius: 999px; padding: 12px 20px; font-size: 15px; box-shadow: 0 0 0 4px rgba(232, 197, 71, .35); }
+  body.dash .askbox:not(.closed) .ask-toggle { border-radius: 14px 14px 0 0; }
+  body.dash .askbox #ask-log { max-height: none; flex: 1; }
+  body.dash .askbox .ask-body { flex: 1; overflow: hidden; }
+  @media (max-width: 900px) { body.dash .askbox { right: 16px; bottom: 16px; } }
 </style>
 </head>
 <body>
@@ -1000,7 +1003,7 @@ function downloadPack(s, d) {
   fetch("/api/genie").then(r => r.ok ? r.json() : Promise.reject())
     .then(d => setOff(d.configured ? "" : "Genie isn't set up on this machine. Set DATABRICKS_HOST, DATABRICKS_TOKEN and GENIE_SPACE_ID, then restart python andrew-site/serve.py."))
     .catch(() => setOff("Needs the local server: start the page with python andrew-site/serve.py."));
-  if (DASH) document.querySelector(".side").insertBefore(document.getElementById("askbox"), document.querySelector(".side .foot"));
+  if (DASH) document.body.append(document.getElementById("askbox"));  // dashboard: a floating button that stays on screen
   const box = document.getElementById("askbox"), tog = document.getElementById("ask-toggle"), chipBox = document.getElementById("ask-chips");
   tog.onclick = () => { const open = box.classList.toggle("closed") === false; tog.setAttribute("aria-expanded", open);
                         document.getElementById("ask-chev").textContent = open ? "▾" : "▴"; if (open && !q.disabled) q.focus(); };
