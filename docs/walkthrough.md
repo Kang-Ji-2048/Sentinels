@@ -9,17 +9,23 @@ minutes. In the 48 hours before our first run, 157 spills started, and 71 began 
 gauge within 10 km. Show the 3D map: red columns are dry spills, and their height is hours discharging.
 
 **One case, end to end (3 min).** Carnon River, South West Water (SBB00211), as of 14 Nov:
-1. *Data:* discharging for about 21 hours and still going. Three EA gauges within 7 km recorded 0 to 0.2 mm in the
-   48 hours before it started. (We first ranked Helliwell Syke higher, but its monitor was offline, so the
+The full real run is in `data/example_case.json`.
+1. *Data:* discharging for about 21 hours and still going. Two EA gauges, 5.7 and 6.5 km away, recorded at most
+   0.2 mm in the 48 hours before it started and 0.0 mm during it. (We first ranked Helliwell Syke higher, but its monitor was offline, so the
    detector now treats offline durations as unknown. Worth telling judges: it shows the data limits are handled.)
 2. *Investigator (Claude):* builds the case, checks memory for this site's past spills and the company's record.
-3. *Skeptic (Llama, served on Databricks):* argues the other side, for example sensor fault, ungauged rain or
-   pump failure, and gives a confidence score. A different model family means it doesn't just agree with Claude.
-   Low confidence stops the case here, so obviously innocent spills cost one cheap call.
-4. *Evidence agent (Claude + Linkup):* searches the live web to test both sides, such as local news, bathing
-   closures, EA enforcement and reported pump failures. Every fact is cited.
-5. *Drafter:* writes the evidence pack and a draft report to the EA. A human approves before anything is sent.
-6. Open the MLflow trace: every span, prompt, tool call and token count.
+3. *Skeptic (gpt-oss-120b, served on Databricks):* argues the other side and rates pump failure "high", with
+   sensor fault and gauges missing local rain as "medium". Breach confidence: 0.25. A different model family means
+   it doesn't just agree with Claude. Only near-certain innocent cases (below 0.15) stop here.
+4. *Evidence agent (Claude + Linkup):* 5 live searches test both sides. It found that regulators described the region
+   as in "severe drought" on 5 Nov, no reported pump failure or local rain, and South West Water's £7.9m fine in
+   Sept 2026 for illegal discharges. Every fact is cited, and weak sources are flagged as weak.
+5. *Adjudicator (Claude):* weighs each objection against the evidence. Refuted: missed rain, groundwater, and pump
+   failure as an excuse (failing to fix a pump failure was itself one of the charges). Still standing: sensor fault
+   and tidal influence. Final confidence 0.68, so the verdict is **likely_breach**.
+6. *Drafter:* writes the evidence pack and a draft report to the EA, saying clearly it is a possible breach and
+   listing what the EA should check. A human approves before anything is sent.
+7. Open the MLflow trace: every span, prompt, tool call and token count.
 
 **Why it matters (30 s).** Memory in Delta builds a record of repeat offenders and faulty sensors over time.
 Evidence packs are the input a regulator, journalist or campaign group needs. The limits are honest:
