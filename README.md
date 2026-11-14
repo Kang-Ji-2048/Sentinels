@@ -126,8 +126,10 @@ secret scope called `sentinels` (keys `anthropic`, `linkup`), or from the notebo
 ### First live run (14 Nov 2026, 12:50 UK time)
 
 13,207 English overflows checked. 157 spills started in the previous 48 hours, and 71 of them had less
-than 0.25 mm of rain at every gauge within 10 km in both 24-hour windows before the spill. The longest:
-Helliwell Syke (Yorkshire Water), discharging for 44.5 hours with no rain recorded at three nearby gauges.
+than 0.25 mm of rain at every gauge within 10 km in both 24-hour windows before the spill. The longest
+with a working monitor: Carnon River (South West Water, SBB00211), still discharging after about 21 hours with
+under 0.25 mm of rain at three gauges within 7 km. (Spills whose monitor has gone offline get an unknown duration
+rather than a guessed one.)
 
 ## Models and APIs used
 
