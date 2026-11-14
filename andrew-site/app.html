@@ -6,7 +6,7 @@
 <title>Sentinels</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Old+Standard+TT:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
 <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/deck.gl@9.0.38/dist.min.js"></script>
@@ -16,7 +16,7 @@
     --navy: #12355b; --crimson: #c8102e; --ink: #14202b; --muted: #3d5566;
     --paper: #f3f6f1; --rule: #c5cec6; --sea: #bfd6dd; --land: #e3e9df; --gold: #e8c547;
     --rain: rgba(18, 53, 91, .5);
-    --sans: "Archivo", system-ui, sans-serif; --serif: "Old Standard TT", Georgia, serif;
+    --sans: "Inter Tight", system-ui, sans-serif; --serif: "Inter Tight", system-ui, sans-serif;   /* B1 "Modern Survey" */
   }
   * { box-sizing: border-box; }
   html, body { height: 100%; margin: 0; }
@@ -25,7 +25,7 @@
 
   .top { flex: none; height: 56px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; background: var(--navy); color: var(--sea); }
   .brand { display: flex; align-items: center; gap: 36px; }
-  .logo { font: 700 22px var(--serif); color: #fff; }
+  .logo { font: 800 22px var(--serif); letter-spacing: -.04em; color: var(--navy); }
   .nav { display: flex; gap: 4px; }
   .nav span { height: 56px; display: flex; align-items: center; padding: 0 16px; font-weight: 500; }
   .nav .on { color: #fff; font-weight: 600; border-bottom: 4px solid var(--gold); padding-top: 4px; }
@@ -35,7 +35,7 @@
   #map { position: absolute; inset: 0; }
 
   .count { position: absolute; top: 20px; left: 24px; width: 274px; padding: 8px 12px 12px; background: rgba(243, 246, 241, .92); z-index: 2; pointer-events: none; }
-  .count .n { font: 700 96px/92px var(--serif); color: var(--crimson); }
+  .count .n { font: 800 88px/88px var(--serif); letter-spacing: -.05em; color: var(--crimson); }
   .count h1 { margin: 0; font-size: 22px; font-weight: 600; }
   .count p { margin: 0; color: var(--muted); line-height: 21px; }
   .key { margin-top: 20px; padding-top: 12px; border-top: 1px solid var(--ink); display: grid; gap: 8px; }
@@ -100,6 +100,12 @@
     .count .n { font-size: 64px; line-height: 64px; }
     .top { padding: 0 16px; } .brand { gap: 16px; } .updated { display: none; }
   }
+  /* B1 "Modern Survey": white header, softer corners, lifted panels */
+  .top { background: #fff; color: var(--muted); border-bottom: 1px solid var(--rule); }
+  .nav .on { color: var(--navy); }
+  .count { border-radius: 6px; box-shadow: 0 10px 30px rgba(18, 53, 91, .12); }
+  .reset { border-radius: 6px; }
+  .gauge-label, .site-label { border-radius: 6px; }
 </style>
 </head>
 <body>
@@ -222,7 +228,7 @@ const overlay = new deck.MapboxOverlay({
   layers: layers(),
   onClick: info => info.object && select(info.object),
   getTooltip: ({ object }) => object && { text: `${title(object.name)}  ${hrs(object)} h`,
-    style: { background: "rgba(227,233,223,.95)", color: "#14202b", font: "600 15px Archivo, sans-serif", padding: "5px 10px", borderRadius: 0 } },
+    style: { background: "rgba(227,233,223,.95)", color: "#14202b", font: "600 15px 'Inter Tight', sans-serif", padding: "5px 10px", borderRadius: "6px" } },
 });
 map.addControl(overlay);
 map.on("zoom", () => overlay.setProps({ layers: layers() }));

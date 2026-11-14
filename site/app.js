@@ -128,7 +128,7 @@ function setupMap(spills, caseSpill) {
       new deck.TextLayer({
         id: "labels", parameters: NO_DEPTH, data: s === 3 ? caseLinks : [], getPosition: l => l.to,
         getText: l => `${l.g.km} km · ${Math.max(l.g.mm_0_24h_before, l.g.mm_24_48h_before)} mm`,
-        getSize: 13, getColor: [20, 32, 43, 255], getPixelOffset: [0, -16], fontFamily: "Archivo, sans-serif", fontWeight: 600,
+        getSize: 13, getColor: [20, 32, 43, 255], getPixelOffset: [0, -16], fontFamily: "Inter Tight, sans-serif", fontWeight: 600,
         outlineWidth: 5, outlineColor: [243, 246, 241, 255], fontSettings: { sdf: true }, characterSet: "auto",
       }),
     ];
