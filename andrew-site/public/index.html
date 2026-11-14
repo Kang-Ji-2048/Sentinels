@@ -237,7 +237,7 @@
   body.dash .inrange { color: var(--muted); }
   body.dash .badge { display: inline-block; min-width: 26px; padding: 1px 7px; border-radius: 6px; background: #eef2f5; color: var(--navy); font-size: 13px; font-weight: 600; text-align: center; }
   body.dash .mcard .map { flex: 1; min-height: 380px; border-radius: 12px; overflow: hidden; }
-  body.dash .mcard .key { position: absolute; z-index: 2; left: 14px; bottom: 14px; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; max-width: calc(100% - 28px);
+  body.dash .mcard .key { position: absolute; z-index: 2; left: 14px; bottom: 14px; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; max-width: calc(100% - 80px);
                 margin: 0; padding: 8px 12px; border: 0; background: rgba(255, 255, 255, .95); border-radius: 10px; box-shadow: 0 4px 16px rgba(18, 53, 91, .12); font-size: 13px; }
   body.dash .mcard .key span { display: inline-flex; align-items: center; gap: 7px; }
   body.dash .mcard .key .size { color: var(--muted); }
@@ -288,6 +288,8 @@
   body.dash .pin.on .pn { color: #c9d6e3; border-right-color: #45607d; }
   body.dash .pin:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
   body.dash .row .big { transition: transform .15s ease; } body.dash .row:hover .big { transform: translateX(-3px); }
+  body.dash .pin-wrap { transition: opacity .4s ease, visibility .4s; }
+  body.dash .tilted .pin-wrap { opacity: 0 !important; visibility: hidden; pointer-events: none; }  /* maplibre sets marker opacity inline */
   body.dash .cmeta { display: grid; gap: 2px; color: var(--muted); font-size: 14px; }
   body.dash .cverdict { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin: 14px 0 0; font-size: 14px; }
   body.dash .vchip { padding: 3px 10px; border-radius: 999px; font-size: 13px; font-weight: 600; text-transform: capitalize; background: #e6ebf0; color: var(--ink); }
@@ -339,7 +341,7 @@
       <div id="map" role="img" aria-label="Map of England: one mark per spilling overflow, sized by hours discharging"></div>
       <div class="key dash-only">
         <span><i class="sw dry"></i>Dry spill</span><span><i class="sw rain"></i>Rain explained</span><span><i class="sw none"></i>No gauge</span>
-        <span class="size" title="Dry spill: every rain gauge within 10 km saw under 0.25 mm in each of the two days before it began.">Dot size is hours discharging · dry = under 0.25 mm at every gauge within 10 km</span>
+        <span class="size" title="Dry spill: every rain gauge within 10 km saw under 0.25 mm in each of the two days before it began.">Size and height = hours discharging</span>
       </div>
       <div class="count classic-only">
         <div class="n" id="n"></div>
@@ -443,7 +445,8 @@ document.getElementById("updated").textContent = document.getElementById("runat"
 
 // One semi-transparent cylinder per site; height is hours discharging.
 const kind = s => VERDICT[s.verdict] ? s.verdict : "no_gauge";
-let selected = null;
+let selected = null, selectedAt = 0;
+const easeOut = t => 1 - Math.pow(1 - Math.min(Math.max(t, 0), 1), 3);
 
 // 2D: the showcase site's dots. Area ~ hours, soft glow, pulsing ring on dry spills, white edge.
 const COL = { dry_spill_candidate: [200, 16, 46], rain_explained: [18, 53, 91], no_gauge: [110, 120, 125] };
@@ -504,13 +507,21 @@ function layers() {
     const dashed = new deck.PathLayer({ id: "ring", data: ring, getPath: d => d, getColor: [18, 53, 91, 200], getWidth: 2, widthUnits: "pixels",
       getDashArray: [5, 4], dashJustified: true, extensions: [new deck.PathStyleExtension({ dash: true })] });
     // Tilted in on a spill: the dry spills stand up as columns (height = hours discharging), the selected one gold.
-    const ctx = selected && !dryOnly ? [new deck.ColumnLayer({ id: "ctx-cols", data: sites.filter(s => s.verdict !== "dry_spill_candidate"),
-      diskResolution: 16, extruded: true, radius: 3.5 * m, getPosition: s => [s.lon, s.lat],
-      getElevation: s => Math.max(s.hours || 0, 0.5) * PX_PER_HOUR * 2.5 * m, getFillColor: s => VERDICT[kind(s)].fill,
-      pickable: true, updateTriggers: { getElevation: m } })] : [];  // rain-explained and no-gauge spills, faint, for contrast
-    const cols = selected ? [...ctx, new deck.ColumnLayer({ id: "dash-cols", data: dry, diskResolution: 24, extruded: true, radius: 5 * m,
-      getPosition: s => [s.lon, s.lat], getElevation: s => Math.max(s.hours || 0, 0.5) * PX_PER_HOUR * 2.5 * m,
-      getFillColor: s => s.id === sel ? GOLD : [200, 16, 46, 200], pickable: true, updateTriggers: { getFillColor: sel, getElevation: m } })] : [];
+    // Tilted in on a spill: spills rise as lit columns (height = hours discharging) as the camera arrives;
+    // dry ones red, the selected one gold with its hours floating above it, rain-explained and no-gauge ones faint.
+    const rise = !selected ? 0 : REDUCED ? 1 : easeOut((performance.now() - selectedAt - 700) / 1500);
+    const tall = s => (1.2 + Math.sqrt(Math.max(s.hours || 0, 0))) * 22 * m;  // square-root scale: short spills still read as columns
+    const column = (id, data, r, fill) => new deck.ColumnLayer({ id, data, diskResolution: 32, extruded: true, radius: r * m, elevationScale: rise,
+      getPosition: s => [s.lon, s.lat], getElevation: tall, getFillColor: fill, material: { ambient: 0.45, diffuse: 0.7, shininess: 40, specularColor: [255, 255, 255] },
+      pickable: true, updateTriggers: { getFillColor: sel, getElevation: m } });
+    const cols = !selected ? [] : [
+      ...(dryOnly ? [] : [column("ctx-cols", sites.filter(s => s.verdict !== "dry_spill_candidate"), 3.5, s => VERDICT[kind(s)].fill)]),
+      column("dash-cols", dry, 5, s => s.id === sel ? GOLD : [200, 16, 46, 215]),
+      new deck.TextLayer({ id: "sel-label", data: rise > 0.05 ? [selected] : [], getPosition: s => [s.lon, s.lat, tall(s) * rise + 14 * m],
+        getText: s => `${hrs(s)} h`, getSize: 17, getColor: [255, 255, 255, 255], fontFamily: "Inter Tight, system-ui, sans-serif", fontWeight: 700,
+        background: true, getBackgroundColor: [18, 53, 91, 235], backgroundPadding: [8, 4], getTextAnchor: "middle", getAlignmentBaseline: "bottom",
+        parameters: { depthCompare: "always" }, updateTriggers: { getPosition: [rise, m] } }),
+    ];
     return [...dotLayers([disc, dashed, links, gauges]), ...cols];
   }
   if (MAP2D) return dotLayers([area, links, gauges]);
@@ -527,7 +538,7 @@ const map = new maplibregl.Map({
 });
 if (MAP2D && !DASH) { map.dragRotate.disable(); map.touchZoomRotate.disableRotation(); }
 map.on("style.load", () => {
-  if (MAP2D && !DASH) return;  // the flat 2D page keeps the showcase site's plain Positron basemap
+  if (MAP2D) return;  // flat map and dashboard keep the plain Positron basemap (Kang preferred it, 21:37)
   // Restyle Positron into the Figma palette: land, sea, coastline. Everything else is hidden.
   for (const l of map.getStyle().layers) {
     if (l.id === "background") map.setPaintProperty(l.id, "background-color", "#bfd6dd");  // sea, so unloaded tiles read as sea
@@ -545,6 +556,10 @@ map.on("style.load", () => {
 
 const overlay = new deck.MapboxOverlay({
   layers: layers(),
+  effects: DASH ? [new deck.LightingEffect({  // soft key light from the north-west so the columns read as solid
+    ambient: new deck.AmbientLight({ color: [255, 255, 255], intensity: 1.15 }),
+    key: new deck.DirectionalLight({ color: [255, 248, 235], intensity: 1.1, direction: [-1, -2, -2.5] }),
+    fill: new deck.DirectionalLight({ color: [210, 225, 240], intensity: 0.5, direction: [2, 1, -1] }) })] : [],
   onClick: info => info.object && select(info.object),
   getTooltip: ({ object }) => object && { text: `${title(object.name)}  ${hrs(object)} h`,
     style: { background: "rgba(227,233,223,.95)", color: "#14202b", font: "600 15px 'Inter Tight', sans-serif", padding: "5px 10px", borderRadius: "6px" } },
@@ -718,6 +733,7 @@ function showGauges() {
 }
 function select(s) {
   selected = s === selected ? null : s;  // clicking the selected spill again clears it
+  selectedAt = performance.now();
   renderRows(); renderCase(); showGauges();
   overlay.setProps({ layers: layers() });
   if (!selected) {
@@ -729,8 +745,8 @@ function select(s) {
   if (DASH) {  // a slow arc out and back in, so you see where in England the spill is
     markPins();
     if (pins.has(s.id)) siteMarker.remove(); else showLabel(s, true);
-    map.flyTo({ center: [s.lon, s.lat], zoom: 10, pitch: 58, bearing: -18, curve: 1.7, duration: REDUCED ? 0 : 2600,
-                padding: { top: 60, bottom: 90, left: 40, right: 40 }, essential: true });
+    map.flyTo({ center: [s.lon, s.lat], zoom: 9.4, pitch: 62, bearing: -24, curve: 1.7, duration: REDUCED ? 0 : 2600,
+                padding: { top: 200, bottom: 20, left: 40, right: 40 }, essential: true });  // spill sits low so its column has headroom
     return resetBtn.hidden = false;
   }
   showLabel(s, true);
@@ -740,7 +756,10 @@ function select(s) {
 // Dashboard: numbered pins for the shortlist, matching the list on the right. Click one to fly to it.
 const pins = new Map();
 const PINNED = 6;
-function markPins() { for (const [id, p] of pins) p.classList.toggle("on", !!selected && selected.id === id); }
+function markPins() {
+  for (const [id, p] of pins) p.classList.toggle("on", !!selected && selected.id === id);
+  document.querySelector(".mcard .map").classList.toggle("tilted", !!selected);  // pins step aside; the 3D label takes over
+}
 if (DASH) dry.slice(0, PINNED).forEach((s, i) => {
   const p = el("button", "pin"); p.append(el("span", "pn", i + 1), el("b", null, hrs(s)));
   p.title = `${title(s.name)}, ${hrs(s)} h`; p.setAttribute("aria-label", `${i + 1}: ${title(s.name)}, ${hrs(s)} hours`);
