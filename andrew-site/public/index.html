@@ -281,8 +281,10 @@
   body.dash .pin::after { content: ""; position: absolute; left: 50%; bottom: -6px; width: 9px; height: 9px; background: inherit; border: inherit;
                           border-top: 0; border-left: 0; transform: translateX(-50%) rotate(45deg); }
   body.dash .pin .pn { padding-right: 6px; border-right: 1px solid #c9d3dd; color: var(--muted); font-weight: 500; font-size: 12px; }
-  body.dash .pin-wrap { padding-bottom: 6px; z-index: 2; } /* above the deck.gl canvas */
-  body.dash .pin-wrap:has(.pin:hover), body.dash .pin-wrap:has(.hot), body.dash .pin-wrap:has(.on) { z-index: 4; }
+  /* deck.gl draws inside maplibre's top-left control box (z-index 2), so map labels must sit above 2 */
+  body.dash .maplibregl-marker { z-index: 3; }
+  body.dash .pin-wrap { padding-bottom: 6px; z-index: 4; }
+  body.dash .pin-wrap:has(.pin:hover), body.dash .pin-wrap:has(.hot), body.dash .pin-wrap:has(.on) { z-index: 5; }
   body.dash .pin:hover, body.dash .pin.hot { transform: translateY(-3px) scale(1.06); z-index: 5; }
   body.dash .pin.on { background: var(--navy); color: #fff; transform: translateY(-3px) scale(1.1); }
   body.dash .pin.on .pn { color: #c9d6e3; border-right-color: #45607d; }
@@ -290,6 +292,19 @@
   body.dash .row .big { transition: transform .15s ease; } body.dash .row:hover .big { transform: translateX(-3px); }
   body.dash .pin-wrap { transition: opacity .4s ease, visibility .4s; }
   body.dash .tilted .pin-wrap { opacity: 0 !important; visibility: hidden; pointer-events: none; }  /* maplibre sets marker opacity inline */
+  /* Agents' verdict badges, tour button, restyled gauge labels (dashboard) */
+  body.dash .vdot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(20, 32, 43, .25); background: #8a6800; flex: none; }
+  body.dash .vdot.likely_breach { background: var(--crimson); } body.dash .vdot.likely_innocent { background: var(--navy); }
+  body.dash .pin .vdot { position: absolute; top: -5px; right: -5px; }
+  body.dash .vchip.mini { padding: 1px 7px; font-size: 11px; vertical-align: 2px; }
+  body.dash .tour { position: absolute; z-index: 3; right: 14px; top: 14px; padding: 8px 14px; border: 0; border-radius: 10px; background: #fff; color: var(--navy);
+                    font-weight: 600; cursor: pointer; box-shadow: 0 4px 16px rgba(18, 53, 91, .14); }
+  body.dash .tour.on { background: var(--navy); color: #fff; }
+  body.dash .tour:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  body.dash .mcard .reset { top: 56px; }
+  body.dash .gauge-label { padding: 4px 9px; background: #fff; border: 1px solid #dde4ea; border-radius: 8px; box-shadow: 0 4px 12px rgba(18, 53, 91, .14); font-size: 12px; color: var(--muted); }
+  body.dash .gauge-label b { color: var(--ink); font-size: 13px; }
+  body.dash .gauge-label.wet b { color: var(--navy); }
   body.dash .cmeta { display: grid; gap: 2px; color: var(--muted); font-size: 14px; }
   body.dash .cverdict { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin: 14px 0 0; font-size: 14px; }
   body.dash .vchip { padding: 3px 10px; border-radius: 999px; font-size: 13px; font-weight: 600; text-transform: capitalize; background: #e6ebf0; color: var(--ink); }
@@ -338,9 +353,11 @@
         <span class="inrange" id="of2"></span>
       </div>
       <button class="reset" id="reset" hidden>Show all of England</button>
+      <button class="tour dash-only" id="tour">▶ Play tour</button>
       <div id="map" role="img" aria-label="Map of England: one mark per spilling overflow, sized by hours discharging"></div>
       <div class="key dash-only">
         <span><i class="sw dry"></i>Dry spill</span><span><i class="sw rain"></i>Rain explained</span><span><i class="sw none"></i>No gauge</span>
+        <span><i class="vdot needs_review"></i>Checked by the agents</span>
         <span class="size" title="Dry spill: every rain gauge within 10 km saw under 0.25 mm in each of the two days before it began.">Size = hours discharging</span>
       </div>
       <div class="count classic-only">
@@ -428,6 +445,10 @@ if (MAP2D) document.getElementById("size-key").textContent = "Dot size is hours 
 document.querySelectorAll(".views a").forEach(a => { if ((a.dataset.v === "2d") === MAP2D) a.setAttribute("aria-current", "page"); a.href += location.hash; });
 let pulse = 0;
 
+// The agents' final verdicts: short names and colours, shared by the pins, list, domes and case card.
+const VERDICT_NAME = { likely_breach: "likely breach", needs_review: "needs review", likely_innocent: "ruled innocent" };
+const VERDICT_RGB = { likely_breach: [200, 16, 46], needs_review: [138, 104, 0], likely_innocent: [18, 53, 91] };
+const verdictLine = k => `${VERDICT_NAME[k.final_verdict] || k.final_verdict.replace(/_/g, " ")} · ${Math.round(k.breach_confidence * 100)}%`;
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
 const title = s => s === s.toUpperCase() ? s.toLowerCase().replace(/\b\w/g, c => c.toUpperCase()) : s;
 const fmt = (x, d = 1) => x == null ? "n/a" : x.toFixed(d);
@@ -540,8 +561,14 @@ function layers() {
       new deck.ScatterplotLayer({ id: "dome-rim", data: shown, getPosition: s => [s.lon, s.lat], radiusUnits: "meters", parameters: NO_DEPTH,
         getRadius: domeR, filled: false, stroked: true, lineWidthUnits: "pixels", getLineWidth: s => s.id === sel ? 2 : 1.2,
         getLineColor: s => [...rgb(s), (strong(s) ? 200 : 110) * rise], updateTriggers: { getRadius: [m, sel], getLineColor: [sel, rise] } }),
+      new deck.TextLayer({ id: "agent-labels", data: rise > 0.05 ? shown.filter(s => s.case && s.id !== sel) : [],
+        getPosition: s => [s.lon, s.lat, domeR(s) * rise + 6 * m], getText: s => verdictLine(s.case), getSize: 13,
+        getColor: s => [...(VERDICT_RGB[s.case.final_verdict] || [20, 32, 43]), 255], fontFamily: "Inter Tight, system-ui, sans-serif", fontWeight: 600,
+        background: true, getBackgroundColor: [255, 255, 255, 240], getBorderColor: s => [...(VERDICT_RGB[s.case.final_verdict] || [20, 32, 43]), 120],
+        getBorderWidth: 1, backgroundPadding: [6, 3], getTextAnchor: "middle", getAlignmentBaseline: "bottom", characterSet: "auto",
+        parameters: { depthCompare: "always" }, updateTriggers: { getPosition: [rise, m, sel] } }),
       new deck.TextLayer({ id: "sel-label", data: rise > 0.05 ? [selected] : [], getPosition: s => [s.lon, s.lat, domeR(s) * rise + 8 * m],
-        getText: s => `${hrs(s)} h`, getSize: 17, getColor: [255, 255, 255, 255], fontFamily: "Inter Tight, system-ui, sans-serif", fontWeight: 700,
+        getText: s => s.case ? `${hrs(s)} h  ·  ${verdictLine(s.case)}` : `${hrs(s)} h`, characterSet: "auto", getSize: 17, getColor: [255, 255, 255, 255], fontFamily: "Inter Tight, system-ui, sans-serif", fontWeight: 700,
         background: true, getBackgroundColor: [18, 53, 91, 235], backgroundPadding: [8, 4], getTextAnchor: "middle", getAlignmentBaseline: "bottom",
         parameters: { depthCompare: "always" }, updateTriggers: { getPosition: [rise, m] } }),
     ];
@@ -586,8 +613,10 @@ const overlay = new deck.MapboxOverlay({
     key: new deck.DirectionalLight({ color: [255, 248, 235], intensity: 1.1, direction: [-1, -2, -2.5] }),
     fill: new deck.DirectionalLight({ color: [210, 225, 240], intensity: 0.5, direction: [2, 1, -1] }) })] : [],
   onClick: info => info.object && select(info.object),
-  getTooltip: ({ object }) => object && { text: `${title(object.name)}  ${hrs(object)} h`,
-    style: { background: "rgba(227,233,223,.95)", color: "#14202b", font: "600 15px 'Inter Tight', sans-serif", padding: "5px 10px", borderRadius: "6px" } },
+  getTooltip: ({ object }) => object && object.name && { text: `${title(object.name)}  ·  ${hrs(object)} h${object.case ? "  ·  " + verdictLine(object.case) : ""}`,
+    style: DASH ? { background: "#fff", color: "#14202b", font: "600 14px 'Inter Tight', sans-serif", padding: "6px 10px", borderRadius: "8px",
+                    boxShadow: "0 4px 14px rgba(18,53,91,.18)", border: "1px solid #dde4ea" }
+                : { background: "rgba(227,233,223,.95)", color: "#14202b", font: "600 15px 'Inter Tight', sans-serif", padding: "5px 10px", borderRadius: "6px" } },
 });
 map.addControl(overlay);
 map.on("zoom", () => overlay.setProps({ layers: layers() }));
@@ -620,7 +649,9 @@ function renderRows() {
   rows.replaceChildren(...dry.slice(0, PINNED).map((s, i) => {
     const b = el("button", "row" + (s === selected ? " sel" : ""));
     const site = el("span", "site"), big = el("span", "big", hrs(s));
-    site.append(el("b", null, title(s.name)), el("span", null, `${s.company} · ${fmt(s.rain48, 2)} mm rain nearby`));
+    const nm = el("b", null, title(s.name));
+    if (s.case) nm.append(" ", el("span", "vchip mini " + s.case.final_verdict, VERDICT_NAME[s.case.final_verdict] || "checked"));
+    site.append(nm, el("span", null, `${s.company} · ${fmt(s.rain48, 2)} mm rain nearby`));
     big.append(el("small", null, "h"));
     b.append(el("span", "no", i + 1), site, big);
     b.onmouseenter = b.onfocus = () => pins.get(s.id)?.classList.add("hot");
@@ -752,13 +783,16 @@ function showGauges() {
   gaugeMarkers.forEach(m => m.remove());
   gaugeMarkers = (selected ? selected.gauges : []).filter(g => g.lat != null).map(g => {
     const box = el("div", "gauge-label");
-    box.append(el("b", null, `${fmt(g.mm_0_24h_before + g.mm_24_48h_before, 2)} mm`), ` in 48 h · ${g.station}`);
+    box.classList.toggle("wet", wet(g));
+    box.append(el("b", null, `${fmt(g.mm_0_24h_before + g.mm_24_48h_before, 2)} mm`), ` rain in 48 h · gauge ${g.station}`);
     return new maplibregl.Marker({ element: box, anchor: "top", offset: [0, 10] }).setLngLat([g.lon, g.lat]).addTo(map);
   });
 }
 function select(s) {
   selected = s === selected ? null : s;  // clicking the selected spill again clears it
   selectedAt = performance.now();
+  if (DASH && views.map && !views.map.hidden)  // shareable link straight to this spill: #map/<site id>
+    history.replaceState(null, "", selected ? `#map/${encodeURIComponent(selected.id)}` : "#map");
   renderRows(); renderCase(); showGauges();
   overlay.setProps({ layers: layers() });
   if (!selected) {
@@ -787,6 +821,7 @@ function markPins() {
 }
 if (DASH) dry.slice(0, PINNED).forEach((s, i) => {
   const p = el("button", "pin"); p.append(el("span", "pn", i + 1), el("b", null, hrs(s)));
+  if (s.case) { const v = el("i", "vdot " + s.case.final_verdict); v.title = `Checked by the agents: ${verdictLine(s.case)}`; p.append(v); }
   p.title = `${title(s.name)}, ${hrs(s)} h`; p.setAttribute("aria-label", `${i + 1}: ${title(s.name)}, ${hrs(s)} hours`);
   p.onclick = e => { e.stopPropagation(); select(s); };
   pins.set(s.id, p);
@@ -796,16 +831,47 @@ if (DASH) dry.slice(0, PINNED).forEach((s, i) => {
 renderRows(); renderCase();
 if (!DASH && dry[0]) showLabel(dry[0], false);
 
+// "Play tour": a hands-free run for recording the demo. Overview, then each spill the agents checked, then back out.
+// Any click or key press on the page stops it.
+let touring = 0;
+const tourBtn = document.getElementById("tour");
+const tourStops = () => { const c = dry.filter(s => s.case); return (c.length ? c : dry).slice(0, 4); };
+const wait = (ms, run) => new Promise(r => setTimeout(() => r(run === touring), ms));
+async function tour() {
+  const run = ++touring; tourBtn.textContent = "■ Stop tour"; tourBtn.classList.add("on");
+  if (selected) select(null);
+  if (!(await wait(2500, run))) return;
+  for (const s of tourStops()) {
+    select(s);
+    if (!(await wait(7000, run))) return;
+  }
+  select(null); await wait(2200, run); stopTour();
+}
+function stopTour() { touring++; tourBtn.textContent = "▶ Play tour"; tourBtn.classList.remove("on"); }
+if (DASH) {
+  tourBtn.onclick = e => { e.stopPropagation(); touring && tourBtn.classList.contains("on") ? stopTour() : tour(); };
+  for (const ev of ["pointerdown", "keydown", "wheel"])
+    document.addEventListener(ev, e => { if (tourBtn.classList.contains("on") && !tourBtn.contains(e.target)) stopTour(); }, { capture: true });
+}
+
 // ---------- Cases tab ----------
 const pctN = x => Math.round(x * 100);
 const views = { map: document.querySelector("main.body"), cases: document.getElementById("cases-view"), reports: document.getElementById("reports-view") };
-function show(v) {
+function show(hash) {
+  let [v, id] = String(hash).split("/");
   if (!views[v]) v = "map";
   for (const [k, node] of Object.entries(views)) node.hidden = k !== v;
   document.querySelectorAll(".nav a").forEach(a => a.classList.toggle("on", a.dataset.view === v));
   if (v === "map") map.resize(); else if (v === "cases") renderCases(); else if (v === "reports") renderReports();
-  if (location.hash !== "#" + v) history.replaceState(null, "", "#" + v);
+  if (v === "map" && id) {  // #map/<site id> opens that spill
+    const s = sites.find(x => x.id === decodeURIComponent(id));
+    // map.loaded() is false mid-flight too, and "load" only fires once, so track first load ourselves
+    if (s && s !== selected) mapReady ? select(s) : map.once("load", () => select(s));
+    return;
+  }
+  if (location.hash.split("/")[0] !== "#" + v) history.replaceState(null, "", "#" + v);
 }
+let mapReady = false; map.once("load", () => { mapReady = true; });
 window.addEventListener("hashchange", () => show(location.hash.slice(1)));
 function openOnMap(s) { show("map"); if (selected !== s) select(s); }
 const siteLine = s => `${s.company} · ${s.id}`;
