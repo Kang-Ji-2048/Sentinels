@@ -58,6 +58,17 @@ def claude_json(system: str, user: str, schema: dict, effort: str = "medium") ->
     return json.loads(text_of(resp))
 
 
+def _name_variants(name: str) -> list[str]:
+    """Unity Gateway accepts different spellings across workspaces: try the common ones."""
+    short = name.removeprefix("system.ai.")
+    bare = short.removeprefix("databricks-")
+    out = []
+    for n in [name, short, f"system.ai.{bare}", bare, f"databricks-{bare}"]:
+        if n not in out:
+            out.append(n)
+    return out
+
+
 def skeptic_json(system: str, user: str, schema: dict) -> tuple[dict, str]:
     """Returns (parsed JSON, model name used)."""
     host, token = os.environ.get("DATABRICKS_HOST"), os.environ.get("DATABRICKS_TOKEN")
@@ -67,12 +78,19 @@ def skeptic_json(system: str, user: str, schema: dict) -> tuple[dict, str]:
     if client is not None:
         prompt = (f"{user}\n\nRespond with ONLY a JSON object matching this JSON schema, no prose:\n"
                   f"{json.dumps(schema)}")
-        r = client.chat.completions.create(
-            model=SKEPTIC_DATABRICKS_MODEL, max_tokens=2000,
-            messages=[{"role": "system", "content": system}, {"role": "user", "content": prompt}])
-        raw = r.choices[0].message.content.strip()
-        raw = raw[raw.find("{"): raw.rfind("}") + 1]  # tolerate code fences around the JSON
-        return json.loads(raw), SKEPTIC_DATABRICKS_MODEL
+        last_err = None
+        for model in _name_variants(SKEPTIC_DATABRICKS_MODEL):
+            try:
+                r = client.chat.completions.create(
+                    model=model, max_tokens=2000,
+                    messages=[{"role": "system", "content": system}, {"role": "user", "content": prompt}])
+            except Exception as e:  # noqa: BLE001 - wrong name / not enabled: try the next form
+                last_err = e
+                continue
+            raw = r.choices[0].message.content.strip()
+            raw = raw[raw.find("{"): raw.rfind("}") + 1]  # tolerate code fences around the JSON
+            return json.loads(raw), model
+        print(f"Databricks skeptic model unavailable ({last_err}); falling back to {SKEPTIC_FALLBACK_MODEL}")
     resp = claude().messages.create(
         model=SKEPTIC_FALLBACK_MODEL, max_tokens=4000, system=system,
         messages=[{"role": "user", "content": user}],

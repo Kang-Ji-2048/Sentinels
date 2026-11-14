@@ -154,9 +154,37 @@ def _traced_search(query, from_date=None):
     return linkup_search(query, from_date=from_date)
 
 
+# ---------------------------------------------------------------- adjudicator
+ADJUDICATOR_SCHEMA = {
+    "type": "object", "additionalProperties": False,
+    "required": ["final_confidence", "objections_refuted", "objections_standing", "reasoning"],
+    "properties": {
+        "final_confidence": {"type": "number", "description": "0-1: probability this is a genuine dry spill"},
+        "objections_refuted": {"type": "array", "items": {"type": "string"}},
+        "objections_standing": {"type": "array", "items": {"type": "string"}},
+        "reasoning": {"type": "string"},
+    },
+}
+
+
+@trace(name="adjudicator", span_type="AGENT")
+def adjudicate(spill: dict, case: dict, skeptic: dict, evidence: dict) -> dict:
+    """Weighs the skeptic's objections against the cited web evidence and gives a final confidence."""
+    system = ("You are an impartial adjudicator. The investigator argues a sewage spill happened on a dry "
+              "day; the skeptic gave innocent explanations and a confidence. A fact-checker then searched "
+              "the live web. Decide which objections the evidence refutes, which still stand, and give a "
+              "final probability that this is a genuine dry-day spill worth reporting for investigation. "
+              "Unverified objections are not refuted, but speculative objections with no support in the "
+              "data or the web evidence should carry little weight.")
+    user = (f"Spill:\n{_case_brief(spill)}\n\nInvestigator:\n{json.dumps(case)}\n\n"
+            f"Skeptic ({skeptic.get('model')}):\n{json.dumps(skeptic)}\n\nFact-checker report:\n{evidence['report']}")
+    return llm.claude_json(system, user, ADJUDICATOR_SCHEMA)
+
+
 # ---------------------------------------------------------------- drafter (action)
 @trace(name="drafter", span_type="AGENT")
-def draft_report(spill: dict, case: dict, skeptic: dict, evidence: dict, final_verdict: str) -> str:
+def draft_report(spill: dict, case: dict, skeptic: dict, evidence: dict, final_verdict: str,
+                 ruling: dict | None = None) -> str:
     system = ("You write evidence packs for possible storm-overflow permit breaches in England, for a "
               "human reviewer to send to the Environment Agency. Be factual, neutral and concise. "
               "Every claim must point to the data or a cited URL. Include the skeptic's strongest "
@@ -167,6 +195,7 @@ def draft_report(spill: dict, case: dict, skeptic: dict, evidence: dict, final_v
     user = (f"Final verdict from our pipeline: {final_verdict}\n\nSpill data:\n{_case_brief(spill)}\n\n"
             f"Investigator:\n{json.dumps(case)}\n\nSkeptic ({skeptic.get('model')}):\n"
             f"{json.dumps(skeptic)}\n\nEvidence agent report:\n{evidence['report']}\n\n"
+            f"Adjudicator ruling:\n{json.dumps(ruling)}\n\n"
             f"Raw searches:\n{json.dumps(evidence['searches'])[:20000]}")
     return llm.text_of(llm.claude_call(system=system, messages=[{"role": "user", "content": user}],
                                        output_config={"effort": "medium"}))
