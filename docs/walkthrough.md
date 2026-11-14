@@ -25,13 +25,17 @@ The full real run is in `data/example_case.json`.
    and tidal influence. Final confidence 0.68, so the verdict is **likely_breach**.
 6. *Drafter:* writes the evidence pack and a draft report to the EA, saying clearly it is a possible breach and
    listing what the EA should check. A human approves before anything is sent.
-7. Open the MLflow trace: every span, prompt, tool call and token count.
+7. *Citation verifier (Linkup fetch):* re-opens each cited page and checks it really says what the pack
+   claims. The pack ends with "n of m citations confirmed", with the supporting quote for each.
+8. Open the MLflow trace (the verdict and citation score are attached as feedback): every span, prompt, tool call and token count.
 
 **Why it matters (30 s).** Memory in Delta builds a record of repeat offenders and faulty sensors over time.
 Evidence packs are the input a regulator, journalist or campaign group needs. The limits are honest:
 self-reported data, sparse gauges, and a dry spill is a candidate, not proof. That's why the skeptic exists.
 
 **Bounties.**
-- *Databricks:* medallion Delta pipeline, scheduled job, Foundation Model API for the skeptic, MLflow Tracing,
-  Delta-backed agent memory.
-- *Linkup:* the evidence agent is built around Linkup sourced answers, which verify fresh information and cite it.
+- *Databricks:* medallion Delta pipeline with MERGE, scheduled job, a Unity Gateway foundation model for the
+  skeptic, MLflow Tracing with feedback scores, Delta-backed agent memory, and an AI/BI dashboard with a Genie
+  space so anyone can ask "which company has the most dry spills?"
+- *Linkup:* three uses. Search with date windows finds fresh cited context, fetch reads full pages, and fetch with
+  grounded extraction verifies every citation in the final pack.
