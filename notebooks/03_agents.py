@@ -119,7 +119,11 @@ if not results:
 new = pd.DataFrame([{k: r[k] for k in ["site_id", "company", "watercourse", "event_start", "duration_hours", "final_verdict",
                                        "breach_confidence", "skeptic_model", "strongest_objection", "severity", "n_sources",
                                        "decided_at"]} for r in results])
-spark.createDataFrame(new).write.mode("append").saveAsTable(T("gold_case_memory"))
+# One row per spill: a rerun replaces that spill's earlier verdict instead of adding a duplicate
+spark.createDataFrame(new).createOrReplaceTempView("new_cases")
+spark.sql(f"""MERGE INTO {T('gold_case_memory')} m USING new_cases n
+  ON m.site_id = n.site_id AND m.event_start = n.event_start
+  WHEN MATCHED THEN UPDATE SET * WHEN NOT MATCHED THEN INSERT *""")
 reports = pd.DataFrame([{"site_id": r["site_id"], "decided_at": r["decided_at"], "final_verdict": r["final_verdict"],
                          "report_md": r["report"] or "", "evidence_json": json.dumps(r["evidence"] or {})} for r in results])
 spark.createDataFrame(reports).write.mode("append").option("mergeSchema", "true").saveAsTable(T("gold_evidence_packs"))

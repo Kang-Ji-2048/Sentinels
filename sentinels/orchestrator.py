@@ -19,7 +19,7 @@ BREACH_THRESHOLD = 0.65   # final confidence for "likely_breach"
 
 @trace(name="sentinels_case", span_type="CHAIN")
 def run_case(spill: dict, memory: CaseMemory, draft: bool = True) -> dict:
-    history = memory.site_history(spill["id"])
+    history = memory.site_history(spill["id"], exclude_event=spill["latesteventstart"])
     case = agents.investigate(spill, history, memory.company_summary(spill["company"]))
     skeptic = agents.challenge(spill, case, history)
     skeptic_conf = float(skeptic["breach_confidence"])
