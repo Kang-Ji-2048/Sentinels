@@ -258,7 +258,8 @@ function renderCase(s, c) {
     const all = c.evidence.searches.flatMap(q => q.sources || []).filter((x, i, a) => x.url && a.findIndex(y => y.url === x.url) === i);
     const cited = all.filter(x => (c.evidence.report || "").includes(x.url));   // only sources the evidence pack actually cites
     const srcs = (cited.length ? cited : all).slice(0, 8);
-    set("evidence", `<p>${c.evidence.searches.length} live searches.</p>
+    const cit = c.citations && c.citations.checked ? `<p><b>${c.citations.verified} of ${c.citations.checked}</b> cited claims verified against the source page.</p>` : "";
+    set("evidence", `<p>${c.evidence.searches.length} live searches${c.evidence.fetches ? `, ${c.evidence.fetches.length} full pages read` : ""}.</p>${cit}
       <ul>${c.evidence.searches.map(q => `<li>${esc(q.query)}</li>`).join("")}</ul>
       <p><b>Sources cited</b></p><ul class="sources">${srcs.map(x => `<li><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.name || x.url)}</a></li>`).join("")}</ul>`);
   } else {

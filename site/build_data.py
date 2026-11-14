@@ -3,12 +3,14 @@
 python site/build_data.py  ->  site/data/run.json  (+ site/data/case.json)
 """
 import json
-import shutil
 from collections import Counter
 from pathlib import Path
 
 root = Path(__file__).resolve().parents[1]
-run = json.loads((root / "data" / "latest_run.json").read_text())
+# Prefer the Databricks pipeline's run (example_run.json) so map sites match the agent cases; else the local run.
+run_file = next(f for f in [root / "data" / "example_run.json", root / "data" / "latest_run.json"] if f.exists())
+run = json.loads(run_file.read_text())
+print("run:", run_file.name)
 keep = ["id", "company", "receivingwatercourse", "latitude", "longitude", "status", "monitor_offline", "latesteventstart",
         "latesteventend", "duration_hours", "verdict", "max_mm_0_24h_before", "max_mm_24_48h_before", "gauges"]
 spills = [{k: a.get(k) for k in keep} for a in run["assessed"] if a.get("longitude") is not None]
@@ -34,7 +36,16 @@ dest = root / "site" / "data"
 dest.mkdir(parents=True, exist_ok=True)
 (dest / "run.json").write_text(json.dumps(out, default=str, separators=(",", ":")))
 print("wrote", dest / "run.json", len(spills), "spills")
-case = root / "data" / "example_case.json"
-if case.exists():
-    shutil.copy(case, dest / "case.json")
-    print("copied", case)
+# The followed case: the most confident real agent run (example_cases.json is a list, example_case.json one case).
+cases = []
+for f in sorted((root / "data").glob("example_*.json")):
+    if f.name == "example_run.json":
+        continue
+    loaded = json.loads(f.read_text())
+    cases += loaded if isinstance(loaded, list) else [loaded]
+on_map = {s["id"] for s in spills}
+cases = [c for c in cases if c.get("site_id") in on_map] or cases
+if cases:
+    best = max(cases, key=lambda c: (c.get("final_verdict") == "likely_breach", c.get("breach_confidence") or 0))
+    (dest / "case.json").write_text(json.dumps(best, default=str))
+    print("case:", best["site_id"], best.get("final_verdict"), best.get("breach_confidence"), f"(of {len(cases)})")

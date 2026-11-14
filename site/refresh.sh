@@ -4,6 +4,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 python scripts/detect.py                       # live feeds -> data/latest_run.json
+# NB: if data/example_run.json (the Databricks run behind the agent cases) exists, both builders use it instead.
 python site/build_data.py                      # site 1 -> site/data/run.json
 python andrew-site/build.py                    # site 2 -> andrew-site/build/index.html
 mkdir -p andrew-site/public

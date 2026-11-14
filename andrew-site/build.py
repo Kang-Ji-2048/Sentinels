@@ -12,7 +12,8 @@ from pathlib import Path
 
 here = Path(__file__).resolve().parent
 root = here.parent
-run = json.loads((root / "data" / "latest_run.json").read_text())
+run_file = next(f for f in [root / "data" / "example_run.json", root / "data" / "latest_run.json"] if f.exists())
+run = json.loads(run_file.read_text())  # example_run.json = the Databricks run that the agent cases came from
 
 
 def rain48(a):
@@ -26,7 +27,7 @@ sites = [{"id": a["id"], "company": a["company"], "name": a.get("receivingwaterc
           "rain48": rain48(a), "gauges": a.get("gauges") or []}
          for a in run["assessed"] if a.get("longitude") is not None and a.get("latitude") is not None]
 cases = {}
-for f in sorted([*(root / "data" / "reports").glob("*.json"), *(root / "data").glob("example_*.json"),
+for f in sorted([*(root / "data" / "reports").glob("*.json"), *(f for f in (root / "data").glob("example_*.json") if f.name != "example_run.json"),
                  *here.glob("demo_*.json")],  # demo_* = made-up placeholder cases, flagged "illustrative"
                 key=lambda f: (not f.name.startswith("demo_"), f.stat().st_mtime)):  # real runs always beat demo_*
     loaded = json.loads(f.read_text())
