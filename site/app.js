@@ -1,6 +1,6 @@
 /* Sentinels showcase: loads data/run.json (+ data/case.json if present) and drives the page. */
 const COL = { dry_spill_candidate: [239, 91, 69], rain_explained: [106, 166, 216], no_gauge: [125, 135, 150] };
-const NEUTRAL = document.documentElement.dataset.variant === "b" ? [36, 61, 89] : [208, 183, 132];
+const NEUTRAL = [208, 183, 132];
 const fmt = n => Number(n).toLocaleString("en-GB");
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const title = s => String(s || "").toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
@@ -12,27 +12,7 @@ const ENGLAND = { longitude: -1.9, latitude: 52.9, zoom: 5.4, pitch: 0, bearing:
 const isSmall = matchMedia("(max-width: 600px)").matches;
 if (isSmall) ENGLAND.zoom = 4.6;
 
-const VARIANT = document.documentElement.dataset.variant || "a";
-const BASEMAP = VARIANT === "b"
-  ? "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
-  : "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
-
-function applyVariant() {
-  document.querySelectorAll(".variant-switch a").forEach(a => a.classList.toggle("on", a.getAttribute("href") === "?v=" + VARIANT));
-  if (VARIANT !== "c") return;
-  // Map first: move the hero into the scrollytelling as step 0, over the map.
-  const hero = document.querySelector(".hero");
-  const wrap = document.createElement("div");
-  wrap.className = "hero-card";
-  while (hero.firstChild) wrap.appendChild(hero.firstChild);
-  hero.appendChild(wrap);
-  hero.classList.add("step", "in-map");
-  hero.dataset.step = "0";
-  document.querySelector(".steps").prepend(hero);
-}
-
 async function main() {
-  applyVariant();
   const run = await (await fetch("data/run.json")).json();
   let caseData = null;
   try { const r = await fetch("data/case.json"); if (r.ok) caseData = await r.json(); } catch (_) { /* no case yet */ }
@@ -101,7 +81,7 @@ function setupMap(spills, caseSpill) {
 
   const dg = new deck.DeckGL({
     container: "deck",
-    mapStyle: BASEMAP,
+    mapStyle: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
     initialViewState: views[0],
     controller: isSmall ? false : { scrollZoom: false },
     layers: [layer()],

@@ -180,7 +180,7 @@ h2 { font: 650 clamp(2rem, 3.4vw, 3rem)/1.15 var(--serif); margin: 0 0 14px; let
   .sticky { top: 64px; height: calc(100vh - 64px); }
   .top nav a:not(:last-child) { display: none; }
   .hero { padding: 100px 16px 70px; }
-  .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; }
+  .stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; }
   .stats > div { flex-direction: column; gap: 6px; padding: 0 6px; text-align: center; }
   .lbl { font-size: .8rem; }
   .band { padding: 80px 16px; }
@@ -193,33 +193,3 @@ h2 { font: 650 clamp(2rem, 3.4vw, 3rem)/1.15 var(--serif); margin: 0 0 14px; let
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
-
-/* ---------- Design variants (?v=a|b|c) ---------- */
-/* B: Preprint light, follows the light theme of kang-ji-2048.github.io */
-[data-variant="b"] {
-  --bg: #ffffff; --bg-2: #f4f5f7; --band: #243d59; --ink: #161616; --ink-2: #59606b; --ink-3: #7a828d; --line: #d9dde2;
-  --accent: #88621e; --gold: #d3b16e; --dry: #d9442f; --rain: #3c7fc0; --card: rgba(255, 255, 255, .92);
-}
-[data-variant="b"] body { background: var(--bg); }
-[data-variant="b"] .num { color: var(--ink); }
-[data-variant="b"] .num.hot, [data-variant="b"] h1 em { color: var(--dry); }
-[data-variant="b"] .band.alt { --bg-2: #2e4a6a; --ink: #fff; --ink-2: #c9d1dc; --ink-3: #9fb0c3; --line: #3d5878; --accent: #e0be7b; color: var(--ink); }
-[data-variant="b"] .built { background: #10202f; --ink: #fff; --ink-2: #c7c7c7; --ink-3: #9aa3ad; --line: #2b4564; --accent: #e0be7b; color: var(--ink); }
-[data-variant="b"] .tip { background: #fff; box-shadow: 0 8px 24px rgba(0, 0, 0, .12); }
-[data-variant="b"] ::selection { background: #e7d2a7; color: #2b4564; }
-[data-variant="b"] .maplibregl-ctrl-attrib { background: rgba(255, 255, 255, .6) !important; }
-
-/* C: Map first. The hero sits over the live 3D map instead of above it. */
-[data-variant="c"] .hero.in-map { min-height: 100vh; max-width: none; padding: 0 clamp(16px, 4vw, 72px); pointer-events: none; }
-[data-variant="c"] .hero.in-map > * { pointer-events: auto; }
-[data-variant="c"] .hero.in-map .hero-card { background: radial-gradient(closest-side, rgba(15, 20, 27, .92), rgba(15, 20, 27, .75) 70%, rgba(15, 20, 27, 0));
-  padding: 60px clamp(10px, 4vw, 80px); max-width: 1000px; }
-[data-variant="c"] .hero.in-map .scrollcue { display: none; }
-[data-variant="c"] .hero.in-map .lede { margin-bottom: 28px; }
-[data-variant="c"] .step[data-step="0"]:not(.hero) { display: none; }
-
-/* Variant switcher (for choosing a design; remove once picked) */
-.variant-switch { position: fixed; right: 16px; bottom: 16px; z-index: 50; display: flex; gap: 4px; padding: 4px; background: var(--card);
-  border: 1px solid var(--line); border-radius: var(--radius); font: 500 12px var(--mono); backdrop-filter: blur(8px); }
-.variant-switch a { padding: 6px 10px; text-decoration: none; color: var(--ink-2); border-radius: 2px; }
-.variant-switch a.on { background: var(--accent); color: var(--bg); }

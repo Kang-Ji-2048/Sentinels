@@ -8,5 +8,5 @@ python site/build_data.py    # -> site/data/run.json (+ site/data/case.json if d
 python -m http.server 8000 --directory site
 ```
 
-Open http://localhost:8000. Design options: `?v=a` (dark preprint), `?v=b` (light preprint), `?v=c` (map first).
+Open http://localhost:8000.
 The agent panels in the case study stay empty until a real traced run is saved as `data/example_case.json`.
