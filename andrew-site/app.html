@@ -341,7 +341,7 @@
       <div id="map" role="img" aria-label="Map of England: one mark per spilling overflow, sized by hours discharging"></div>
       <div class="key dash-only">
         <span><i class="sw dry"></i>Dry spill</span><span><i class="sw rain"></i>Rain explained</span><span><i class="sw none"></i>No gauge</span>
-        <span class="size" title="Dry spill: every rain gauge within 10 km saw under 0.25 mm in each of the two days before it began.">Size and height = hours discharging</span>
+        <span class="size" title="Dry spill: every rain gauge within 10 km saw under 0.25 mm in each of the two days before it began.">Size = hours discharging</span>
       </div>
       <div class="count classic-only">
         <div class="n" id="n"></div>
@@ -446,7 +446,24 @@ document.getElementById("updated").textContent = document.getElementById("runat"
 // One semi-transparent cylinder per site; height is hours discharging.
 const kind = s => VERDICT[s.verdict] ? s.verdict : "no_gauge";
 let selected = null, selectedAt = 0;
-const SPHERE = DASH ? new luma.SphereGeometry({ nlat: 24, nlong: 48 }) : null;  // the domed column caps
+const SPHERE = DASH ? new luma.SphereGeometry({ nlat: 24, nlong: 48 }) : null;  // the bead inside each dome
+// A unit hemisphere, z up, open at the bottom: the glass of each spill's dome.
+const DOME = DASH ? (() => {
+  const nlat = 16, nlong = 48, pos = [], nor = [], idx = [];
+  for (let i = 0; i <= nlat; i++) {
+    const phi = (i / nlat) * Math.PI / 2;  // 0 = top, pi/2 = ground
+    for (let j = 0; j <= nlong; j++) {
+      const th = (j / nlong) * 2 * Math.PI, x = Math.sin(phi) * Math.cos(th), y = Math.sin(phi) * Math.sin(th), z = Math.cos(phi);
+      pos.push(x, y, z); nor.push(x, y, z);
+    }
+  }
+  for (let i = 0; i < nlat; i++) for (let j = 0; j < nlong; j++) {
+    const a = i * (nlong + 1) + j, b = a + nlong + 1;
+    idx.push(a, b, a + 1, b, b + 1, a + 1);
+  }
+  return new luma.Geometry({ topology: "triangle-list", indices: { size: 1, value: new Uint16Array(idx) },
+    attributes: { POSITION: { size: 3, value: new Float32Array(pos) }, NORMAL: { size: 3, value: new Float32Array(nor) } } });
+})() : null;
 const easeOut = t => 1 - Math.pow(1 - Math.min(Math.max(t, 0), 1), 3);
 
 // 2D: the showcase site's dots. Area ~ hours, soft glow, pulsing ring on dry spills, white edge.
@@ -508,34 +525,37 @@ function layers() {
     const dashed = new deck.PathLayer({ id: "ring", data: ring, getPath: d => d, getColor: [18, 53, 91, 200], getWidth: 2, widthUnits: "pixels",
       getDashArray: [5, 4], dashJustified: true, extensions: [new deck.PathStyleExtension({ dash: true })] });
     // Tilted in on a spill: the dry spills stand up as columns (height = hours discharging), the selected one gold.
-    // Tilted in on a spill: spills rise as lit columns (height = hours discharging) as the camera arrives;
-    // dry ones red, the selected one gold with its hours floating above it, rain-explained and no-gauge ones faint.
+    // Tilted in on a spill: each 2D dot becomes a "snow globe": its soft glow turns into a glass dome and the dot into
+    // a solid bead with the same white rim. Same colours and sizes as the flat map; the domes swell up as the camera arrives.
     const rise = !selected ? 0 : REDUCED ? 1 : easeOut((performance.now() - selectedAt - 700) / 1500);
-    const tall = s => (1.2 + Math.sqrt(Math.max(s.hours || 0, 0))) * 22 * m;  // square-root scale: short spills still read as columns
-    // Each spill: a soft ground shadow, a smooth lit cylinder and a domed cap (a sphere sunk into the top), so it reads as a capsule.
-    const MAT = { ambient: 0.42, diffuse: 0.62, shininess: 96, specularColor: [255, 255, 255] };
     const show = rise > 0.02;
-    const column = (id, data, r, fill) => [
-      new deck.ScatterplotLayer({ id: id + "-shadow", data: show ? data : [], getPosition: s => [s.lon, s.lat], radiusUnits: "meters",
-        getRadius: r * 2.1 * m, getFillColor: [20, 32, 43, 26 * rise], parameters: NO_DEPTH }),
-      new deck.ScatterplotLayer({ id: id + "-shadow2", data: show ? data : [], getPosition: s => [s.lon, s.lat], radiusUnits: "meters",
-        getRadius: r * 1.4 * m, getFillColor: [20, 32, 43, 38 * rise], parameters: NO_DEPTH }),
-      new deck.ColumnLayer({ id, data: show ? data : [], diskResolution: 64, extruded: true, radius: r * m, elevationScale: rise,
-        getPosition: s => [s.lon, s.lat], getElevation: tall, getFillColor: fill, material: MAT,
-        pickable: true, updateTriggers: { getFillColor: sel, getElevation: m } }),
-      new deck.SimpleMeshLayer({ id: id + "-cap", data: show ? data : [], mesh: SPHERE, material: MAT,
-        getPosition: s => [s.lon, s.lat, tall(s) * rise], getScale: [r * m, r * m, r * m], getColor: fill,
-        pickable: true, updateTriggers: { getPosition: [rise, m], getScale: m, getColor: sel } }),
-    ];
+    const beadR = s => dotSize(s) * 1.25 * m * (s.id === sel ? 1.4 : 1);  // metres; dotSize is the 2D dot's radius in px
+    const domeR = s => beadR(s) * 2.3;
+    const GLASS = { ambient: 0.6, diffuse: 0.35, shininess: 180, specularColor: [255, 255, 255] };
+    const BEAD = { ambient: 0.45, diffuse: 0.65, shininess: 60, specularColor: [255, 255, 255] };
+    const rgb = s => s.id === sel ? GOLD.slice(0, 3) : (COL[s.verdict] || COL.no_gauge);
+    const strong = s => s.id === sel || s.verdict === "dry_spill_candidate";
+    const shown = !show ? [] : sites.filter(s => !dryOnly || s.verdict === "dry_spill_candidate" || s.id === sel);
     const cols = !selected ? [] : [
-      ...(dryOnly ? [] : column("ctx-cols", sites.filter(s => s.verdict !== "dry_spill_candidate"), 3, s => VERDICT[kind(s)].fill)),
-      ...column("dash-cols", dry, 4.2, s => s.id === sel ? GOLD : [200, 16, 46, 230]),
-      new deck.TextLayer({ id: "sel-label", data: rise > 0.05 ? [selected] : [], getPosition: s => [s.lon, s.lat, tall(s) * rise + 4.2 * m + 10 * m],
+      new deck.ScatterplotLayer({ id: "dome-shadow", data: shown, getPosition: s => [s.lon, s.lat], radiusUnits: "meters", parameters: NO_DEPTH,
+        getRadius: s => domeR(s) * rise * 1.12, getFillColor: [20, 32, 43, 22], updateTriggers: { getRadius: [rise, m, sel] } }),
+      new deck.ScatterplotLayer({ id: "bead-rim", data: shown, getPosition: s => [s.lon, s.lat], radiusUnits: "meters", parameters: NO_DEPTH,
+        getRadius: s => beadR(s) * rise * 1.12, filled: false, stroked: true, lineWidthUnits: "pixels", getLineWidth: 1.5,
+        getLineColor: s => s.id === sel ? [20, 32, 43, 255] : [255, 255, 255, 230], updateTriggers: { getRadius: [rise, m, sel], getLineColor: sel } }),
+      new deck.SimpleMeshLayer({ id: "dome-bead", data: shown, mesh: SPHERE, material: BEAD,
+        getPosition: s => [s.lon, s.lat, beadR(s) * rise], getScale: s => Array(3).fill(beadR(s) * rise),
+        getColor: s => [...rgb(s), strong(s) ? 255 : 170], updateTriggers: { getPosition: [rise, m, sel], getScale: [rise, m, sel], getColor: sel } }),
+      new deck.SimpleMeshLayer({ id: "dome-glass", data: shown, mesh: DOME, material: GLASS, pickable: true,
+        parameters: { depthWriteEnabled: false },  // see-through: the bead inside stays visible
+        getPosition: s => [s.lon, s.lat, 0], getScale: s => Array(3).fill(domeR(s) * rise),
+        getColor: s => [...rgb(s), strong(s) ? 70 : 40], updateTriggers: { getScale: [rise, m, sel], getColor: sel } }),
+      new deck.TextLayer({ id: "sel-label", data: rise > 0.05 ? [selected] : [], getPosition: s => [s.lon, s.lat, domeR(s) * rise + 10 * m],
         getText: s => `${hrs(s)} h`, getSize: 17, getColor: [255, 255, 255, 255], fontFamily: "Inter Tight, system-ui, sans-serif", fontWeight: 700,
         background: true, getBackgroundColor: [18, 53, 91, 235], backgroundPadding: [8, 4], getTextAnchor: "middle", getAlignmentBaseline: "bottom",
         parameters: { depthCompare: "always" }, updateTriggers: { getPosition: [rise, m] } }),
     ];
-    return [...dotLayers([disc, dashed, links, gauges]), ...cols];
+    const flat = dotLayers([disc, dashed, links, gauges]);
+    return [...(rise > 0.5 ? flat.filter(l => l.id !== "glow" && l.id !== "dots") : flat), ...cols];
   }
   if (MAP2D) return dotLayers([area, links, gauges]);
   const context = dryOnly ? [] : [stack("rain_explained"), stack("no_gauge")];
