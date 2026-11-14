@@ -28,12 +28,12 @@ NEXT = {"draft": {"approved", "rejected"}, "approved": {"sent", "draft"}, "rejec
 
 
 def load() -> dict:
-    return json.loads(DECISIONS.read_text()) if DECISIONS.exists() else {}
+    return json.loads(DECISIONS.read_text(encoding="utf-8")) if DECISIONS.exists() else {}
 
 
 def save(decisions: dict) -> None:
     tmp = DECISIONS.with_suffix(".tmp")
-    tmp.write_text(json.dumps(decisions, indent=1))
+    tmp.write_text(json.dumps(decisions, indent=1), encoding="utf-8")
     os.replace(tmp, DECISIONS)  # never leave a half-written file
 
 
@@ -73,7 +73,7 @@ def decide(body: dict) -> dict:
     save(decisions)
     if status == "rejected" and not d["illustrative"]:  # never feed made-up example cases to the agents
         MEMORY.parent.mkdir(parents=True, exist_ok=True)
-        with MEMORY.open("a") as f:
+        with MEMORY.open("a", encoding="utf-8") as f:
             f.write(json.dumps({"site_id": d["site_id"], "company": text(body, "company", 100),
                                 "event_start": d["event_start"], "final_verdict": "rejected_by_reviewer",
                                 "reviewer_reason": note, "decided_at": now}) + "\n")

@@ -9,7 +9,7 @@ from pathlib import Path
 root = Path(__file__).resolve().parents[1]
 # Prefer the Databricks pipeline's run (example_run.json) so map sites match the agent cases; else the local run.
 run_file = next(f for f in [root / "data" / "example_run.json", root / "data" / "latest_run.json"] if f.exists())
-run = json.loads(run_file.read_text())
+run = json.loads(run_file.read_text(encoding="utf-8"))
 print("run:", run_file.name)
 keep = ["id", "company", "receivingwatercourse", "latitude", "longitude", "status", "monitor_offline", "latesteventstart",
         "latesteventend", "duration_hours", "verdict", "max_mm_0_24h_before", "max_mm_24_48h_before", "gauges"]
@@ -34,18 +34,21 @@ except Exception as e:  # noqa: BLE001  (map still works without the links)
     print("gauge locations unavailable:", e)
 dest = root / "site" / "data"
 dest.mkdir(parents=True, exist_ok=True)
-(dest / "run.json").write_text(json.dumps(out, default=str, separators=(",", ":")))
+(dest / "run.json").write_text(json.dumps(out, default=str, separators=(",", ":")), encoding="utf-8")
 print("wrote", dest / "run.json", len(spills), "spills")
-# The followed case: the most confident real agent run (example_cases.json is a list, example_case.json one case).
+# The followed case: the walkthrough's case (example_case.json) so the site and the walkthrough tell the same story;
+# else the most confident real agent run (example_cases.json is a list, example_case.json one case).
 cases = []
 for f in sorted((root / "data").glob("example_*.json")):
     if f.name == "example_run.json":
         continue
-    loaded = json.loads(f.read_text())
+    loaded = json.loads(f.read_text(encoding="utf-8"))
     cases += loaded if isinstance(loaded, list) else [loaded]
 on_map = {s["id"] for s in spills}
 cases = [c for c in cases if c.get("site_id") in on_map] or cases
+walk = root / "data" / "example_case.json"
+walk_id = json.loads(walk.read_text(encoding="utf-8")).get("site_id") if walk.exists() else None
 if cases:
-    best = max(cases, key=lambda c: (c.get("final_verdict") == "likely_breach", c.get("breach_confidence") or 0))
-    (dest / "case.json").write_text(json.dumps(best, default=str))
+    best = next((c for c in cases if c.get("site_id") == walk_id), None) or max(cases, key=lambda c: (c.get("final_verdict") == "likely_breach", c.get("breach_confidence") or 0))
+    (dest / "case.json").write_text(json.dumps(best, default=str), encoding="utf-8")
     print("case:", best["site_id"], best.get("final_verdict"), best.get("breach_confidence"), f"(of {len(cases)})")
