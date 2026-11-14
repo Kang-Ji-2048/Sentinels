@@ -169,6 +169,7 @@
     .count { left: 16px; top: 16px; }
     .count .n { font-size: 64px; line-height: 64px; }
     .top { padding: 0 16px; } .brand { gap: 16px; } .updated { display: none; }
+    .nav > * { padding: 0 8px; font-size: 14px; }
   }
   /* B1 "Modern Survey": white header, softer corners, lifted panels */
   .top { background: #fff; color: var(--muted); border-bottom: 1px solid var(--rule); }
@@ -209,19 +210,113 @@
   .turn th { background: #e9eee7; font-weight: 600; }
   .turn details { margin-top: 6px; } .turn summary { cursor: pointer; font-weight: 500; color: var(--navy); }
   .turn pre { margin: 4px 0 0; padding: 8px; background: #f7f9f6; border: 1px solid var(--rule); border-radius: 6px; font: 12px/1.45 ui-monospace, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+  /* Dashboard tab (dashboard.html, Kang 14 Nov 21:00): two white cards on a pale ground, map card + shortlist card.
+     The Map tab keeps the full-bleed layout: dashboard-only parts are hidden there. */
+  body:not(.dash) .dash-only, body.dash .classic-only { display: none !important; }
+  body:not(.dash) .mcard { display: contents; }
+  body.dash { background: #eef2f5; }
+  body.dash .body { gap: 20px; padding: 20px; }
+  body.dash .mcard, body.dash .side { background: #fff; border: 1px solid #dde4ea; border-radius: 16px; box-shadow: 0 1px 2px rgba(18, 53, 91, .04); }
+  body.dash .mcard { flex: 1.45 1 0; min-width: 0; display: flex; flex-direction: column; padding: 22px 22px 14px; }
+  body.dash .mhead { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+  body.dash .eyebrow { margin: 0 0 6px; font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--navy); }
+  body.dash .mtitle { margin: 0; font: 600 26px/1.15 var(--serif); letter-spacing: -.02em; color: var(--ink); }
+  body.dash .seg { display: flex; gap: 2px; margin: 0; padding: 3px; background: #eef2f5; border-radius: 10px; }
+  body.dash .seg a { padding: 7px 12px; border-radius: 8px; font-weight: 500; color: var(--muted); text-decoration: none; white-space: nowrap; }
+  body.dash .seg a:hover { color: var(--navy); }
+  body.dash .seg a[aria-current] { background: var(--navy); color: #fff; }
+  body.dash .mmeta { display: flex; justify-content: space-between; gap: 12px; margin: 16px 0 12px; color: var(--muted); font-size: 14px; }
+  body.dash .ic { display: inline-flex; align-items: center; gap: 8px; }
+  body.dash .ic svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+  body.dash .mctrl { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; font-size: 14px; }
+  body.dash .mctrl .toggle { margin: 0; color: var(--muted); }
+  body.dash .inrange { color: var(--muted); }
+  body.dash .badge { display: inline-block; min-width: 26px; padding: 1px 7px; border-radius: 6px; background: #eef2f5; color: var(--navy); font-size: 13px; font-weight: 600; text-align: center; }
+  body.dash .mcard .map { flex: 1; min-height: 380px; border-radius: 12px; overflow: hidden; }
+  body.dash .mcard .key { position: absolute; z-index: 2; left: 14px; bottom: 14px; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; max-width: calc(100% - 28px);
+                margin: 0; padding: 8px 12px; border: 0; background: rgba(255, 255, 255, .95); border-radius: 10px; box-shadow: 0 4px 16px rgba(18, 53, 91, .12); font-size: 13px; }
+  body.dash .mcard .key span { display: inline-flex; align-items: center; gap: 7px; }
+  body.dash .mcard .key .size { color: var(--muted); }
+  body.dash .mcard .sw { display: inline-block; }
+  body.dash .mcard .reset { left: auto; right: 14px; top: 14px; bottom: auto; border-radius: 10px; }
+  body.dash .mfoot { margin: 10px 2px 0; color: var(--muted); font-size: 13px; }
+  body.dash .askbox { bottom: 64px; }
+
+  body.dash .side { flex: 1 1 0; width: auto; min-width: 340px; max-width: 520px; border-left: 1px solid #dde4ea; padding: 18px 20px 4px; }
+  body.dash .shead { display: flex; align-items: center; justify-content: space-between; padding: 4px 4px 14px; }
+  body.dash .side .shead h2 { padding: 0; font-size: 20px; font-weight: 500; letter-spacing: -.01em; text-transform: none; color: var(--navy); }
+  body.dash .rows { border: 1px solid #dde4ea; border-radius: 12px; overflow: hidden; }
+  body.dash .row { gap: 14px; padding: 12px 14px; border-top: 1px solid #e6ebf0; }
+  body.dash .row:first-child { border-top: 0; }
+  body.dash .row .no { flex: none; width: 30px; height: 30px; display: grid; place-items: center; border-radius: 7px; background: #eef2f5; color: var(--navy); font-size: 13px; }
+  body.dash .row .site b { font-weight: 500; }
+  body.dash .row .site span { font-size: 13px; }
+  body.dash .row .big { flex: none; text-align: right; font-size: 22px; font-weight: 500; color: var(--crimson); font-variant-numeric: tabular-nums; }
+  body.dash .row .big small { margin-left: 2px; font-size: 13px; color: var(--muted); }
+  body.dash .row:not(.head):hover { background: #f5f8fa; }
+  body.dash .row.sel, body.dash .row.sel:hover { background: #eaf0f6; }
+  body.dash .row.sel .no { background: var(--navy); color: #fff; }
+  body.dash .side .case { flex: none; margin: 18px 0 0; padding: 22px 24px 8px; background: #f3f6f9; border: 1px solid #dde4ea; border-radius: 12px; }
+  body.dash .case .chead { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; padding: 0 0 12px; }
+  body.dash .case .chead .eyebrow { font-size: 11px; }
+  body.dash .case .chead h3 { font-size: 22px; font-weight: 500; }
+  body.dash .case .score { text-align: right; line-height: 1; }
+  body.dash .case .score b { display: block; font-size: 44px; font-weight: 500; color: var(--crimson); letter-spacing: -.02em; }
+  body.dash .case .score span { font-size: 12px; color: var(--muted); }
+  body.dash .case section { border-top-color: #dde4ea; }
+  body.dash .case .empty h2 { padding: 0 0 6px; font-size: 18px; font-weight: 500; text-transform: none; letter-spacing: 0; }
+  body.dash .side .foot { border-top: 0; padding: 14px 4px; font-size: 13px; }
+  @media (max-width: 900px) {
+    body.dash .body { padding: 12px; gap: 12px; } body.dash .mcard { flex: none; padding: 16px 14px 12px; } body.dash .mcard .map { flex: none; height: 62vh; }
+    body.dash .side { flex: none; max-width: none; min-width: 0; } body.dash .mhead { flex-direction: column; } body.dash .mmeta { flex-direction: column; gap: 4px; } body.dash .askbox { bottom: 92px; }
+  }
+
 </style>
 </head>
 <body>
 <header class="top">
   <div class="brand">
     <span class="logo">Sentinels</span>
-    <nav class="nav"><a href="#map" data-view="map" class="on">Map</a><a href="#cases" data-view="cases">Cases</a><a href="#reports" data-view="reports">Reports</a></nav>
+    <nav class="nav"><a href="#map" data-view="map" class="on" id="nav-map">Map</a><a href="dashboard.html" id="nav-dash">Dashboard</a><a href="#cases" data-view="cases">Cases</a><a href="#reports" data-view="reports">Reports</a></nav>
   </div>
   <span class="updated" id="updated"></span>
 </header>
 <main class="body">
-  <div class="map">
-    <button class="reset" id="reset" hidden>Show all of England</button>
+  <section class="mcard">
+    <div class="mhead dash-only">
+      <div>
+        <p class="eyebrow">Sewage spill watch · England</p>
+        <h1 class="mtitle">The spills rain can't explain.</h1>
+      </div>
+    </div>
+    <div class="mmeta dash-only">
+      <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>Every storm overflow in England, 9 water companies</span>
+      <span id="runat"></span>
+    </div>
+    <div class="mctrl dash-only">
+      <label class="toggle"><input type="checkbox" class="dry-only"> Dry spills only <span class="badge" id="n2"></span></label>
+      <span class="inrange" id="of2"></span>
+    </div>
+    <div class="map">
+      <button class="reset" id="reset" hidden>Show all of England</button>
+      <div id="map" role="img" aria-label="Map of England: one mark per spilling overflow, sized by hours discharging"></div>
+      <div class="key dash-only">
+        <span><i class="sw dry"></i>Dry spill</span><span><i class="sw rain"></i>Rain explained</span><span><i class="sw none"></i>No gauge</span>
+        <span class="size">Dot size is hours discharging.</span>
+      </div>
+      <div class="count classic-only">
+        <div class="n" id="n"></div>
+        <h1>dry spills in 48 hours</h1>
+        <p id="of"></p>
+        <div class="key">
+          <div><span class="sw dry"></span>Dry spill candidate</div>
+          <div><span class="sw rain"></span>Rain explained</div>
+          <div><span class="sw none"></span>No gauge within 10 km</div>
+          <p id="size-key">Column height is hours discharging.</p>
+          <p class="views">Map: <a href="index.html" data-v="3d">3D columns</a> · <a href="2d.html" data-v="2d">2D dots</a></p>
+          <label class="toggle"><input type="checkbox" class="dry-only"> Dry spills only</label>
+        </div>
+      </div>
     <section class="askbox closed" id="askbox" aria-label="Ask Genie">
       <button class="ask-toggle" id="ask-toggle" aria-expanded="false" aria-controls="ask-body"><span>Ask Genie about this data</span><span aria-hidden="true" id="ask-chev">▴</span></button>
       <div class="ask-body" id="ask-body">
@@ -235,23 +330,11 @@
         <button class="new" type="button" id="ask-new" hidden>New conversation</button>
       </div>
     </section>
-    <div id="map" role="img" aria-label="3D map of England: one column per spilling overflow, height is hours discharging"></div>
-    <div class="count">
-      <div class="n" id="n"></div>
-      <h1>dry spills in 48 hours</h1>
-      <p id="of"></p>
-      <div class="key">
-        <div><span class="sw dry"></span>Dry spill candidate</div>
-        <div><span class="sw rain"></span>Rain explained</div>
-        <div><span class="sw none"></span>No gauge within 10 km</div>
-        <p id="size-key">Column height is hours discharging.</p>
-        <p class="views">Map: <a href="index.html" data-v="3d">3D columns</a> · <a href="2d.html" data-v="2d">2D dots</a></p>
-        <label class="toggle"><input type="checkbox" id="dryOnly"> Dry spills only</label>
-      </div>
     </div>
-  </div>
+    <p class="mfoot dash-only">Dry spill: no gauge within 10 km saw 0.25 mm of rain in either of the two days before it began. Select a spill to read its case.</p>
+  </section>
   <aside class="side">
-    <h2>Longest dry spills</h2>
+    <div class="shead"><h2>Longest dry spills</h2><span class="badge dash-only" id="rows-n"></span></div>
     <div class="rows" id="rows"></div>
     <div class="case" id="case"></div>
     <p class="foot">A candidate, not proof. A person approves any report before it is sent.</p>
@@ -298,9 +381,15 @@ const AREA_M = 10000;          // the detector checks rain gauges within 10 km
 const DRY_MM = 0.25;           // detector threshold: under this in a 24 h window is a dry day
 const wet = g => g.mm_0_24h_before >= DRY_MM || g.mm_24_48h_before >= DRY_MM;
 let dryOnly = false;
-const MAP2D = true;  // build.py writes 2d.html with this set: the showcase site's flat dot map
+const MAP2D = true;
+const DASH = /*DASH*/false;    // build.py writes dashboard.html with this set: the card layout, flat map  // build.py writes 2d.html with this set: the showcase site's flat dot map
 const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
 document.body.classList.toggle("flat", MAP2D);
+document.body.classList.toggle("dash", DASH);
+if (DASH) {  // on the dashboard page the "map" view is the dashboard; Map links back to the full-bleed page
+  const m = document.getElementById("nav-map"), d = document.getElementById("nav-dash");
+  m.href = "index.html#map"; m.removeAttribute("data-view"); d.href = "#map"; d.dataset.view = "map";
+}
 if (MAP2D) document.getElementById("size-key").textContent = "Dot size is hours discharging.";
 document.querySelectorAll(".views a").forEach(a => { if ((a.dataset.v === "2d") === MAP2D) a.setAttribute("aria-current", "page"); a.href += location.hash; });
 let pulse = 0;
@@ -313,8 +402,11 @@ const dry = sites.filter(s => s.verdict === "dry_spill_candidate").sort((a, b) =
 
 document.getElementById("n").textContent = dry.length;
 document.getElementById("of").textContent = `of ${sites.length} spills started. No meaningful rain at any gauge within 10 km.`;
+document.getElementById("n2").textContent = dry.length;
+document.getElementById("of2").textContent = `${dry.length} of ${sites.length} spills in 48 h are dry`;
+document.getElementById("rows-n").textContent = dry.length;
 const when = new Date(RUN.run_at.replace(" ", "T"));
-document.getElementById("updated").textContent = isNaN(when) ? "" :
+document.getElementById("updated").textContent = document.getElementById("runat").textContent = isNaN(when) ? "" :
   `Updated ${when.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}, ${when.toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`;
 
 // One semi-transparent cylinder per site; height is hours discharging.
@@ -377,7 +469,7 @@ function layers() {
 }
 
 const ENGLAND = MAP2D ? [[-5.8, 49.9], [1.8, 55.85]] : [[-5.4, 50.0], [1.8, 55.2]];  // flat view needs all of England in frame
-const ENGLAND_PAD = MAP2D ? { top: 20, bottom: 20, left: 260, right: 20 } : { top: 0, bottom: 0, left: 240, right: 0 };
+const ENGLAND_PAD = DASH ? { top: 20, bottom: 50, left: 20, right: 20 } : MAP2D ? { top: 20, bottom: 20, left: 260, right: 20 } : { top: 0, bottom: 0, left: 240, right: 0 };
 const map = new maplibregl.Map({
   container: "map", style: "https://basemaps.cartocdn.com/gl/positron-nolabels-gl-style/style.json",
   bounds: ENGLAND, fitBoundsOptions: { padding: ENGLAND_PAD },
@@ -410,7 +502,7 @@ const overlay = new deck.MapboxOverlay({
 map.addControl(overlay);
 map.on("zoom", () => overlay.setProps({ layers: layers() }));
 const resetBtn = document.getElementById("reset");
-document.getElementById("dryOnly").onchange = e => { dryOnly = e.target.checked; overlay.setProps({ layers: layers() }); };
+document.querySelectorAll(".dry-only").forEach(c => c.onchange = e => { dryOnly = e.target.checked; overlay.setProps({ layers: layers() }); });
 resetBtn.onclick = () => select(null);
 map.addControl(new maplibregl.NavigationControl({ visualizePitch: !MAP2D, showCompass: !MAP2D }), "bottom-right");
 if (MAP2D && !REDUCED) requestAnimationFrame(function tick(now) {  // pulse rings on dry spills; first frame runs after the page script
@@ -434,6 +526,19 @@ function showLabel(s, selected) {
 
 function renderRows() {
   const rows = document.getElementById("rows");
+  if (!DASH) return renderRowsClassic(rows);
+  rows.replaceChildren(...dry.slice(0, selected ? 4 : 6).map((s, i) => {
+    const b = el("button", "row" + (s === selected ? " sel" : ""));
+    const site = el("span", "site"), big = el("span", "big", hrs(s));
+    site.append(el("b", null, title(s.name)), el("span", null, `${s.company} · ${fmt(s.rain48, 2)} mm rain nearby`));
+    big.append(el("small", null, "h"));
+    b.append(el("span", "no", i + 1), site, big);
+    b.setAttribute("aria-pressed", s === selected);
+    b.onclick = () => select(s);
+    return b;
+  }));
+}
+function renderRowsClassic(rows) {
   const head = el("div", "row head");
   head.append(el("span", "site", "Site"), el("span", "h", "Hours"), el("span", "r", "Rain, mm"));
   rows.replaceChildren(head, ...dry.slice(0, selected ? 4 : 7).map(s => {
@@ -450,12 +555,17 @@ function renderCase() {
   const c = document.getElementById("case");
   if (!selected) {
     const box = el("div", "empty");
-    box.append(el("h2", null, "Case"), el("p", null, "Select a spill on the map or a row above to read the case."));
+    box.append(el("h2", null, DASH ? "Pick a spill" : "Case"), el("p", null, DASH ? "Select a spill on the map or in the list above to read its case: the rain gauges checked and what the agents concluded." : "Select a spill on the map or a row above to read the case."));
     return c.replaceChildren(box);
   }
   const s = selected, v = VERDICT[s.verdict] || VERDICT.no_gauge;
-  const head = el("section");
-  head.append(el("h3", null, title(s.name)), el("div", "lede", `${s.company} · ${s.id} · discharging ${s.hours == null ? "for an unknown time (monitor offline)" : fmt(s.hours) + " h"}`));
+  let head = el("section");
+  if (!DASH) head.append(el("h3", null, title(s.name)), el("div", "lede", `${s.company} · ${s.id} · discharging ${s.hours == null ? "for an unknown time (monitor offline)" : fmt(s.hours) + " h"}`));
+  else { head = el("div", "chead"); const info = el("div"), score = el("div", "score");
+  info.append(el("p", "eyebrow", `Selected spill · ${s.case ? "agent case" : "no agent case yet"}`), el("h3", null, title(s.name)),
+    el("div", "lede", `${s.company} · ${s.id}${s.hours == null ? " · monitor offline, duration unknown" : ""}`));
+  score.append(el("b", null, hrs(s)), el("span", null, "hours discharging"));
+  head.append(info, score); }
   const verdict = el("section");
   verdict.append(el("span", "tag" + (s.verdict === "dry_spill_candidate" ? " dry" : ""), v.name));
   const gauges = el("section");

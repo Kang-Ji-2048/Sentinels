@@ -23,6 +23,8 @@ python andrew-site/serve.py                       # open http://localhost:8000
 - **Side panel:** the longest dry spills, then the selected site's case: verdict, gauge readings and the agents'
   conversation when one exists.
 
+- **Dashboard tab** (`dashboard.html`): the same map and data as a card layout: flat dot map on the left, the
+  numbered list of longest dry spills and the selected case on the right. Same Cases and Reports tabs.
 - **Cases tab:** a status board (New, Ruled innocent, Needs review, Report drafted, Approved, Rejected), the
   confidence swing (how far the web evidence moved the skeptic's view) and repeat sites (overflows with more
   than one dry-spill candidate across detector runs). Click any case to open it on the map.

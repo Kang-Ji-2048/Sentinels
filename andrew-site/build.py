@@ -64,3 +64,6 @@ print("wrote", out)
 flat = out.with_name("2d.html")  # same page with the showcase site's flat 2D dot map
 flat.write_text(template.replace("/*DATA*/null", data).replace("/*MAP2D*/false", "true"), encoding="utf-8")
 print("wrote", flat)
+dash = out.with_name("dashboard.html")  # card-layout dashboard tab, flat map
+dash.write_text(template.replace("/*DATA*/null", data).replace("/*MAP2D*/false", "true").replace("/*DASH*/false", "true"), encoding="utf-8")
+print("wrote", dash)
