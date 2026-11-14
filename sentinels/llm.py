@@ -15,7 +15,7 @@ CLAUDE_MODEL = os.environ.get("SENTINELS_CLAUDE_MODEL", "claude-opus-5-5")
 SKEPTIC_FALLBACK_MODEL = "claude-haiku-5-5"
 # Databricks foundation models are served through Unity Gateway as system.ai.<name>;
 # names differ by workspace (see the model-listing cell in notebooks/03_agents).
-SKEPTIC_DATABRICKS_MODEL = os.environ.get("SENTINELS_SKEPTIC_MODEL", "system.ai.gpt-5-2")
+SKEPTIC_DATABRICKS_MODEL = os.environ.get("SENTINELS_SKEPTIC_MODEL", "system.ai.databricks-gpt-5-5")
 
 _claude = None
 # On Databricks, set with gateway_client() below

@@ -21,7 +21,7 @@ import os
 dbutils.widgets.text("anthropic_key", "")
 dbutils.widgets.text("linkup_key", "")
 dbutils.widgets.text("top_n", "3")
-dbutils.widgets.text("skeptic_model", "system.ai.gpt-5-2")
+dbutils.widgets.text("skeptic_model", "system.ai.databricks-gpt-5-5")
 def _secret(key, widget):
     try:
         return dbutils.secrets.get("sentinels", key)
