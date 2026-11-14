@@ -128,7 +128,8 @@ reports = pd.DataFrame([{"site_id": r["site_id"], "decided_at": r["decided_at"],
                          "report_md": r["report"] or "", "evidence_json": json.dumps(r["evidence"] or {}),
                          "citations_checked": (r["citations"] or {}).get("checked"),
                          "citations_verified": (r["citations"] or {}).get("verified"),
-                         "citations_json": json.dumps(r["citations"] or {})} for r in results])
+                         "citations_json": json.dumps(r["citations"] or {}),
+                         "case_json": json.dumps(r, default=str)} for r in results])  # full conversation, for the sites
 spark.createDataFrame(reports).write.mode("append").option("mergeSchema", "true").saveAsTable(T("gold_evidence_packs"))
 # Training rows for the Adaption triage model (notebook 04): spill data -> the team's verdict
 from sentinels import adaption
@@ -147,7 +148,27 @@ Markdown(first["report"]) if first else print("No case survived the skeptic.")
 
 # COMMAND ----------
 
-# Export one complete case for the showcase site (data/example_case.json): copy this output.
-best = max((r for r in results if r["report"]), key=lambda r: r["breach_confidence"], default=None)
-if best:
-    print(json.dumps(best, default=str, indent=1))
+# Export for the sites: every agent conversation so far (latest per site) + the detector run they belong to.
+# Download both files from Workspace > Users > you > sentinels_export (right-click > Download) and send them over.
+import os
+from datetime import datetime, timezone
+export_dir = f"/Workspace/Users/{_user}/sentinels_export"
+os.makedirs(export_dir, exist_ok=True)
+packs = spark.table(T("gold_evidence_packs"))
+cases = {}
+if "case_json" in packs.columns:
+    for row in packs.where("case_json IS NOT NULL").orderBy("decided_at").select("case_json").collect():
+        c = json.loads(row.case_json)
+        cases[c["site_id"]] = c
+for r in results:  # this run's cases win
+    cases[r["site_id"]] = json.loads(json.dumps(r, default=str))
+with open(f"{export_dir}/example_cases.json", "w") as f:
+    json.dump(list(cases.values()), f, indent=1)
+assessed = py_records(spark.table(T("gold_spill_assessments")).toPandas())
+for a in assessed:
+    a["gauges"] = json.loads(a.pop("gauges_json") or "[]")
+run_at = max((a["assessed_at"] for a in assessed), default=datetime.now(timezone.utc))
+with open(f"{export_dir}/latest_run.json", "w") as f:
+    json.dump({"run_at": str(run_at), "overflows": None, "recent_spills": len(assessed), "assessed": assessed},
+              f, default=str, indent=1)
+print(f"Wrote {len(cases)} agent conversations and {len(assessed)} assessed spills to {export_dir}")
