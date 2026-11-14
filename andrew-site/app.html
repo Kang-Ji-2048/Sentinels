@@ -28,7 +28,7 @@
   .logo { font: 800 22px var(--serif); letter-spacing: -.04em; color: var(--navy); }
   .nav { display: flex; gap: 4px; }
   .nav > * { height: 56px; display: flex; align-items: center; padding: 0 16px; font-weight: 500; color: inherit; text-decoration: none; }
-  .nav a:hover { color: #fff; }
+  .nav a:hover { color: var(--navy); }
   .nav a:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
   .nav .off { opacity: .55; cursor: default; }
   .nav .on { color: #fff; font-weight: 600; border-bottom: 4px solid var(--gold); padding-top: 4px; }
@@ -51,6 +51,11 @@
   .reset { position: absolute; z-index: 3; left: 24px; bottom: 24px; padding: 8px 14px; background: var(--navy); color: #fff; border: 0; font-weight: 600; cursor: pointer; }
   .reset:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
   .reset[hidden] { display: none; }
+  .views { margin: 2px 0 0; pointer-events: auto; color: var(--muted); }
+  .views a { color: var(--navy); font-weight: 600; }
+  .views a[aria-current] { color: var(--ink); text-decoration: none; }
+  .flat .sw { width: 12px; height: 12px; margin: 0; border-radius: 50%; border: 1px solid #fff; box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 18%, transparent); }
+  .flat .sw.rain, .flat .sw.none { width: 9px; height: 9px; margin: 0 1.5px; }
   .toggle { pointer-events: auto; display: flex; gap: 8px; align-items: center; margin-top: 4px; font-weight: 500; cursor: pointer; }
   .toggle input { width: 16px; height: 16px; margin: 0; accent-color: var(--crimson); cursor: pointer; }
   .gauge-label { font: 13px/1.3 var(--sans); padding: 2px 6px; background: rgba(243, 246, 241, .94); border: 1px solid var(--navy); color: var(--ink); white-space: nowrap; pointer-events: none; }
@@ -193,7 +198,8 @@
         <div><span class="sw dry"></span>Dry spill candidate</div>
         <div><span class="sw rain"></span>Rain explained</div>
         <div><span class="sw none"></span>No gauge within 10 km</div>
-        <p>Column height is hours discharging.</p>
+        <p id="size-key">Column height is hours discharging.</p>
+        <p class="views">Map: <a href="index.html" data-v="3d">3D columns</a> · <a href="2d.html" data-v="2d">2D dots</a></p>
         <label class="toggle"><input type="checkbox" id="dryOnly"> Dry spills only</label>
       </div>
     </div>
@@ -246,6 +252,12 @@ const AREA_M = 10000;          // the detector checks rain gauges within 10 km
 const DRY_MM = 0.25;           // detector threshold: under this in a 24 h window is a dry day
 const wet = g => g.mm_0_24h_before >= DRY_MM || g.mm_24_48h_before >= DRY_MM;
 let dryOnly = false;
+const MAP2D = /*MAP2D*/false;  // build.py writes 2d.html with this set: the showcase site's flat dot map
+const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
+document.body.classList.toggle("flat", MAP2D);
+if (MAP2D) document.getElementById("size-key").textContent = "Dot size is hours discharging.";
+document.querySelectorAll(".views a").forEach(a => { if ((a.dataset.v === "2d") === MAP2D) a.setAttribute("aria-current", "page"); a.href += location.hash; });
+let pulse = 0;
 
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
 const title = s => s === s.toUpperCase() ? s.toLowerCase().replace(/\b\w/g, c => c.toUpperCase()) : s;
@@ -262,6 +274,29 @@ document.getElementById("updated").textContent = isNaN(when) ? "" :
 // One semi-transparent cylinder per site; height is hours discharging.
 const kind = s => VERDICT[s.verdict] ? s.verdict : "no_gauge";
 let selected = null;
+
+// 2D: the showcase site's dots. Area ~ hours, soft glow, pulsing ring on dry spills, white edge.
+const COL = { dry_spill_candidate: [200, 16, 46], rain_explained: [18, 53, 91], no_gauge: [110, 120, 125] };
+const NO_DEPTH = { depthCompare: "always", depthWriteEnabled: false };
+const dotSize = s => Math.min(2.6 + 1.9 * Math.sqrt(Math.max(s.hours || 0, 0.2)), 13);  // px
+function dotLayers(base) {
+  const sel = selected && selected.id;
+  const shown = sites.filter(s => !dryOnly || s.verdict === "dry_spill_candidate" || s.id === sel);
+  const rgb = s => s.id === sel ? GOLD.slice(0, 3) : (COL[s.verdict] || COL.no_gauge);
+  const alpha = s => s.id === sel ? 255 : s.verdict === "dry_spill_candidate" ? 235 : 150;
+  return [...base,
+    new deck.ScatterplotLayer({ id: "glow", parameters: NO_DEPTH, data: shown, getPosition: s => [s.lon, s.lat], radiusUnits: "pixels",
+      getRadius: s => dotSize(s) * 2.1, getFillColor: s => [...rgb(s), alpha(s) * 0.16], updateTriggers: { getFillColor: sel } }),
+    new deck.ScatterplotLayer({ id: "pulse", parameters: NO_DEPTH, data: shown.filter(s => s.verdict === "dry_spill_candidate"),
+      getPosition: s => [s.lon, s.lat], radiusUnits: "pixels", getRadius: dotSize, radiusScale: 1 + 1.6 * pulse,
+      stroked: true, filled: false, lineWidthUnits: "pixels", getLineWidth: 1.2, getLineColor: [200, 16, 46, 170 * (1 - pulse)] }),
+    new deck.ScatterplotLayer({ id: "dots", parameters: NO_DEPTH, data: shown, getPosition: s => [s.lon, s.lat], radiusUnits: "pixels",
+      getRadius: s => dotSize(s) * (s.id === sel ? 1.4 : 1), pickable: true, autoHighlight: true, highlightColor: [255, 255, 255, 70],
+      stroked: true, lineWidthUnits: "pixels", getLineWidth: 1,
+      getFillColor: s => [...rgb(s), alpha(s)], getLineColor: s => s.id === sel ? [20, 32, 43, 255] : [255, 255, 255, 200],
+      updateTriggers: { getFillColor: sel, getLineColor: sel, getRadius: sel } }),
+  ];
+}
 
 function layers() {
   const z = map.getZoom();
@@ -290,17 +325,21 @@ function layers() {
     filled: true, stroked: true, lineWidthUnits: "pixels", getLineWidth: 2,
     getFillColor: g => wet(g) ? [18, 53, 91, 255] : [243, 246, 241, 255], getLineColor: [18, 53, 91, 255],
   });
+  if (MAP2D) return dotLayers([area, links, gauges]);
   const context = dryOnly ? [] : [stack("rain_explained"), stack("no_gauge")];
   return [area, links, gauges, ...context, stack("dry_spill_candidate")];
 }
 
-const ENGLAND = [[-5.4, 50.0], [1.8, 55.2]], ENGLAND_PAD = { top: 0, bottom: 0, left: 240, right: 0 };
+const ENGLAND = MAP2D ? [[-5.8, 49.9], [1.8, 55.85]] : [[-5.4, 50.0], [1.8, 55.2]];  // flat view needs all of England in frame
+const ENGLAND_PAD = MAP2D ? { top: 20, bottom: 20, left: 260, right: 20 } : { top: 0, bottom: 0, left: 240, right: 0 };
 const map = new maplibregl.Map({
   container: "map", style: "https://basemaps.cartocdn.com/gl/positron-nolabels-gl-style/style.json",
   bounds: ENGLAND, fitBoundsOptions: { padding: ENGLAND_PAD },
-  pitch: 45, maxPitch: 70, attributionControl: { compact: true },
+  pitch: MAP2D ? 0 : 45, maxPitch: MAP2D ? 0 : 70, attributionControl: { compact: true },
 });
+if (MAP2D) { map.dragRotate.disable(); map.touchZoomRotate.disableRotation(); }
 map.on("style.load", () => {
+  if (MAP2D) return;  // 2D keeps the showcase site's plain Positron basemap
   // Restyle Positron into the Figma palette: land, sea, coastline. Everything else is hidden.
   for (const l of map.getStyle().layers) {
     if (l.id === "background") map.setPaintProperty(l.id, "background-color", "#bfd6dd");  // sea, so unloaded tiles read as sea
@@ -327,7 +366,12 @@ map.on("zoom", () => overlay.setProps({ layers: layers() }));
 const resetBtn = document.getElementById("reset");
 document.getElementById("dryOnly").onchange = e => { dryOnly = e.target.checked; overlay.setProps({ layers: layers() }); };
 resetBtn.onclick = () => select(null);
-map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "bottom-right");
+map.addControl(new maplibregl.NavigationControl({ visualizePitch: !MAP2D, showCompass: !MAP2D }), "bottom-right");
+if (MAP2D && !REDUCED) requestAnimationFrame(function tick(now) {  // pulse rings on dry spills; first frame runs after the page script
+  pulse = (now % 1800) / 1800;
+  if (!views.map.hidden) overlay.setProps({ layers: layers() });
+  requestAnimationFrame(tick);
+});
 
 const label = (text, lngLat, cls = "sea-label") => new maplibregl.Marker({ element: el("div", cls, text), anchor: "center" }).setLngLat(lngLat).addTo(map);
 label("North Sea", [2.6, 54.6]); label("Irish Sea", [-4.9, 53.75]); label("English Channel", [-1.6, 50.25]);
@@ -360,7 +404,7 @@ function renderCase() {
   const c = document.getElementById("case");
   if (!selected) {
     const box = el("div", "empty");
-    box.append(el("h2", null, "Case"), el("p", null, "Select a stack on the map or a row above to read the case."));
+    box.append(el("h2", null, "Case"), el("p", null, "Select a spill on the map or a row above to read the case."));
     return c.replaceChildren(box);
   }
   const s = selected, v = VERDICT[s.verdict] || VERDICT.no_gauge;
@@ -432,10 +476,10 @@ function select(s) {
   if (!selected) {
     resetBtn.hidden = true;
     if (dry[0]) showLabel(dry[0], false);
-    return map.fitBounds(ENGLAND, { padding: ENGLAND_PAD, pitch: 45, bearing: 0, duration: 1200 });
+    return map.fitBounds(ENGLAND, { padding: ENGLAND_PAD, pitch: MAP2D ? 0 : 45, bearing: 0, duration: 1200 });
   }
   showLabel(s, true);
-  map.flyTo({ center: [s.lon, s.lat], zoom: 10.3, pitch: 55, bearing: 0, padding: { top: 60, bottom: 0, left: 300, right: 0 }, duration: 1600, essential: true });
+  map.flyTo({ center: [s.lon, s.lat], zoom: 10.3, pitch: MAP2D ? 0 : 55, bearing: 0, padding: { top: 60, bottom: 0, left: 300, right: 0 }, duration: 1600, essential: true });
   resetBtn.hidden = false;
 }
 renderRows(); renderCase();

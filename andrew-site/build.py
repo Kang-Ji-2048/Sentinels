@@ -61,3 +61,6 @@ out = here / "build" / "index.html"
 out.parent.mkdir(exist_ok=True)
 out.write_text(template.replace("/*DATA*/null", data))
 print("wrote", out)
+flat = out.with_name("2d.html")  # same page with the showcase site's flat 2D dot map
+flat.write_text(template.replace("/*DATA*/null", data).replace("/*MAP2D*/false", "true"))
+print("wrote", flat)

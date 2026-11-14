@@ -8,4 +8,4 @@ python scripts/detect.py                       # live feeds -> data/latest_run.j
 python site/build_data.py                      # site 1 -> site/data/run.json
 python andrew-site/build.py                    # site 2 -> andrew-site/build/index.html
 mkdir -p andrew-site/public
-cp andrew-site/build/index.html andrew-site/public/index.html   # committed snapshot Vercel serves
+cp andrew-site/build/index.html andrew-site/build/2d.html andrew-site/public/   # committed snapshots Vercel serves (3D + 2D)
