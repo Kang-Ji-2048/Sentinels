@@ -14,19 +14,20 @@ The full real run is in `data/example_case.json`.
    0.2 mm in the 48 hours before it started and 0.0 mm during it. (We first ranked Helliwell Syke higher, but its monitor was offline, so the
    detector now treats offline durations as unknown. Worth telling judges: it shows the data limits are handled.)
 2. *Investigator (Claude):* builds the case, checks memory for this site's past spills and the company's record.
-3. *Skeptic (gpt-oss-120b, served on Databricks):* argues the other side and rates pump failure "high", with
-   sensor fault and gauges missing local rain as "medium". Breach confidence: 0.25. A different model family means
+3. *Skeptic (gpt-oss-120b, served on Databricks):* argues the other side: sensor fault, rain the gauges missed,
+   pump failure and data-feed errors, each rated "medium". Breach confidence: 0.42. A different model family means
    it doesn't just agree with Claude. Only near-certain innocent cases (below 0.15) stop here.
-4. *Evidence agent (Claude + Linkup):* 5 live searches test both sides. It found that regulators described the region
-   as in "severe drought" on 5 Nov, no reported pump failure or local rain, and South West Water's £7.9m fine in
-   Sept 2026 for illegal discharges. Every fact is cited, and weak sources are flagged as weak.
-5. *Adjudicator (Claude):* weighs each objection against the evidence. Refuted: missed rain, groundwater, and pump
-   failure as an excuse (failing to fix a pump failure was itself one of the charges). Still standing: sensor fault
-   and tidal influence. Final confidence 0.68, so the verdict is **likely_breach**.
+4. *Evidence agent (Claude + Linkup):* 5 live searches and 3 full-page reads (BBC, Surfers Against Sewage,
+   South West Water). It found the region was in severe drought a week earlier (BBC, 6 Nov), that the Carnon has a
+   history of dry-day spills (SAS), and no report of a pump failure.
+5. *Adjudicator (Claude):* weighs each objection against the evidence. Refuted: snowmelt; groundwater weakened by
+   the drought. Still standing: sensor fault, a pump failure nobody reported, and the open-ended record. Final
+   confidence 0.62, so the verdict is **needs_review**: refer for investigation, honestly flagged as unverified.
 6. *Drafter:* writes the evidence pack and a draft report to the EA, saying clearly it is a possible breach and
    listing what the EA should check. A human approves before anything is sent.
 7. *Citation verifier (Linkup fetch):* re-opens each cited page and checks it really says what the pack
-   claims. The pack ends with "n of m citations confirmed", with the supporting quote for each.
+   claims. Here **9 of 9** cited claims were confirmed, each with the supporting quote. (Same run, River Tees
+   NWL01051(2) came out likely_breach at 0.68 with 5 of 6 citations confirmed: show it if time allows.)
 8. Open the MLflow trace (the verdict and citation score are attached as feedback): every span, prompt, tool call and token count.
 
 **Why it matters (30 s).** Memory in Delta builds a record of repeat offenders and faulty sensors over time.
