@@ -12,7 +12,19 @@ const ENGLAND = { longitude: -1.9, latitude: 52.9, zoom: 5.4, pitch: 0, bearing:
 const isSmall = matchMedia("(max-width: 600px)").matches;
 if (isSmall) ENGLAND.zoom = 4.6;
 
+// Show the demo video only once site/media/demo.mp4 exists; until then a placeholder.
+async function setupVideo() {
+  const v = document.getElementById("demo-video");
+  try {
+    const r = await fetch("media/demo.mp4", { method: "HEAD" });
+    if (!r.ok) return;
+    v.hidden = false;
+    document.getElementById("video-pending").remove();
+  } catch (_) { /* keep the placeholder */ }
+}
+
 async function main() {
+  setupVideo();
   const run = await (await fetch("data/run.json")).json();
   let caseData = null;
   try { const r = await fetch("data/case.json"); if (r.ok) caseData = await r.json(); } catch (_) { /* no case yet */ }
