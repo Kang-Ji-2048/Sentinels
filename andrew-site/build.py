@@ -28,7 +28,7 @@ sites = [{"id": a["id"], "company": a["company"], "name": a.get("receivingwaterc
 cases = {}
 for f in sorted([*(root / "data" / "reports").glob("*.json"), *(root / "data").glob("example_*.json"),
                  *here.glob("demo_*.json")],  # demo_* = made-up placeholder cases, flagged "illustrative"
-                key=lambda f: f.stat().st_mtime):
+                key=lambda f: (not f.name.startswith("demo_"), f.stat().st_mtime)):  # real runs always beat demo_*
     loaded = json.loads(f.read_text())
     for c in loaded if isinstance(loaded, list) else [loaded]:
         cases[c["site_id"]] = c
