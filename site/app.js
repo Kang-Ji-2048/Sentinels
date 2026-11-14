@@ -50,41 +50,79 @@ function bars(byCompany) {
 function setupMap(spills, caseSpill) {
   if (!window.deck) { document.getElementById("deck").innerHTML = '<p style="padding:120px 24px;color:#6f7f89">Map failed to load.</p>'; return; }
   const tip = document.getElementById("tip");
-  let step = 0;
-  const layer = () => new deck.ColumnLayer({
-    id: "spills", data: spills, diskResolution: 16, radius: step === 3 ? 350 : (isSmall ? 3500 : 2600), extruded: true, pickable: true, autoHighlight: true,
-    highlightColor: [255, 255, 255, 90],
-    getPosition: d => [d.longitude, d.latitude],
-    getElevation: d => {
-      const h = Math.max(d.duration_hours || 0, 0.4);
-      if (step === 0) return 400;
-      if (step >= 2 && d.verdict !== "dry_spill_candidate") return 300;
-      return h * (step === 3 ? 120 : 1500);
-    },
-    getFillColor: d => {
-      if (step === 0) return [...NEUTRAL, 200];
-      const c = COL[d.verdict] || NEUTRAL;
-      if (step >= 2 && d.verdict !== "dry_spill_candidate") return [...c, 45];
-      if (step === 3 && d.id !== caseSpill.id) return [...c, 120];
-      return [...c, 235];
-    },
-    updateTriggers: { getElevation: step, getFillColor: step },
-    transitions: { getElevation: { duration: 1400, easing: t => 1 - Math.pow(1 - t, 3) }, getFillColor: 900 },
-  });
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const dry = spills.filter(d => d.verdict === "dry_spill_candidate");
+  let step = -1;          // discrete styling state (nearest step)
+  let cam = null;         // current camera, driven by scroll
+  let pulse = 0;
 
   const views = [
-    ENGLAND,
-    { ...ENGLAND, pitch: 50, bearing: -12 },
-    { ...ENGLAND, pitch: 55, bearing: 12, zoom: ENGLAND.zoom + .2 },
-    { longitude: caseSpill.longitude, latitude: caseSpill.latitude, zoom: isSmall ? 10 : 11, pitch: 62, bearing: -25 },
+    { ...ENGLAND, pitch: 25 },
+    { ...ENGLAND, pitch: 48, bearing: -14 },
+    { ...ENGLAND, pitch: 55, bearing: 10, zoom: ENGLAND.zoom + .25 },
+    { longitude: caseSpill.longitude, latitude: caseSpill.latitude, zoom: isSmall ? 10.2 : 11.2, pitch: 60, bearing: -28 },
   ];
 
+  // Column size follows zoom so columns read the same on screen at every scale.
+  const zoomK = z => Math.pow(2, (ENGLAND.zoom - z) * 0.7);
+  const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+  const layers = () => {
+    const k = cam ? zoomK(cam.zoom) : 1;
+    const s = Math.max(step, 0);
+    return [
+      new deck.ScatterplotLayer({
+        id: "halo", data: s >= 2 ? dry : [], radiusUnits: "meters", stroked: true, filled: true,
+        getPosition: d => [d.longitude, d.latitude],
+        getRadius: d => (d.id === caseSpill.id && s === 3 ? 9000 : 5200),
+        radiusScale: k * (1 + 0.55 * pulse),
+        getFillColor: [239, 91, 69, Math.round(28 * (1 - pulse))],
+        getLineColor: [239, 91, 69, Math.round(150 * (1 - pulse))],
+        lineWidthUnits: "pixels", getLineWidth: 1.2,
+        updateTriggers: { getRadius: s },
+      }),
+      new deck.ColumnLayer({
+        id: "spills", data: spills, diskResolution: 36, radius: (isSmall ? 4000 : 3200) * k, extruded: true,
+        pickable: true, autoHighlight: true, highlightColor: [255, 255, 255, 80],
+        material: { ambient: .55, diffuse: .6, shininess: 40, specularColor: [255, 240, 220] },
+        elevationScale: k,
+        getPosition: d => [d.longitude, d.latitude],
+        getElevation: d => {
+          const h = Math.max(d.duration_hours || 0, 0.4);
+          if (s === 0) return 1200;
+          if (s >= 2 && d.verdict !== "dry_spill_candidate") return 350;
+          return h * 1900;
+        },
+        getFillColor: d => {
+          if (s === 0) return [...NEUTRAL, 210];
+          const c = COL[d.verdict] || NEUTRAL;
+          if (s >= 2 && d.verdict !== "dry_spill_candidate") return [...c, 40];
+          if (s === 3 && d.id !== caseSpill.id) return [...c, 110];
+          return [...c, 245];
+        },
+        updateTriggers: { getElevation: s, getFillColor: s },
+        transitions: {
+          getElevation: { duration: 1600, easing: t => 1 - Math.pow(1 - t, 4) },
+          getFillColor: { duration: 1000, easing: t => t * (2 - t) },
+        },
+      }),
+    ];
+  };
+
+  const lighting = new deck.LightingEffect({
+    ambient: new deck.AmbientLight({ color: [255, 255, 255], intensity: 1.15 }),
+    sun: new deck.DirectionalLight({ color: [255, 244, 228], intensity: 1.6, direction: [-2, -4, -3] }),
+  });
+
+  const box = document.getElementById("deck");
   const dg = new deck.DeckGL({
     container: "deck",
     mapStyle: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
-    initialViewState: views[0],
-    controller: isSmall ? false : { scrollZoom: false },
-    layers: [layer()],
+    viewState: views[0],
+    controller: false,          // the camera is driven by scrolling
+    useDevicePixels: true,      // full retina resolution
+    effects: [lighting],
+    layers: layers(),
     onHover: ({ object, x, y }) => {
       if (!object) { tip.hidden = true; return; }
       tip.hidden = false;
@@ -96,21 +134,51 @@ function setupMap(spills, caseSpill) {
     },
   });
 
-  const go = s => {
-    if (s === step) return;
-    step = s;
-    dg.setProps({
-      layers: [layer()],
-      initialViewState: { ...views[s], transitionDuration: s === 3 ? 3200 : 1800, transitionInterpolator: new deck.FlyToInterpolator({ speed: 1.2 }) },
-    });
-  };
-  const stepEls = document.querySelectorAll(".step");
-  const io = new IntersectionObserver(es => es.forEach(e => {
-    if (!e.isIntersecting) return;
-    stepEls.forEach(x => x.classList.toggle("active", x === e.target));
-    go(+e.target.dataset.step);
-  }), { rootMargin: "-45% 0px -45% 0px" });
-  stepEls.forEach(el => io.observe(el));
+  const fly = new deck.FlyToInterpolator({ curve: 1.3 });
+  const stepEls = [...document.querySelectorAll(".step")];
+
+  // Scroll position -> continuous progress t in [0, steps-1].
+  function progress() {
+    const mid = innerHeight / 2;
+    const centres = stepEls.map(el => { const r = el.getBoundingClientRect(); return r.top + r.height / 2 - mid; });
+    if (centres[0] >= 0) return 0;
+    for (let i = 0; i < centres.length - 1; i++) {
+      if (centres[i + 1] > 0) return i + (-centres[i]) / (centres[i + 1] - centres[i]);
+    }
+    return centres.length - 1;
+  }
+
+  function cameraAt(t) {
+    const i = Math.min(Math.floor(t), views.length - 2);
+    const f = ease(Math.min(Math.max(t - i, 0), 1));
+    const size = { width: box.clientWidth, height: box.clientHeight };
+    const a = { ...views[i], ...size }, b = { ...views[i + 1], ...size };
+    return fly.interpolateProps(a, b, f);
+  }
+
+  // Smoothly chase the scroll target every frame (critically damped), so fast scrolls still glide.
+  let target = 0, shown = 0, lastT = performance.now(), running = false;
+  function frame(now) {
+    const dt = Math.min(now - lastT, 64); lastT = now;
+    target = progress();
+    shown += (target - shown) * (1 - Math.exp(-dt / (reduced ? 1 : 140)));
+    if (Math.abs(target - shown) < 1e-4) shown = target;
+    const c = cameraAt(shown);
+    if (!reduced) c.bearing += 3 * Math.sin(now / 7000);     // slow drift keeps the scene alive
+    cam = c;
+    pulse = reduced ? 0 : (now % 2400) / 2400;
+    const s = Math.round(shown);
+    if (s !== step) {
+      step = s;
+      stepEls.forEach(x => x.classList.toggle("active", +x.dataset.step === s));
+    }
+    dg.setProps({ viewState: { ...c, transitionDuration: 0 }, layers: layers() });
+    if (running) requestAnimationFrame(frame);
+  }
+  new IntersectionObserver(([e]) => {
+    if (e.isIntersecting && !running) { running = true; lastT = performance.now(); requestAnimationFrame(frame); }
+    else if (!e.isIntersecting) running = false;
+  }, { rootMargin: "200px 0px" }).observe(document.getElementById("map"));
 
   // Retitle the last step for the case being followed.
   const last = document.querySelector('.step[data-step="3"] .card');
