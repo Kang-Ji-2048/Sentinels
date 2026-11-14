@@ -4,7 +4,7 @@
 
 > About 40 potentially illegal sewage spills happen every day in England, and almost none are caught in real time.
 
-Storm overflows are only allowed to discharge sewage when heavy rain would otherwise flood homes. When an overflow spills on a **dry day**, it may be breaching its permit. In 2025 England had about 291k storm overflow spills (EA). A Times/SAS analysis estimated around 15k dry-day spills a year. Water companies now publish near-real-time overflow status, but nobody joins that data to rainfall as it happens, checks for innocent explanations, and turns a suspicious spill into evidence someone can act on.
+Storm overflows are only allowed to discharge sewage when heavy rain would otherwise flood homes. When an overflow spills on a **dry day**, it may be breaching its permit. In 2025 England had 291,492 storm overflow spills ([Environment Agency](https://www.gov.uk/government/news/fewer-and-shorter-storm-overflow-spills-in-2025-new-monitoring-data-shows)). Water companies' own figures, obtained by The Times, showed almost 15,000 dry-day spills in 2025, lasting 157,803 hours: about 40 a day ([The Times via East Devon Watch](https://eastdevonwatch.org/2026/03/17)). Water companies now publish near-real-time overflow status, but nobody joins that data to rainfall as it happens, checks for innocent explanations, and turns a suspicious spill into evidence someone can act on.
 
 Sentinels does this as a pipeline on Databricks plus a team of agents:
 
@@ -24,7 +24,7 @@ This is not an app. It is a pipeline and an agent system, with every step traced
 ```mermaid
 flowchart LR
     subgraph Sources["Live open data"]
-        A1["9 water company<br/>ArcGIS overflow feeds<br/>(~15k overflows)"]
+        A1["8 English water company<br/>ArcGIS overflow feeds<br/>(~13k overflows)"]
         A2["EA flood-monitoring API<br/>rain gauges, 15-min readings"]
     end
 
