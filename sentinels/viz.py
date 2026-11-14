@@ -19,5 +19,5 @@ def spill_map(assessed: list[dict]) -> pdk.Deck:
                       elevation_scale=1500, radius=2500, get_fill_color="colour", pickable=True,
                       auto_highlight=True, extruded=True)
     view = pdk.ViewState(latitude=53.0, longitude=-1.8, zoom=5.6, pitch=50, bearing=-15)
-    return pdk.Deck(layers=[layer], initial_view_state=view, map_style="dark",
+    return pdk.Deck(layers=[layer], initial_view_state=view, map_provider="carto", map_style=pdk.map_styles.DARK,
                     tooltip={"html": "{label}"})

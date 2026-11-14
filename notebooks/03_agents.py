@@ -21,6 +21,7 @@ import os
 dbutils.widgets.text("anthropic_key", "")
 dbutils.widgets.text("linkup_key", "")
 dbutils.widgets.text("top_n", "3")
+dbutils.widgets.text("skeptic_model", "system.ai.gpt-5-2")
 def _secret(key, widget):
     try:
         return dbutils.secrets.get("sentinels", key)
@@ -37,8 +38,17 @@ from databricks.sdk import WorkspaceClient
 from sentinels import llm, orchestrator
 from sentinels.memory import CaseMemory
 
-# Skeptic runs on a Databricks Foundation Model endpoint: a different model family from Claude
-llm.SKEPTIC_CLIENT = WorkspaceClient().serving_endpoints.get_open_ai_client()
+# Skeptic runs on a Databricks foundation model via Unity Gateway: a different model family from Claude
+w = WorkspaceClient()
+token = w.config.authenticate()["Authorization"].split(" ", 1)[1]
+llm.SKEPTIC_CLIENT = llm.gateway_client(w.config.host, token)
+llm.SKEPTIC_DATABRICKS_MODEL = dbutils.widgets.get("skeptic_model")
+
+# Which foundation models does this workspace have? Pick a non-Claude one for the skeptic widget.
+try:
+    print([f"system.ai.{m.name}" for m in w.registered_models.list(catalog_name="system", schema_name="ai")])
+except Exception as e:
+    print("Could not list models; browse Catalog > system > ai instead:", e)
 mlflow.set_experiment(f"/Users/{spark.sql('SELECT current_user()').first()[0]}/sentinels")
 try:
     mlflow.anthropic.autolog()  # token usage + raw calls under each agent span

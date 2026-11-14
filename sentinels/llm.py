@@ -13,12 +13,20 @@ import anthropic
 
 CLAUDE_MODEL = os.environ.get("SENTINELS_CLAUDE_MODEL", "claude-opus-5-5")
 SKEPTIC_FALLBACK_MODEL = "claude-haiku-5-5"
-# Model names available differ by workspace: check Serving > Foundation models.
-SKEPTIC_DATABRICKS_MODEL = os.environ.get("SENTINELS_SKEPTIC_MODEL", "databricks-meta-llama-3-3-70b-instruct")
+# Databricks foundation models are served through Unity Gateway as system.ai.<name>;
+# names differ by workspace (see the model-listing cell in notebooks/03_agents).
+SKEPTIC_DATABRICKS_MODEL = os.environ.get("SENTINELS_SKEPTIC_MODEL", "system.ai.gpt-5-2")
 
 _claude = None
-# On Databricks, set this to WorkspaceClient().serving_endpoints.get_open_ai_client()
+# On Databricks, set with gateway_client() below
 SKEPTIC_CLIENT = None
+
+
+def gateway_client(host: str, token: str):
+    """OpenAI-compatible client for Databricks Unity Gateway (foundation models under system.ai)."""
+    from openai import OpenAI
+
+    return OpenAI(api_key=token, base_url=f"{host.rstrip('/')}/ai-gateway/mlflow/v1")
 
 
 def claude() -> anthropic.Anthropic:
@@ -55,9 +63,7 @@ def skeptic_json(system: str, user: str, schema: dict) -> tuple[dict, str]:
     host, token = os.environ.get("DATABRICKS_HOST"), os.environ.get("DATABRICKS_TOKEN")
     client = SKEPTIC_CLIENT
     if client is None and host and token:
-        from openai import OpenAI  # Databricks serving endpoints are OpenAI-compatible
-
-        client = OpenAI(api_key=token, base_url=f"{host.rstrip('/')}/serving-endpoints")
+        client = gateway_client(host, token)
     if client is not None:
         prompt = (f"{user}\n\nRespond with ONLY a JSON object matching this JSON schema, no prose:\n"
                   f"{json.dumps(schema)}")

@@ -9,5 +9,6 @@ from sentinels.viz import spill_map  # noqa: E402
 
 run = json.loads((root / "data" / "latest_run.json").read_text())
 out = root / "docs" / "map.html"
+out.parent.mkdir(exist_ok=True)
 spill_map(run["assessed"]).to_html(str(out), open_browser=False)
 print("wrote", out)

@@ -5,10 +5,16 @@ from collections import Counter
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+try:  # use the OS certificate store (needed behind antivirus HTTPS scanning, e.g. Avast on Windows)
+    import truststore
+    truststore.inject_into_ssl()
+except ImportError:
+    pass
 from sentinels import detect  # noqa: E402
 
 out = Path(__file__).resolve().parents[1] / "data" / "latest_run.json"
 result = detect.run()
+out.parent.mkdir(exist_ok=True)
 out.write_text(json.dumps(result, default=str, indent=1))
 print(f"{result['overflows']} overflows, {result['recent_spills']} spills started in the last 48h")
 print(Counter(a["verdict"] for a in result["assessed"]))

@@ -29,7 +29,10 @@ _DATE_FIELDS = {"statusstart", "latesteventstart", "latesteventend", "lastupdate
 
 
 def _ms_to_dt(ms):
-    return None if ms is None else datetime.fromtimestamp(ms / 1000, tz=timezone.utc)
+    # Some feeds use 1899-12-30 (negative epoch) as an "empty date" placeholder; Windows also rejects negatives
+    if ms is None or ms <= 0:
+        return None
+    return datetime.fromtimestamp(ms / 1000, tz=timezone.utc)
 
 
 def fetch_company(company: str, url: str, where: str = "1=1") -> list[dict]:

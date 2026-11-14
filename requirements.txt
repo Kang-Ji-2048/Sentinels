@@ -5,3 +5,4 @@ openai>=1.40
 linkup-sdk>=0.2
 mlflow>=2.18
 pydeck>=0.9
+truststore>=0.9
