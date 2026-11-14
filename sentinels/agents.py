@@ -89,20 +89,43 @@ def challenge(spill: dict, case: dict, history: list[dict]) -> dict:
 
 
 # ---------------------------------------------------------------- evidence agent (Linkup)
-LINKUP_URL = "https://api.linkup.so/v1/search"
+LINKUP_BASE = "https://api.linkup.so/v1"
 
 
-def linkup_search(query: str, depth: str = "standard", from_date: str | None = None) -> dict:
+def _linkup(path: str, body: dict, timeout: int = 60) -> dict:
+    r = requests.post(f"{LINKUP_BASE}{path}", json=body, timeout=timeout,
+                      headers={"Authorization": f"Bearer {os.environ['LINKUP_API_KEY']}"})
+    if r.status_code >= 400:
+        raise RuntimeError(f"Linkup {path} -> {r.status_code}: {r.text[:300]}")
+    return r.json()
+
+
+def linkup_search(query: str, depth: str = "standard", from_date: str | None = None,
+                  to_date: str | None = None) -> dict:
     body = {"q": query, "depth": depth, "outputType": "sourcedAnswer"}
     if from_date:
         body["fromDate"] = from_date
-    r = requests.post(LINKUP_URL, json=body, timeout=60,
-                     headers={"Authorization": f"Bearer {os.environ['LINKUP_API_KEY']}"})
-    r.raise_for_status()
-    data = r.json()
+    if to_date:
+        body["toDate"] = to_date
+    data = _linkup("/search", body)
     return {"answer": data.get("answer"),
             "sources": [{"name": s.get("name"), "url": s.get("url"), "snippet": (s.get("snippet") or "")[:400]}
                         for s in data.get("sources", [])[:6]]}
+
+
+def linkup_fetch(url: str, schema: dict | None = None, instructions: str | None = None) -> dict:
+    """Reads one web page (Linkup /fetch). With a schema, Linkup extracts grounded fields from it."""
+    body = {"url": url}
+    if schema:
+        body["schema"] = schema
+        if instructions:
+            body["instructions"] = instructions
+    try:
+        return _linkup("/fetch", body, timeout=90)
+    except RuntimeError as e:  # the schema field may want a JSON string rather than an object
+        if schema and "-> 400" in str(e):
+            return _linkup("/fetch", {**body, "schema": json.dumps(schema)}, timeout=90)
+        raise
 
 
 LINKUP_TOOL = {
@@ -116,31 +139,49 @@ LINKUP_TOOL = {
         "type": "object", "additionalProperties": False, "required": ["query"],
         "properties": {
             "query": {"type": "string", "description": "A specific natural-language search query"},
-            "from_date": {"type": "string", "description": "Optional ISO date (YYYY-MM-DD) to only get results after it"},
+            "from_date": {"type": "string", "description": "Optional ISO date (YYYY-MM-DD): only results after it"},
+            "to_date": {"type": "string", "description": "Optional ISO date (YYYY-MM-DD): only results before it"},
         },
+    },
+}
+
+LINKUP_FETCH_TOOL = {
+    "name": "linkup_fetch",
+    "description": ("Read the full text of one web page (Linkup fetch). Use it when a search result looks "
+                    "important but its snippet is not enough, e.g. a news article, an EA notice or the "
+                    "company's own page about this overflow."),
+    "strict": True,
+    "input_schema": {
+        "type": "object", "additionalProperties": False, "required": ["url"],
+        "properties": {"url": {"type": "string", "description": "The page URL, usually from a search result"}},
     },
 }
 
 
 @trace(name="evidence_agent", span_type="AGENT")
-def gather_evidence(spill: dict, case: dict, skeptic: dict, max_searches: int = 5) -> dict:
-    """Claude drives Linkup searches to confirm or refute the case, then reports cited findings."""
+def gather_evidence(spill: dict, case: dict, skeptic: dict, max_searches: int = 5, max_fetches: int = 3) -> dict:
+    """Claude drives Linkup searches (and full-page reads) to confirm or refute the case, then reports
+    cited findings."""
     system = ("You are a fact-checker building a cited evidence pack about a possible illegal sewage "
               "spill in England. Use linkup_search to verify the investigator's questions AND to test "
               f"the skeptic's objections (e.g. was there unrecorded rain or a reported pump failure?). "
-              f"Make at most {max_searches} searches. Only state facts that a source supports, and cite "
+              f"Make at most {max_searches} searches; for time-sensitive questions (weather, incidents) set "
+              "from_date/to_date to a window around the spill. Use linkup_fetch (at most "
+              f"{max_fetches} times) to read a promising page in full before relying on it. "
+              "Only state facts that a source supports, and cite "
               "every one by URL. Only cite a source that is actually about this overflow, river, town, "
               "company or the dates in question, from a news outlet, regulator, council, the company itself "
               "or a reference work. Leave out pages that only mention the topic in passing, content farms, "
               "forums, event listings, travel or forecast widgets, and results about other places with the "
-              "same name; if a search returns nothing usable, say it found nothing. Finish with a short findings report: what supports a breach, what "
-              "supports an innocent explanation, and what is unknown.")
+              "same name; if a search returns nothing usable, say it found nothing. Finish with a short "
+              "findings report: what supports a breach, what supports an innocent explanation, and what "
+              "is unknown.")
     messages = [{"role": "user", "content":
                  f"Spill:\n{_case_brief(spill)}\n\nInvestigator:\n{json.dumps(case)}\n\n"
                  f"Skeptic:\n{json.dumps(skeptic)}"}]
-    searches = []
-    for _ in range(max_searches + 2):
-        resp = llm.claude_call(system=system, messages=messages, tools=[LINKUP_TOOL],
+    searches, fetches = [], []
+    for _ in range(max_searches + max_fetches + 2):
+        resp = llm.claude_call(system=system, messages=messages, tools=[LINKUP_TOOL, LINKUP_FETCH_TOOL],
                                output_config={"effort": "medium"})
         messages.append({"role": "assistant", "content": resp.content})
         if resp.stop_reason != "tool_use":
@@ -150,19 +191,93 @@ def gather_evidence(spill: dict, case: dict, skeptic: dict, max_searches: int = 
             if block.type != "tool_use":
                 continue
             try:
-                out = _traced_search(block.input["query"], block.input.get("from_date"))
-                searches.append({"query": block.input["query"], **out})
+                if block.name == "linkup_fetch":
+                    if len(fetches) >= max_fetches:
+                        raise RuntimeError("fetch limit reached; write the report with what you have")
+                    out = _traced_fetch(block.input["url"])
+                    fetches.append({"url": block.input["url"], "chars": len(out["markdown"])})
+                else:
+                    if len(searches) >= max_searches:
+                        raise RuntimeError("search limit reached; write the report with what you have")
+                    out = _traced_search(block.input["query"], block.input.get("from_date"),
+                                         block.input.get("to_date"))
+                    searches.append({"query": block.input["query"], **out})
                 results.append({"type": "tool_result", "tool_use_id": block.id, "content": json.dumps(out)})
             except Exception as e:  # noqa: BLE001
                 results.append({"type": "tool_result", "tool_use_id": block.id,
-                                "content": f"Search failed: {e}", "is_error": True})
+                                "content": f"Tool failed: {e}", "is_error": True})
         messages.append({"role": "user", "content": results})
-    return {"report": llm.text_of(resp), "searches": searches}
+    return {"report": llm.text_of(resp), "searches": searches, "fetches": fetches}
 
 
 @trace(name="linkup_search", span_type="TOOL")
-def _traced_search(query, from_date=None):
-    return linkup_search(query, from_date=from_date)
+def _traced_search(query, from_date=None, to_date=None):
+    return linkup_search(query, from_date=from_date, to_date=to_date)
+
+
+@trace(name="linkup_fetch", span_type="TOOL")
+def _traced_fetch(url):
+    return {"url": url, "markdown": (linkup_fetch(url).get("markdown") or "")[:8000]}
+
+
+# ---------------------------------------------------------------- citation verifier (Linkup fetch)
+CLAIMS_SCHEMA = {
+    "type": "object", "additionalProperties": False, "required": ["claims"],
+    "properties": {"claims": {"type": "array", "items": {
+        "type": "object", "additionalProperties": False, "required": ["claim", "url"],
+        "properties": {"claim": {"type": "string", "description": "One factual claim, in one sentence"},
+                       "url": {"type": "string", "description": "The URL cited for it"}}}}},
+}
+SUPPORT_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "supports_claim": {"type": "boolean", "description": "true only if the page itself states the claim"},
+        "quote": {"type": "string", "description": "The sentence on the page that supports the claim, verbatim"},
+    },
+    "required": ["supports_claim", "quote"],
+}
+
+
+@trace(name="citation_verifier", span_type="AGENT")
+def verify_citations(report_md: str, max_checks: int = 10) -> dict:
+    """Re-reads every cited page with Linkup fetch and checks it really says what the pack claims."""
+    from concurrent.futures import ThreadPoolExecutor
+
+    claims = llm.claude_json(
+        "List every factual claim in this evidence pack that is backed by a web URL, one entry per "
+        "claim and URL pair. Skip claims backed only by the spill or rain-gauge data.",
+        report_md, CLAIMS_SCHEMA, effort="low")["claims"][:max_checks]
+
+    def check(c):
+        try:
+            data = _traced_check(c["url"], c["claim"])
+            ok = data.get("supports_claim") is True and bool(data.get("quote"))
+            return {**c, "status": "verified" if ok else "not_supported", "quote": data.get("quote")}
+        except Exception as e:  # noqa: BLE001
+            return {**c, "status": "unreachable", "quote": None, "error": str(e)[:200]}
+
+    with ThreadPoolExecutor(max_workers=5) as pool:
+        checks = list(pool.map(check, claims))
+    verified = sum(c["status"] == "verified" for c in checks)
+    return {"checked": len(checks), "verified": verified,
+            "precision": round(verified / len(checks), 2) if checks else None, "checks": checks}
+
+
+@trace(name="linkup_verify", span_type="TOOL")
+def _traced_check(url, claim):
+    return linkup_fetch(url, schema=SUPPORT_SCHEMA,
+                        instructions=f"Does this page support this claim? Claim: {claim}").get("data") or {}
+
+
+def citation_section(v: dict) -> str:
+    """Markdown appended to the evidence pack so the human reviewer sees which citations held up."""
+    icon = {"verified": "✅", "not_supported": "⚠️", "unreachable": "❔"}
+    lines = [f"\n\n## Citation check (Linkup fetch)\n\n{v['verified']} of {v['checked']} cited claims were "
+             "confirmed by re-reading the cited page.\n"]
+    for c in v["checks"]:
+        q = f' "{c["quote"][:200]}"' if c.get("quote") and c["status"] == "verified" else ""
+        lines.append(f"- {icon[c['status']]} {c['claim']} ({c['url']}){q}")
+    return "\n".join(lines)
 
 
 # ---------------------------------------------------------------- adjudicator

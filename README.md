@@ -12,7 +12,7 @@ Sentinels does this as a pipeline on Databricks plus a team of agents:
 2. **Flag.** Mark spills that started with no meaningful rain nearby.
 3. **Investigate.** An investigator agent builds the case using memory of the site's history and repeat offences.
 4. **Challenge.** A skeptic agent, running on a different model, looks for innocent explanations such as a sensor fault, rain the gauges missed, snowmelt or permitted emergency discharge.
-5. **Verify.** An evidence agent uses Linkup live web search to find fresh cited context: local news, bathing water closures, past fines, permit details.
+5. **Verify.** An evidence agent uses Linkup live web search (and full-page reads) to find fresh cited context: local news, bathing water closures, past fines, permit details. An adjudicator weighs the skeptic's objections against that evidence, and a citation verifier re-reads every cited page with Linkup to confirm it says what we claim.
 6. **Act.** A drafter writes an evidence pack and a draft report to the Environment Agency. A human approves it before anything is sent.
 
 This is not an app. It is a pipeline and an agent system, with every step traced in MLflow.
@@ -74,7 +74,9 @@ flowchart LR
 | **Skeptic** (a different model, served on Databricks) | Argues for innocent explanations and scores how confident we can be | The defence. A second model avoids one model agreeing with itself |
 | **Evidence agent** (Linkup) | Searches the live web for fresh, cited context about the site, the river and the company | Turns a data point into something a journalist or regulator can verify |
 | **Drafter** (Claude) | Writes the evidence pack and a draft report to the EA, with every claim linked to data or a source | Ends in a real action, approved by a human |
-| **MLflow Tracing** | Records every agent call, tool call and decision | Lets us walk judges through one real case step by step |
+| **Citation verifier** (Linkup fetch) | Re-opens every page the evidence pack cites and checks, with Linkup's grounded extraction, that the page really says what the pack claims. The pack ends with "n of m citations confirmed" | A regulator can trust the citations; hallucinated or off-topic sources are caught |
+| **MLflow Tracing + feedback** | Records every agent call, tool call and decision, and attaches the verdict and citation-check score to each trace as feedback | Lets us walk judges through one real case step by step, and track grounding quality over time |
+| **AI/BI dashboard + Genie** | Views with Unity Catalog comments over the gold tables; a Genie space answers plain-English questions such as "which company has the most dry spills?" | Makes the findings explorable by non-engineers |
 
 ---
 
@@ -104,6 +106,7 @@ notebooks/00_setup         Schema + check this workspace can reach the APIs
 notebooks/01_ingest_bronze Snapshot all overflows + gauges into Delta (schedule every 15 min)
 notebooks/02_detect_...    Silver events (MERGE), rain readings, gold assessments
 notebooks/03_agents        Top candidates -> agent team -> gold_case_memory + gold_evidence_packs + gold_training_examples
+notebooks/05_insights      UC comments + views for the AI/BI dashboard and Genie space (plain-English questions)
 notebooks/04_adaption      Train a cheap spill-triage model on the team's past verdicts (Adaption AutoScientist)
 sentinels/adaption.py      Adaption Labs API: hosted models (optional skeptic), dataset upload, training
 scripts/detect.py          Run the detector locally and print the top candidates

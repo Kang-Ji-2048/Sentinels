@@ -125,7 +125,10 @@ spark.sql(f"""MERGE INTO {T('gold_case_memory')} m USING new_cases n
   ON m.site_id = n.site_id AND m.event_start = n.event_start
   WHEN MATCHED THEN UPDATE SET * WHEN NOT MATCHED THEN INSERT *""")
 reports = pd.DataFrame([{"site_id": r["site_id"], "decided_at": r["decided_at"], "final_verdict": r["final_verdict"],
-                         "report_md": r["report"] or "", "evidence_json": json.dumps(r["evidence"] or {})} for r in results])
+                         "report_md": r["report"] or "", "evidence_json": json.dumps(r["evidence"] or {}),
+                         "citations_checked": (r["citations"] or {}).get("checked"),
+                         "citations_verified": (r["citations"] or {}).get("verified"),
+                         "citations_json": json.dumps(r["citations"] or {})} for r in results])
 spark.createDataFrame(reports).write.mode("append").option("mergeSchema", "true").saveAsTable(T("gold_evidence_packs"))
 # Training rows for the Adaption triage model (notebook 04): spill data -> the team's verdict
 from sentinels import adaption

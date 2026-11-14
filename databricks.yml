@@ -1,5 +1,5 @@
 # Databricks Asset Bundle: deploy with `databricks bundle deploy`, or recreate the job by hand in the UI.
-# One job, three chained tasks, every 15 minutes, serverless (the only compute on Free Edition).
+# One job, four chained tasks, every 15 minutes, serverless (the only compute on Free Edition).
 bundle:
   name: sentinels
 
@@ -23,6 +23,9 @@ resources:
           notebook_task:
             notebook_path: ./notebooks/03_agents.py
             base_parameters: { top_n: "3" }
+        - task_key: insights
+          depends_on: [{ task_key: agents }]
+          notebook_task: { notebook_path: ./notebooks/05_insights.py }
 
 targets:
   dev:
