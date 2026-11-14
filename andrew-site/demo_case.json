@@ -1,0 +1,67 @@
+{
+ "illustrative": true,
+ "site_id": "SBB00211",
+ "company": "South West Water",
+ "watercourse": "CARNON RIVER",
+ "event_start": "2026-11-13 17:14:21+00:00",
+ "duration_hours": 21.7,
+ "final_verdict": "needs_review",
+ "breach_confidence": 0.58,
+ "skeptic_confidence": 0.45,
+ "skeptic_model": "example only",
+ "strongest_objection": "EXAMPLE: the outfall is close to a tidal creek, so a tide-driven sensor reading cannot be ruled out from this data alone.",
+ "severity": "medium",
+ "n_sources": 2,
+ "case": {
+  "summary": "EXAMPLE TEXT, not a real agent output. The overflow started discharging at 17:14 on 13 Nov and was still discharging 21.7 hours later. Three Environment Agency gauges within 6.5 km recorded 0.00 to 0.20 mm in the 24 hours before the start and nothing in the 24 hours before that, all under the 0.25 mm dry-day threshold.",
+  "breach_indicators": [
+   "Example: all three gauges within 10 km stayed under 0.25 mm in both 24-hour windows before the spill.",
+   "Example: no rain was recorded at any gauge while the spill was running.",
+   "Example: the spill lasted far longer than a short sensor blip."
+  ],
+  "repeat_offender": false,
+  "severity": "medium",
+  "questions_for_evidence": [
+   "Example: is there any public report of an incident at this site in the last week?",
+   "Example: is the outfall tidal?"
+  ]
+ },
+ "skeptic": {
+  "model": "example only",
+  "breach_confidence": 0.45,
+  "strongest_objection": "EXAMPLE TEXT, not a real agent output. The outfall is close to a tidal creek, so a tide-driven sensor reading cannot be ruled out from this data alone.",
+  "innocent_explanations": [
+   {"explanation": "Example: tidal water reaching the monitor and reading as a discharge", "plausibility": "medium"},
+   {"explanation": "Example: groundwater getting into the sewer after earlier wet weeks", "plausibility": "medium"},
+   {"explanation": "Example: an emergency discharge after a pump failure", "plausibility": "low"},
+   {"explanation": "Example: rain falling between the gauges and missing all three", "plausibility": "low"}
+  ]
+ },
+ "evidence": {
+  "report": "EXAMPLE TEXT, not a real agent output. No web search was run for this example. In a real run the evidence agent searches the live web (Linkup) to test the skeptic's objections, and each finding below would carry a link to its source.",
+  "searches": [
+   {
+    "query": "Example search: Carnon River sewage overflow November 2026",
+    "answer": "Example only: a real run would summarise what the search found here, with cited sources.",
+    "sources": [{"name": "Example source (not a real search result)"}]
+   },
+   {
+    "query": "Example search: is the Carnon River outfall tidal",
+    "answer": "Example only: a real run would answer the skeptic's tidal objection here, with cited sources.",
+    "sources": [{"name": "Example source (not a real search result)"}]
+   }
+  ]
+ },
+ "ruling": {
+  "final_confidence": 0.58,
+  "reasoning": "EXAMPLE TEXT, not a real agent output. The rain data clearly supports a dry-day spill, but the tidal objection is still open, so the case goes to a person for review rather than being called a likely breach.",
+  "objections_refuted": [
+   "Example: a short sensor blip (the spill ran for 21.7 hours)",
+   "Example: rain missed by the gauges (three gauges within 6.5 km all stayed dry)"
+  ],
+  "objections_standing": [
+   "Example: tidal water reaching the monitor"
+  ]
+ },
+ "report": "EXAMPLE DRAFT, not a real evidence pack. Nothing has been sent.\n\nTo: Environment Agency\nSite: Carnon River overflow, South West Water (SBB00211)\n\nThe overflow began discharging at 17:14 on 13 November 2026 and was still discharging 21.7 hours later. Three Environment Agency rain gauges within 6.5 km recorded under 0.25 mm in each of the two 24-hour periods before the spill began.\n\nOpen question: whether the monitor is affected by the tide.\n\nThis draft needs a person's approval before it is sent."
+}
