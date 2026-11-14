@@ -21,8 +21,7 @@ now = datetime.now(timezone.utc)
 
 latest = spark.sql(f"""SELECT * FROM {T('bronze_overflow_snapshots')}
   WHERE ingested_at = (SELECT max(ingested_at) FROM {T('bronze_overflow_snapshots')})""").toPandas()
-rows = [{k: (v.to_pydatetime() if isinstance(v, pd.Timestamp) else (None if pd.isna(v) else v))
-         for k, v in r.items()} for r in latest.to_dict("records")]
+rows = py_records(latest)
 spills = detect.recent_spills(rows, cfg, now)
 print(f"{len(spills)} spills started in the last {cfg.lookback_hours}h")
 
@@ -41,7 +40,7 @@ spark.sql(f"""MERGE INTO {T('silver_spill_events')} t USING new_events s
 # COMMAND ----------
 
 # Rainfall near each spill
-stations = spark.table(T("bronze_rain_stations")).toPandas().to_dict("records")
+stations = py_records(spark.table(T("bronze_rain_stations")).toPandas())
 gauges_for = {s["id"]: detect.nearest_gauges(s, stations, cfg) for s in spills}
 needed = sorted({g["station"] for gs in gauges_for.values() for g in gs})
 since = now - timedelta(hours=cfg.lookback_hours + 48)
@@ -52,7 +51,8 @@ for st in needed:
     except Exception as e:
         print("gauge failed", st, e)
 flat = [r for rs in readings.values() for r in rs]
-spark.createDataFrame(pd.DataFrame(flat)).write.mode("overwrite").saveAsTable(T("silver_rain_readings"))
+if flat:
+    spark.createDataFrame(pd.DataFrame(flat)).write.mode("overwrite").saveAsTable(T("silver_rain_readings"))
 print(f"{len(needed)} gauges, {len(flat)} readings")
 
 # COMMAND ----------
@@ -67,3 +67,10 @@ spark.createDataFrame(gold).write.mode("overwrite").option("overwriteSchema", "t
 display(spark.sql(f"""SELECT verdict, count(*) n FROM {T('gold_spill_assessments')} GROUP BY verdict"""))
 display(spark.sql(f"""SELECT company, id, receivingwatercourse, latesteventstart, duration_hours, max_mm_0_24h_before, max_mm_24_48h_before
   FROM {T('gold_spill_assessments')} WHERE verdict = 'dry_spill_candidate' ORDER BY duration_hours DESC"""))
+
+# COMMAND ----------
+
+# 3D map: column height = hours discharging, red = dry-spill candidate, blue = rain nearby, grey = no gauge
+# (needs pydeck: %pip install pydeck if it isn't on the runtime)
+from sentinels.viz import spill_map
+displayHTML(spill_map(assessed).to_html(as_string=True))

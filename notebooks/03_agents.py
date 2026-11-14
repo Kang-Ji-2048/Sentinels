@@ -40,13 +40,16 @@ from sentinels.memory import CaseMemory
 # Skeptic runs on a Databricks Foundation Model endpoint: a different model family from Claude
 llm.SKEPTIC_CLIENT = WorkspaceClient().serving_endpoints.get_open_ai_client()
 mlflow.set_experiment(f"/Users/{spark.sql('SELECT current_user()').first()[0]}/sentinels")
-mlflow.anthropic.autolog()
+try:
+    mlflow.anthropic.autolog()  # token usage + raw calls under each agent span
+except Exception as e:
+    print("autolog unavailable, manual spans only:", e)
 
 # Memory: Delta table -> CaseMemory
 spark.sql(f"""CREATE TABLE IF NOT EXISTS {T('gold_case_memory')} (site_id STRING, company STRING, watercourse STRING,
   event_start TIMESTAMP, duration_hours DOUBLE, final_verdict STRING, breach_confidence DOUBLE, skeptic_model STRING,
   strongest_objection STRING, severity STRING, n_sources INT, decided_at TIMESTAMP)""")
-mem_rows = spark.table(T("gold_case_memory")).toPandas().to_dict("records")
+mem_rows = py_records(spark.table(T("gold_case_memory")).toPandas())
 memory = CaseMemory(path="/tmp/case_memory.jsonl", records=mem_rows)
 print(f"{len(mem_rows)} past cases in memory")
 
@@ -56,21 +59,21 @@ top_n = int(dbutils.widgets.get("top_n"))
 cands = spark.sql(f"""SELECT * FROM {T('gold_spill_assessments')} WHERE verdict = 'dry_spill_candidate'
   ORDER BY duration_hours DESC LIMIT {top_n}""").toPandas()
 results = []
-for r in cands.to_dict("records"):
-    spill = {**r, "latesteventstart": r["latesteventstart"].to_pydatetime(),
-             "latesteventend": None if pd.isna(r["latesteventend"]) else r["latesteventend"].to_pydatetime(),
-             "gauges": json.loads(r["gauges_json"])}
+for r in py_records(cands):
+    spill = {**r, "gauges": json.loads(r["gauges_json"])}
     print("Investigating", spill["company"], spill["id"], spill["receivingwatercourse"])
     results.append(orchestrator.run_case(spill, memory))
 
 # COMMAND ----------
 
+if not results:
+    dbutils.notebook.exit("No dry-spill candidates to investigate")
 new = pd.DataFrame([{k: r[k] for k in ["site_id", "company", "watercourse", "event_start", "duration_hours", "final_verdict",
                                        "breach_confidence", "skeptic_model", "strongest_objection", "severity", "n_sources",
                                        "decided_at"]} for r in results])
 spark.createDataFrame(new).write.mode("append").saveAsTable(T("gold_case_memory"))
 reports = pd.DataFrame([{"site_id": r["site_id"], "decided_at": r["decided_at"], "final_verdict": r["final_verdict"],
-                         "report_md": r["report"], "evidence_json": json.dumps(r["evidence"])} for r in results])
+                         "report_md": r["report"] or "", "evidence_json": json.dumps(r["evidence"] or {})} for r in results])
 spark.createDataFrame(reports).write.mode("append").option("mergeSchema", "true").saveAsTable(T("gold_evidence_packs"))
 display(new)
 

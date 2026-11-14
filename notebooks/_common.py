@@ -7,3 +7,21 @@ if repo_root not in sys.path:
 
 CATALOG, SCHEMA = "workspace", "sentinels"
 T = lambda name: f"{CATALOG}.{SCHEMA}.{name}"
+
+import pandas as pd
+from datetime import timezone
+
+def py_records(pdf):
+    """Spark->pandas rows as plain Python, with timestamps made tz-aware UTC (toPandas returns naive)."""
+    out = []
+    for r in pdf.to_dict("records"):
+        row = {}
+        for k, v in r.items():
+            if isinstance(v, pd.Timestamp):
+                v = v.to_pydatetime()
+                v = v.replace(tzinfo=timezone.utc) if v.tzinfo is None else v
+            elif not isinstance(v, (list, dict)) and pd.isna(v):
+                v = None
+            row[k] = v
+        out.append(row)
+    return out
