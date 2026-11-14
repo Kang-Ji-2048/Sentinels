@@ -102,10 +102,11 @@
   .cases h2 { margin: 32px 0 4px; font-size: 15px; font-weight: 600; letter-spacing: .9px; text-transform: uppercase; }
   .cases .sub { margin: 0 0 12px; color: var(--muted); max-width: 60ch; }
   .board { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(210px, 1fr); gap: 12px; overflow-x: auto; padding-bottom: 8px; }
-  .col { display: flex; flex-direction: column; gap: 8px; min-height: 140px; padding: 10px; background: #e9eee7; border-top: 3px solid var(--c, var(--ink)); }
+  .col { display: flex; flex-direction: column; gap: 8px; min-height: 140px; max-height: min(480px, 60vh); padding: 10px; background: #e9eee7; border-top: 3px solid var(--c, var(--ink)); }
+  .col .cards { display: flex; flex-direction: column; gap: 8px; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 2px; margin: -2px; }
   .col h3 { margin: 0; display: flex; justify-content: space-between; font-size: 15px; font-weight: 600; }
-  .col h3 span, .col .none, .more { color: var(--muted); font-weight: 400; }
-  .col .none, .more { margin: 0; font-size: 14px; }
+  .col h3 span, .col .none { color: var(--muted); font-weight: 400; }
+  .col .none { margin: 0; font-size: 14px; }
   .card { display: grid; gap: 2px; padding: 8px 10px; text-align: left; background: #fff; border: 1px solid var(--rule); cursor: pointer; }
   .card:hover, .pick:hover { border-color: var(--ink); }
   .card:focus-visible, .pick:focus-visible { outline: 2px solid var(--navy); outline-offset: 1px; }
@@ -200,7 +201,7 @@
 </main>
 <main class="cases" id="cases-view" hidden>
   <h1>Cases</h1>
-  <p class="intro">Every dry-spill candidate from the latest run, and where the agents and reviewers have got to with it. Click a case to see it on the map.</p>
+  <p class="intro">Every dry-spill candidate from the latest run, and where the agents and reviewers have got to with it. Click a case to open it: ones with a drafted report open on the Reports tab, the rest on the map.</p>
   <h2>Status</h2>
   <div class="board" id="board"></div>
   <div class="two">
@@ -470,20 +471,20 @@ function card(s, extra) {
   b.append(el("b", null, title(s.name)), el("span", "meta", `${siteLine(s)} · ${hrs(s)} h`));
   if (extra) b.append(el("span", "meta", extra));
   const ex = example(s); if (ex) b.append(ex);
-  b.onclick = () => openOnMap(s);
+  b.onclick = () => s.case && s.case.report ? openInReports(s) : openOnMap(s);
   return b;
 }
+function openInReports(s) { openReport = s; rejecting = false; errorText = ""; show("reports"); }
 function renderBoard() {
   const groups = Object.fromEntries(STATUS.map(([k]) => [k, []]));
   for (const s of dry.concat(sites.filter(s => s.case && !dry.includes(s)))) { const k = statusOf(s); if (k) groups[k].push(s); }
-  const SHOW = 6;
   document.getElementById("board").replaceChildren(...STATUS.map(([k, name, colour, none]) => {
     const col = el("div", "col"); col.style.setProperty("--c", colour);
     const h = el("h3", null, name); h.append(el("span", null, String(groups[k].length)));
-    col.append(h);
-    if (!groups[k].length) col.append(el("p", "none", none));
-    for (const s of groups[k].slice(0, SHOW)) col.append(card(s, s.case ? `${s.case.final_verdict.replace(/_/g, " ")}, ${pctN(s.case.breach_confidence)}% confident` : null));
-    if (groups[k].length > SHOW) col.append(el("p", "more", `+ ${groups[k].length - SHOW} more`));
+    const list = el("div", "cards");
+    if (!groups[k].length) list.append(el("p", "none", none));
+    for (const s of groups[k]) list.append(card(s, s.case ? `${s.case.final_verdict.replace(/_/g, " ")}, ${pctN(s.case.breach_confidence)}% confident` : null));
+    col.append(h, list);
     return col;
   }));
 }
