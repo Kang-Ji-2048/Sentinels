@@ -129,7 +129,11 @@ def gather_evidence(spill: dict, case: dict, skeptic: dict, max_searches: int = 
               "spill in England. Use linkup_search to verify the investigator's questions AND to test "
               f"the skeptic's objections (e.g. was there unrecorded rain or a reported pump failure?). "
               f"Make at most {max_searches} searches. Only state facts that a source supports, and cite "
-              "every one by URL. Finish with a short findings report: what supports a breach, what "
+              "every one by URL. Only cite a source that is actually about this overflow, river, town, "
+              "company or the dates in question, from a news outlet, regulator, council, the company itself "
+              "or a reference work. Leave out pages that only mention the topic in passing, content farms, "
+              "forums, event listings, travel or forecast widgets, and results about other places with the "
+              "same name; if a search returns nothing usable, say it found nothing. Finish with a short findings report: what supports a breach, what "
               "supports an innocent explanation, and what is unknown.")
     messages = [{"role": "user", "content":
                  f"Spill:\n{_case_brief(spill)}\n\nInvestigator:\n{json.dumps(case)}\n\n"
@@ -194,7 +198,8 @@ def draft_report(spill: dict, case: dict, skeptic: dict, evidence: dict, final_v
                  ruling: dict | None = None) -> str:
     system = ("You write evidence packs for possible storm-overflow permit breaches in England, for a "
               "human reviewer to send to the Environment Agency. Be factual, neutral and concise. "
-              "Every claim must point to the data or a cited URL. Include the skeptic's strongest "
+              "Every claim must point to the data or a cited URL. Only cite sources the evidence agent's "
+              "report relies on; never add off-topic pages from the raw searches. Include the skeptic's strongest "
               "objection honestly. Use Markdown with these sections: Summary, The spill (data), "
               "Rainfall context, Innocent explanations considered, Web evidence (cited), "
               "Confidence and recommendation, Draft message to the Environment Agency. "
