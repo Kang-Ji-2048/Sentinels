@@ -92,13 +92,38 @@ Overflow status codes: `1` = discharging, `0` = stopped, `-1` = offline. Each re
 
 ---
 
-## Repository layout (planned)
+## Repository layout
 
 ```
-sentinels/          Python package: feeds, detection, memory, agents, orchestration
-notebooks/          Databricks notebooks: 01 ingest (bronze), 02 detect (silver/gold), 03 agents
-scripts/            Run the pipeline and one case end to end locally
+sentinels/feeds.py         Live sources: 8 water-company ArcGIS feeds, EA rain gauges
+sentinels/detect.py        Dry-spill rule: spill + nearest gauges -> verdict
+sentinels/agents.py        Investigator, skeptic, Linkup evidence agent, drafter (MLflow-traced)
+sentinels/orchestrator.py  Runs one case through the team; the skeptic gates the expensive steps
+sentinels/memory.py        Case memory per site (JSONL locally, Delta on Databricks)
+notebooks/00_setup         Schema + check this workspace can reach the APIs
+notebooks/01_ingest_bronze Snapshot all overflows + gauges into Delta (schedule every 15 min)
+notebooks/02_detect_...    Silver events (MERGE), rain readings, gold assessments
+notebooks/03_agents        Top candidates -> agent team -> gold_case_memory + gold_evidence_packs
+scripts/detect.py          Run the detector locally and print the top candidates
 ```
+
+## Run it
+
+**Locally (detector only, no keys needed):**
+```
+pip install -r requirements.txt
+python scripts/detect.py
+```
+
+**On Databricks:** add this repo as a Git folder, then run `notebooks/00_setup`, `01_ingest_bronze`,
+`02_detect_silver_gold` and `03_agents` in order. `03_agents` reads the Anthropic and Linkup keys from a
+secret scope called `sentinels` (keys `anthropic`, `linkup`), or from the notebook widgets.
+
+### First live run (14 Nov 2026, 12:50 UK time)
+
+13,207 English overflows checked. 157 spills started in the previous 48 hours, and 71 of them had less
+than 0.25 mm of rain at every gauge within 10 km in both 24-hour windows before the spill. The longest:
+Helliwell Syke (Yorkshire Water), discharging for 44.5 hours with no rain recorded at three nearby gauges.
 
 ## Models and APIs used
 
