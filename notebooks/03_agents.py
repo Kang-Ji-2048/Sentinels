@@ -52,7 +52,7 @@ try:
     print([f"system.ai.{m.name}" for m in w.registered_models.list(catalog_name="system", schema_name="ai")])
 except Exception as e:
     print("Could not list models; browse Catalog > system > ai instead:", e)
-mlflow.set_experiment(f"/Users/{spark.sql('SELECT current_user()').first()[0]}/sentinels")
+mlflow.set_experiment(f"/Users/{spark.sql('SELECT current_user()').first()[0]}/sentinels_traces")  # not ".../sentinels": that path is the Git folder
 try:
     mlflow.anthropic.autolog()  # token usage + raw calls under each agent span
 except Exception as e:
