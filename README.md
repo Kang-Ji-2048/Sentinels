@@ -105,6 +105,9 @@ notebooks/01_ingest_bronze Snapshot all overflows + gauges into Delta (schedule 
 notebooks/02_detect_...    Silver events (MERGE), rain readings, gold assessments
 notebooks/03_agents        Top candidates -> agent team -> gold_case_memory + gold_evidence_packs
 scripts/detect.py          Run the detector locally and print the top candidates
+scripts/map.py             3D map of the latest run -> docs/map.html
+databricks.yml             Job: ingest -> detect -> agents every 15 min (starts paused)
+docs/walkthrough.md        Five-minute judge walkthrough with one worked case
 ```
 
 ## Run it
