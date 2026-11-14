@@ -1,6 +1,6 @@
 """Export the latest detector run (and an example agent case, if present) for the showcase site.
 
-python scripts/site_data.py  ->  site/data/run.json  (+ site/data/case.json)
+python site/build_data.py  ->  site/data/run.json  (+ site/data/case.json)
 """
 import json
 import shutil

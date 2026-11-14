@@ -4,7 +4,7 @@ One static page for judges: the problem, a 3D scrollytelling map of the latest l
 
 ```
 python scripts/detect.py      # optional: fresh live run -> data/latest_run.json
-python scripts/site_data.py   # -> site/data/run.json (+ site/data/case.json if data/example_case.json exists)
+python site/build_data.py    # -> site/data/run.json (+ site/data/case.json if data/example_case.json exists)
 python -m http.server 8000 --directory site
 ```
 
