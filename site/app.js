@@ -239,7 +239,7 @@ function renderCase(s, c) {
     document.querySelector('[data-agent="skeptic"] h4 small').textContent = c.skeptic.model || "different model";
     set("skeptic", `<p><b>Strongest objection:</b> ${esc(c.skeptic.strongest_objection)}</p>
       <ul>${(c.skeptic.innocent_explanations || []).map(x => `<li>${esc(x.explanation)} <span class="pill">${esc(x.plausibility)}</span></li>`).join("")}</ul>
-      <div class="conf"><span>breach confidence</span><div class="track"><div class="fill" style="width:${conf * 100}%"></div></div><span>${conf.toFixed(2)}</span></div>`);
+      <div class="conf"><span>skeptic: breach likely?</span><div class="track"><div class="fill" style="width:${conf * 100}%"></div></div><span>${conf.toFixed(2)}</span></div>`);
   }
   if (c.evidence) {
     const srcs = c.evidence.searches.flatMap(q => q.sources || []).filter((x, i, a) => x.url && a.findIndex(y => y.url === x.url) === i).slice(0, 8);
@@ -247,7 +247,16 @@ function renderCase(s, c) {
       <ul>${c.evidence.searches.map(q => `<li>${esc(q.query)}</li>`).join("")}</ul>
       <p><b>Sources cited</b></p><ul class="sources">${srcs.map(x => `<li><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.name || x.url)}</a></li>`).join("")}</ul>`);
   } else {
-    set("evidence", "<p>Skipped: the skeptic's confidence was too low to spend a web search on this case.</p>");
+    set("evidence", "<p>Skipped: the skeptic was near-certain this spill is innocent, so no web search was spent on it.</p>");
+  }
+  if (c.ruling) {
+    const r = c.ruling, from = Number(c.skeptic_confidence ?? c.skeptic?.breach_confidence), to = Number(r.final_confidence);
+    set("adjudicator", `<p>${esc(r.reasoning)}</p>
+      <div class="ruling"><div><h6>Refuted</h6><ul>${(r.objections_refuted || []).map(x => `<li>${esc(x)}</li>`).join("") || "<li>None</li>"}</ul></div>
+      <div><h6>Still standing</h6><ul>${(r.objections_standing || []).map(x => `<li>${esc(x)}</li>`).join("") || "<li>None</li>"}</ul></div></div>
+      <div class="conf"><span>${isNaN(from) ? "" : from.toFixed(2) + " → "}final</span><div class="track"><div class="fill" style="width:${to * 100}%"></div></div><span>${to.toFixed(2)}</span></div>`);
+  } else {
+    set("adjudicator", "<p>Not needed: the skeptic was near-certain this spill is innocent, so the case stopped early.</p>");
   }
   if (c.report && window.marked) set("drafter", `<div class="report">${marked.parse(esc(c.report).replace(/&gt;/g, ">"))}</div>`);
   else if (!c.report) set("drafter", "<p>No report drafted for this verdict.</p>");

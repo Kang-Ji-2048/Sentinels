@@ -138,6 +138,10 @@ h2 { font: 650 clamp(2rem, 3.4vw, 3rem)/1.15 var(--serif); margin: 0 0 14px; let
 .ag-panel { border-left: 3px solid var(--ink-3); }
 .ag-panel.sk { border-left-color: var(--skeptic); }
 .ag-panel.lk { border-left-color: var(--linkup); }
+.ag-panel.ad, .node.ad { border-left: 3px solid var(--accent); }
+.ruling { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 10px; }
+.ruling h6 { margin: 0 0 4px; font: 600 .75rem var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+@media (max-width: 600px) { .ruling { grid-template-columns: 1fr; } }
 .ag-panel .body { font-size: 15px; color: var(--ink-2); }
 .ag-panel .body.pending { color: var(--ink-3); font-style: italic; }
 .ag-panel ul { margin: 8px 0 0; padding-left: 18px; }
@@ -193,3 +197,4 @@ h2 { font: 650 clamp(2rem, 3.4vw, 3rem)/1.15 var(--serif); margin: 0 0 14px; let
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+@media (min-width: 901px) { #case-data { position: sticky; top: 96px; } }

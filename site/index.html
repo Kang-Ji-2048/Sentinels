@@ -77,7 +77,7 @@
   <div class="wrap">
     <p class="section-label">§2 · Methods</p>
     <h2>A data pipeline that hands suspicious spills to a team of agents</h2>
-    <p class="sub">This is not an app. It is a scheduled Databricks job and four agents, each with one job, and every step is traced in MLflow.</p>
+    <p class="sub">This is not an app. It is a scheduled Databricks job and five agents, each with one job, and every step is traced in MLflow.</p>
 
     <figure class="fig"><p class="cell-out">Out [2]:</p>
     <div class="flow">
@@ -100,6 +100,7 @@
         <div class="node ag">Investigator<small>Claude · builds the case</small></div>
         <div class="node ag sk">Skeptic<small>GPT on Databricks · argues innocence</small></div>
         <div class="node ag lk">Evidence agent<small>Linkup live search · cites sources</small></div>
+        <div class="node ag ad">Adjudicator<small>Claude · weighs both sides, final confidence</small></div>
         <div class="node ag">Drafter<small>Claude · evidence pack + EA report</small></div>
       </div>
       <div class="arrow" aria-hidden="true"></div>
@@ -113,7 +114,7 @@
 
     <div class="why">
       <div><h5>Two models, on purpose</h5><p>The skeptic runs on a different model family, served through Databricks. One model checking its own work tends to agree with itself.</p></div>
-      <div><h5>The skeptic is a gate</h5><p>If it finds an innocent explanation it believes, the case stops there. Obvious false alarms cost one cheap call, not a web search and a report.</p></div>
+      <div><h5>Objections get tested</h5><p>The evidence agent searches the web to check the skeptic's objections, and an adjudicator decides which still stand. A near-certain false alarm stops after one cheap call.</p></div>
       <div><h5>Memory in Delta</h5><p>Every verdict is written back. Over time that becomes a record of repeat offenders, and of sites whose sensors keep crying wolf.</p></div>
       <div><h5>Cited, not generated</h5><p>The evidence agent only states facts a Linkup source supports, and links every one, so a journalist or regulator can check it.</p></div>
     </div>
@@ -157,8 +158,12 @@
           <h4><span class="stepno">4</span>Evidence agent <small>Linkup</small></h4>
           <div class="body pending">Searches the live web to test both sides: local news, bathing closures, past fines, reported works.</div>
         </div>
+        <div class="panel ag-panel ad" data-agent="adjudicator">
+          <h4><span class="stepno">5</span>Adjudicator <small>Claude</small></h4>
+          <div class="body pending">Weighs the skeptic's objections against the cited evidence: which are refuted, which still stand. Sets the final confidence.</div>
+        </div>
         <div class="panel ag-panel" data-agent="drafter">
-          <h4><span class="stepno">5</span>Drafter <small>Claude</small></h4>
+          <h4><span class="stepno">6</span>Drafter <small>Claude</small></h4>
           <div class="body pending">Writes the evidence pack and a draft message to the Environment Agency, for a human to approve.</div>
         </div>
       </div>
