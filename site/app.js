@@ -6,6 +6,8 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": 
 const title = s => String(s || "").toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
 const when = t => t ? new Date(t.replace(" ", "T")).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Europe/London" }) : "ongoing";
 
+const hours = d => d.duration_hours != null ? `${d.duration_hours} h discharging` : "duration unknown (monitor offline)";
+
 const ENGLAND = { longitude: -1.9, latitude: 52.9, zoom: 5.4, pitch: 0, bearing: 0 };
 const isSmall = matchMedia("(max-width: 600px)").matches;
 if (isSmall) ENGLAND.zoom = 4.6;
@@ -37,7 +39,8 @@ async function main() {
 
   const dry = run.spills.filter(s => s.verdict === "dry_spill_candidate");
   const caseSpill = (caseData && run.spills.find(s => s.id === caseData.site_id))
-    || dry.slice().sort((a, b) => b.duration_hours - a.duration_hours)[0];
+    || dry.filter(s => !s.monitor_offline && s.duration_hours != null).sort((a, b) => b.duration_hours - a.duration_hours)[0]
+    || dry[0];
 
   fillStats(run, dry.length);
   bars(run.by_company);
@@ -108,7 +111,7 @@ function setupMap(spills, caseSpill) {
       tip.style.left = Math.min(x + 14, innerWidth - 280) + "px"; tip.style.top = (y + 14) + "px";
       tip.innerHTML = `<div class="t">${esc(title(object.receivingwatercourse) || object.id)}</div>
         <div>${esc(object.company)} · ${esc(object.id)}</div>
-        <div class="m">${esc(object.verdict.replace(/_/g, " "))}<br>${object.duration_hours} h discharging<br>
+        <div class="m">${esc(object.verdict.replace(/_/g, " "))}<br>${hours(object)}<br>
         rain 24 h before: ${object.max_mm_0_24h_before ?? "n/a"} mm</div>`;
     },
   });
@@ -134,7 +137,7 @@ function setupMap(spills, caseSpill) {
   last.querySelector("h3").textContent = `${title(caseSpill.receivingwatercourse)}, ${caseSpill.company}`;
   const g = caseSpill.gauges || [];
   const mm = g.flatMap(x => [x.mm_0_24h_before, x.mm_24_48h_before]);
-  last.querySelector("p").textContent = `Discharging for ${caseSpill.duration_hours} hours. ${g.length} rain gauge${g.length === 1 ? "" : "s"} nearby recorded between ${Math.min(...mm)} and ${Math.max(...mm)} mm in the two days before it began. This is the case we follow through the agents below.`;
+  last.querySelector("p").textContent = `${caseSpill.latesteventend ? "Discharged" : "Discharging"} for ${caseSpill.duration_hours} hours. ${g.length} rain gauge${g.length === 1 ? "" : "s"} nearby recorded between ${Math.min(...mm)} and ${Math.max(...mm)} mm in the two days before it began. This is the case we follow through the agents below.`;
 }
 
 /* ---------------- Case ---------------- */
@@ -145,12 +148,13 @@ function renderCase(s, c) {
     <dt>Overflow</dt><dd>${esc(s.id)}</dd>
     <dt>Spill started</dt><dd>${when(s.latesteventstart)}</dd>
     <dt>Spill ended</dt><dd>${when(s.latesteventend)}</dd>
-    <dt>Duration</dt><dd>${s.duration_hours} h</dd>
+    <dt>Duration</dt><dd>${s.duration_hours != null ? s.duration_hours + " h" : "unknown (monitor offline)"}</dd>
     <dt>Feed status now</dt><dd>${esc(statusTxt)}</dd>
     <dt>Verdict</dt><dd class="hot">${esc(s.verdict.replace(/_/g, " "))}</dd></dl>`;
-  const scale = Math.max(0.5, ...(s.gauges || []).map(g => g.mm_0_24h_before + g.mm_24_48h_before));
+  const wet = g => Math.max(g.mm_0_24h_before, g.mm_24_48h_before);
+  const scale = Math.max(0.5, ...(s.gauges || []).map(wet));
   document.getElementById("gauges").innerHTML = (s.gauges || []).map(g => {
-    const tot = +(g.mm_0_24h_before + g.mm_24_48h_before).toFixed(2);
+    const tot = wet(g);
     return `<div class="gauge"><div class="g-h"><span>Gauge ${esc(g.station)} · ${g.km} km</span><span>${tot} mm</span></div>
       <div class="g-t"><div class="g-f" style="width:${100 * tot / scale}%"></div><div class="g-th" style="left:${100 * 0.25 / scale}%"></div></div></div>`;
   }).join("");

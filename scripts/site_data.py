@@ -9,7 +9,7 @@ from pathlib import Path
 
 root = Path(__file__).resolve().parents[1]
 run = json.loads((root / "data" / "latest_run.json").read_text())
-keep = ["id", "company", "receivingwatercourse", "latitude", "longitude", "status", "latesteventstart",
+keep = ["id", "company", "receivingwatercourse", "latitude", "longitude", "status", "monitor_offline", "latesteventstart",
         "latesteventend", "duration_hours", "verdict", "max_mm_0_24h_before", "max_mm_24_48h_before", "gauges"]
 spills = [{k: a.get(k) for k in keep} for a in run["assessed"] if a.get("longitude") is not None]
 out = {

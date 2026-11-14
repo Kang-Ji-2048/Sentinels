@@ -27,17 +27,12 @@
 </header>
 
 <section class="hero">
-  <p class="eyebrow">PREPRINT · IMPERIAL AI HACKATHON · AUTONOMOUS AGENTS · LONDON, UK</p>
-  <h1>About <em>40</em> potentially illegal sewage spills happen in England every day.<br>
-    Almost none are caught while they happen.</h1>
-  <p class="lede">Storm overflows may only release sewage in heavy rain. Sentinels watches every overflow in England live,
-    flags the ones spilling on dry days, argues both sides with two different models, checks the web for cited evidence,
-    and drafts the report to the Environment Agency for a human to approve.</p>
-  <p class="cell-out">Out [0]:</p>
+  <p class="eyebrow">IMPERIAL AI HACKATHON · 2026</p>
+  <h1>About <em>40</em> sewage spills a day happen on dry days.<br>Almost none are caught.</h1>
+  <p class="lede">Agents that catch them live, check their own work, and draft the report to the regulator.</p>
   <div class="stats" id="stats">
     <div><span class="num" data-k="overflows">13,207</span><span class="lbl">overflows watched</span></div>
-    <div><span class="num" data-k="recent_spills">157</span><span class="lbl">spills started in 48&nbsp;h</span></div>
-    <div><span class="num hot" data-k="dry">73</span><span class="lbl">began with no rain nearby</span></div>
+    <div><span class="num hot" data-k="dry">73</span><span class="lbl">dry-day spills in 48&nbsp;h</span></div>
   </div>
   <p class="caption" id="asof">Live run, 14 Nov 2026</p>
   <a class="scrollcue" href="#map" aria-label="Scroll to map">↓</a>
@@ -145,7 +140,7 @@
       <div class="panel" id="case-data">
         <p class="cell-out">Out [4]:</p><h4><span class="stepno">1</span>The data</h4>
         <div class="kv" id="case-kv"></div>
-        <p class="note">Rain in the 48 hours before the spill, per gauge. The dashed line is the 0.25 mm dry-day threshold.</p>
+        <p class="note">Wettest 24 hours of the two days before the spill, per gauge. The dashed line is the 0.25 mm dry-day threshold.</p>
         <div id="gauges" class="gauges"></div>
         <p class="caption">Fig. 4 — Rainfall at the nearest EA gauges</p>
       </div>
