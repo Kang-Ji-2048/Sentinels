@@ -16,3 +16,15 @@ The agent panels in the case study stay empty until a real traced run is saved a
 The demo video is recorded from the separate demo app (`andrew-site/`). Save it as `site/media/demo.mp4`
 (H.264, ideally under 50 MB so it stays light in Git) and, optionally, a still as `site/media/demo-poster.jpg`.
 The page shows a placeholder until the file exists.
+
+## Hosting on Vercel (both sites)
+
+Both sites are plain static files, so each is one Vercel project from this repo with no build step:
+
+| Vercel project | Root Directory | Framework preset | Build command |
+|---|---|---|---|
+| Site 1 (explainer) | `site` | Other | none |
+| Site 2 (demo app) | `andrew-site/public` | Other | none |
+
+The data is a snapshot committed to the repo (the live feeds aren't fetched from the browser). To refresh both:
+`bash site/refresh.sh`, then commit `site/data/run.json` and `andrew-site/public/index.html` and push; Vercel redeploys on push.
