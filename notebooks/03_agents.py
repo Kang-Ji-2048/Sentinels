@@ -41,8 +41,11 @@ from sentinels.memory import CaseMemory
 # Skeptic runs on a Databricks foundation model via Unity Gateway: a different model family from Claude
 w = WorkspaceClient()
 token = w.config.authenticate()["Authorization"].split(" ", 1)[1]
-llm.SKEPTIC_CLIENT = llm.gateway_client(w.config.host, token)
-llm.SKEPTIC_DATABRICKS_MODEL = dbutils.widgets.get("skeptic_model")
+if dbutils.widgets.get("skeptic_model").strip():
+    llm.SKEPTIC_CLIENT = llm.gateway_client(w.config.host, token)
+    llm.SKEPTIC_DATABRICKS_MODEL = dbutils.widgets.get("skeptic_model").strip()
+else:
+    print("No skeptic_model set: skeptic falls back to Claude Haiku")
 
 # Which foundation models does this workspace have? Pick a non-Claude one for the skeptic widget.
 try:
