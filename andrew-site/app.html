@@ -33,11 +33,79 @@
   .nav .off { opacity: .55; cursor: default; }
   .nav .on { color: #fff; font-weight: 600; border-bottom: 4px solid var(--gold); padding-top: 4px; }
 
+  .top-right { display: flex; align-items: center; gap: 16px; }
+  .check { padding: 8px 14px; border-radius: 6px; background: var(--gold); color: var(--ink); font-weight: 600; text-decoration: none; white-space: nowrap; }
+  .check:hover { background: #f0d264; }
+  .check:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
+  .pc { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 24px 0 8px; }
+  .pc label { width: 100%; font-weight: 600; }
+  .pc input { width: 11em; padding: 10px 12px; border: 1px solid var(--ink); border-radius: 6px; background: #fff; font: inherit; text-transform: uppercase; }
+  .pc input:focus-visible, .pc button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .pc button { padding: 10px 18px; border: 0; border-radius: 6px; background: var(--navy); color: #fff; font-weight: 600; cursor: pointer; }
+  #pc-out { max-width: 720px; }
+  #pc-out h2 { margin: 28px 0 6px; font-size: 24px; line-height: 1.25; text-transform: none; letter-spacing: 0; }
+  .lede-big { margin: 0 0 12px; font-size: 18px; font-weight: 600; color: var(--crimson); }
+  .pc-page { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(380px, 520px) 1fr; background: var(--paper); }
+  .pc-page[hidden] { display: none; }
+  .pc-side { overflow-y: auto; padding: 28px 32px 40px; border-right: 1px solid var(--rule); }
+  .pc-side h1 { margin: 0; font: 700 34px/1.15 var(--serif); }
+  .pc-side .intro { margin: 8px 0 0; color: var(--muted); }
+  .pc-side .sub { margin: 0 0 8px; color: var(--muted); font-size: 14px; }
+  .pc-mapwrap { position: relative; min-height: 0; }
+  .pc-map { position: absolute; inset: 0; }
+  .pc-legend { position: absolute; z-index: 2; left: 12px; bottom: 12px; display: flex; flex-wrap: wrap; gap: 6px 16px; max-width: calc(100% - 24px);
+    padding: 8px 12px; font-size: 14px; color: var(--ink); background: rgba(255,255,255,.94); border-radius: 8px; box-shadow: 0 2px 10px rgba(18,53,91,.15); }
+  .lg-all { width: 10px !important; height: 10px !important; background: rgba(200,16,46,.55); border: 1px solid #fff; border-radius: 50%; box-shadow: 0 0 0 1px rgba(200,16,46,.4); }
+  .pc-item.on { border-color: var(--crimson); box-shadow: 0 0 0 1px var(--crimson); }
+  .pc-dot.on { transform: scale(1.35); box-shadow: 0 0 0 4px rgba(200,16,46,.3); }
+  .pc-full { display: inline-block; margin: 4px 0 0 50px; font-size: 13px; color: var(--navy); }
+  @media (max-width: 900px) {
+    .pc-page { display: flex; flex-direction: column; overflow-y: auto; }
+    .pc-mapwrap { order: -1; position: sticky; top: 0; z-index: 3; flex: none; height: 45vh; border-bottom: 1px solid var(--rule); }
+    .pc-side { overflow: visible; border-right: 0; padding: 20px 16px 32px; }
+    .pc-legend { font-size: 12px; gap: 4px 10px; padding: 6px 8px; }
+  }
+  .pc-legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .pc-legend i { display: inline-block; width: 14px; height: 14px; }
+  .lg-home { background: var(--navy); border-radius: 50% 50% 50% 0; transform: rotate(-45deg); }
+  .lg-area { border: 1.5px dashed var(--navy); border-radius: 50%; }
+  .lg-spill { background: var(--crimson); border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 0 1px var(--crimson); }
+  .lg-water { height: 4px !important; background: var(--crimson); border-radius: 2px; }
+  .pc-home { width: 22px; height: 22px; background: var(--navy); border: 2px solid #fff; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); box-shadow: 0 2px 6px rgba(0,0,0,.3); }
+  .pc-dot, .pc-num { display: grid; place-items: center; width: 26px; height: 26px; flex: none; border-radius: 50%; background: var(--crimson); color: #fff; font: 700 13px var(--sans); border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
+  .pc-list { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 8px; }
+  .pc-item { display: flex; gap: 12px; align-items: center; width: 100%; padding: 10px 12px; text-align: left; background: #fff; border: 1px solid var(--rule); border-radius: 8px; cursor: pointer; font: inherit; color: inherit; }
+  .pc-item:hover { border-color: var(--ink); }
+  .pc-item:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
+  .pc-item > span:last-child { display: grid; gap: 2px; } .pc-item > span:last-child span { color: var(--muted); font-size: 14px; }
+  .advice { margin: 20px 0 8px; padding: 18px 22px; background: #fff; border: 1px solid var(--rule); border-left: 5px solid var(--crimson); border-radius: 8px; }
+  .advice h2 { margin: 0 0 10px !important; font-size: 22px !important; }
+  .advice ul { margin: 0; padding-left: 20px; display: grid; gap: 8px; line-height: 1.5; }
+  .advice a { color: var(--navy); font-weight: 600; }
+
   .body { flex: 1; display: flex; min-height: 0; }
   .map { position: relative; flex: 1; min-width: 0; }
   #map { position: absolute; inset: 0; }
 
-  .count { position: absolute; top: 20px; left: 24px; width: 274px; padding: 8px 12px 12px; background: rgba(243, 246, 241, .92); z-index: 2; pointer-events: none; }
+  .map .reset { left: 384px; }  /* clear of the left rail */
+  .rail { position: absolute; z-index: 2; top: 20px; left: 24px; bottom: 24px; width: 340px; display: flex; flex-direction: column; gap: 12px; pointer-events: none; }
+  .rail > * { pointer-events: auto; }
+  .count { flex: none; padding: 8px 14px 12px; background: rgba(243, 246, 241, .94); }
+  .count summary { position: relative; list-style: none; cursor: pointer; padding-right: 28px; }
+  .count summary::-webkit-details-marker { display: none; }
+  .count summary::after { content: ""; position: absolute; top: 14px; right: 4px; width: 9px; height: 9px; border-right: 2px solid var(--ink); border-bottom: 2px solid var(--ink); transform: rotate(-135deg); transition: transform .2s; }
+  .count:not([open]) summary::after { top: 50%; margin-top: -8px; transform: rotate(45deg); }
+  .count summary:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
+  .count:not([open]) { padding-block: 8px; }
+  .count:not([open]) summary { display: flex; align-items: baseline; gap: 8px; }
+  .count:not([open]) .n { font-size: 30px; line-height: 1; }
+  .count:not([open]) h1 { font-size: 17px; }
+  .spills { flex: 0 1 auto; min-height: 0; display: flex; flex-direction: column; background: rgba(243, 246, 241, .96); border-radius: 6px; box-shadow: 0 10px 30px rgba(18, 53, 91, .12); overflow: hidden; }
+  .spills h2 { flex: none; margin: 0; padding: 12px 14px 8px; font-size: 13px; font-weight: 600; letter-spacing: .9px; text-transform: uppercase; }
+  .spills .rows { min-height: 0; overflow-y: auto; overscroll-behavior: contain; border-bottom: 0; }
+  .spills .row { padding: 8px 14px; font-size: 14px; }
+  .spills .row .h { width: 44px; } .spills .row .r { width: 62px; }
+  .spills .row.head { position: sticky; top: 0; z-index: 1; background: var(--paper); }
   .count .n { font: 800 88px/88px var(--serif); letter-spacing: -.05em; color: var(--crimson); }
   .count h1 { margin: 0; font-size: 22px; font-weight: 600; }
   .count p { margin: 0; color: var(--muted); line-height: 21px; }
@@ -96,6 +164,40 @@
   .case .example, .detail .example { display: grid; gap: 2px; margin-top: 14px; padding: 10px 12px; border: 2px dashed var(--crimson); background: #fbeaec; }
   .case .example b, .detail .example b { color: var(--crimson); text-transform: uppercase; letter-spacing: .9px; font-size: 13px; }
   .case .example ~ section { opacity: .85; }
+  .ftags { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 6px; }
+  .ftag { padding: 2px 9px; border-radius: 10px; font-size: 13px; font-weight: 600; }
+  .ftag.red { background: var(--crimson); color: #fff; }
+  .ftag.yellow { background: var(--gold); color: var(--ink); }
+  .ftag.green { background: #2e7d4f; color: #fff; }
+  .ftag.plain { background: #fff; color: var(--ink); border: 1px solid var(--rule); }
+  .case .findings .gist { margin: 0; font-size: 14px; line-height: 1.45; }
+  .btn.small { margin-top: 10px; padding: 6px 12px; font-size: 14px; border-radius: 6px; }
+  .case details.full { padding: 12px 0; border-top: 1px solid var(--rule); }
+  .case details.full > summary { color: var(--navy); font-weight: 600; }
+  .case details.full > section:first-of-type { border-top: 0; }
+  .case .chat { margin-top: 8px; padding-top: 16px; border-top: 2px solid var(--ink); }
+  .chat-log { display: flex; flex-direction: column; gap: 8px; max-height: 420px; overflow-y: auto; margin-top: 10px; }
+  .chat-log:empty { display: none; }
+  .msg { margin: 0; padding: 8px 12px; border-radius: 10px; white-space: pre-wrap; overflow-wrap: anywhere; max-width: 92%; min-width: 0; }
+  .msg.user { align-self: flex-end; background: var(--navy); color: #fff; }
+  .msg p { margin: 0; }
+  .msg .result { margin-top: 8px; max-height: 240px; overflow: auto; }
+  .msg table { border-collapse: collapse; font-size: 13px; }
+  .msg th, .msg td { padding: 3px 8px; border-bottom: 1px solid var(--rule); text-align: left; white-space: nowrap; }
+  .msg th { font-weight: 600; position: sticky; top: 0; background: #fff; }
+  .msg details { margin-top: 6px; font-size: 13px; }
+  .msg details pre { margin: 4px 0 0; white-space: pre-wrap; font: 12px/1.4 ui-monospace, monospace; }
+  .msg.assistant { align-self: flex-start; background: #fff; border: 1px solid var(--rule); }
+  .msg.pending { color: var(--muted); font-style: italic; }
+  .msg.error { align-self: flex-start; color: var(--crimson); background: #fbeaec; }
+  .starters { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .starters[hidden] { display: none; }
+  .chip-q { padding: 5px 10px; font-size: 14px; background: #fff; border: 1px solid var(--rule); border-radius: 14px; cursor: pointer; }
+  .chip-q:hover { border-color: var(--navy); }
+  .ask { display: flex; gap: 8px; margin-top: 10px; }
+  .ask input { flex: 1; min-width: 0; padding: 9px 12px; font: inherit; border: 1px solid var(--ink); border-radius: 6px; background: #fff; }
+  .ask .btn { border-radius: 6px; }
+  .chat .note { margin: 8px 0 0; font-size: 13px; color: var(--muted); }
   .case .empty h2 { padding: 20px 0 10px; }
   .case .empty p { margin: 0; color: var(--muted); }
   .foot { padding: 16px 24px; color: var(--muted); border-top: 1px solid var(--rule); }
@@ -164,12 +266,13 @@
     .queue, .detail { overflow: visible; padding: 20px 16px; } .detail .cols { grid-template-columns: 1fr; }
     .cases { padding: 20px 16px 40px; } .two { grid-template-columns: 1fr; }
     .body { flex-direction: column; overflow-y: auto; }
-    .map { flex: none; height: 70vh; }
+    .map { flex: none; }
     .side { width: 100%; border-left: 0; border-top: 1px solid var(--ink); overflow: visible; }
-    .count { left: 16px; top: 16px; }
+    .map { height: auto; } #map { position: relative; height: 60vh; }
+    .map .reset { left: 16px; top: calc(60vh - 56px); bottom: auto; }
+    .rail { position: static; width: auto; margin: 12px 16px; } .spills .rows { max-height: 50vh; }
     .count .n { font-size: 64px; line-height: 64px; }
     .top { padding: 0 16px; } .brand { gap: 16px; } .updated { display: none; }
-    .nav > * { padding: 0 8px; font-size: 14px; }
   }
   /* B1 "Modern Survey": white header, softer corners, lifted panels */
   .top { background: #fff; color: var(--muted); border-bottom: 1px solid var(--rule); }
@@ -177,141 +280,6 @@
   .count { border-radius: 6px; box-shadow: 0 10px 30px rgba(18, 53, 91, .12); }
   .reset { border-radius: 6px; }
   .gauge-label, .site-label { border-radius: 6px; }
-  /* Ask Genie: a small collapsible chat on the map, through serve.py -> Databricks Genie */
-  .askbox { position: absolute; z-index: 3; right: 56px; bottom: 20px; width: min(380px, calc(100% - 76px)); max-height: calc(100% - 40px);
-            display: flex; flex-direction: column; background: rgba(255, 255, 255, .97); border-radius: 6px; box-shadow: 0 10px 30px rgba(18, 53, 91, .18); }
-  .askbox.closed { width: auto; }
-  .askbox [hidden] { display: none !important; }  /* map controls sit to the right of the box */
-  .askbox .ask-toggle { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; border: 0; background: var(--navy); color: #fff; font-weight: 600; cursor: pointer; border-radius: 6px; }
-  .askbox:not(.closed) .ask-toggle { border-radius: 6px 6px 0 0; }
-  .askbox .ask-toggle:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-  .askbox .ask-body { display: flex; flex-direction: column; gap: 8px; min-height: 0; padding: 10px 12px 12px; }
-  .askbox.closed .ask-body { display: none; }
-  .askbox .api-off { margin: 0; padding: 8px 10px; background: #fbf3d4; border: 1px solid var(--gold); border-radius: 6px; font-size: 13px; }
-  .askbox .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-  .askbox .chips button { padding: 4px 10px; border: 1px solid var(--navy); border-radius: 999px; background: #fff; color: var(--navy); font-size: 13px; cursor: pointer; }
-  .askbox .chips button:hover { background: rgba(232, 197, 71, .25); }
-  .askbox form { display: flex; gap: 6px; }
-  .askbox input { flex: 1; min-width: 0; padding: 7px 10px; font: inherit; border: 1px solid var(--rule); border-radius: 6px; background: #fff; }
-  .askbox input:focus-visible, .askbox .chips button:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
-  .askbox .btn { padding: 7px 12px; border-radius: 6px; }
-  .askbox .new { align-self: flex-start; padding: 0; border: 0; background: none; color: var(--navy); font-size: 13px; text-decoration: underline; cursor: pointer; }
-  .askbox .new[hidden] { display: none; }
-  #ask-log { overflow-y: auto; min-height: 0; max-height: 46vh; }
-  .turn { padding: 10px 0; border-top: 1px solid var(--rule); font-size: 14px; }
-  .turn .q { margin: 0 0 4px; font-weight: 600; }
-  .turn .a { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
-  .turn .a.err { color: var(--crimson); }
-  .turn .a.wait { color: var(--muted); }
-  .turn .meta { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
-  .turn .tbl { margin-top: 8px; overflow-x: auto; }
-  .turn table { border-collapse: collapse; font-size: 13px; background: #fff; }
-  .turn th, .turn td { padding: 4px 8px; border: 1px solid var(--rule); text-align: left; white-space: nowrap; }
-  .turn th { background: #e9eee7; font-weight: 600; }
-  .turn details { margin-top: 6px; } .turn summary { cursor: pointer; font-weight: 500; color: var(--navy); }
-  .turn pre { margin: 4px 0 0; padding: 8px; background: #f7f9f6; border: 1px solid var(--rule); border-radius: 6px; font: 12px/1.45 ui-monospace, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
-  /* Dashboard tab (dashboard.html, Kang 14 Nov 21:00): two white cards on a pale ground, map card + shortlist card.
-     The Map tab keeps the full-bleed layout: dashboard-only parts are hidden there. */
-  body:not(.dash) .dash-only, body.dash .classic-only { display: none !important; }
-  body:not(.dash) .mcard { display: contents; }
-  body.dash { background: #eef2f5; }
-  body.dash .body { gap: 16px; padding: 16px; }
-  body.dash .mcard, body.dash .side { background: #fff; border: 1px solid #dde4ea; border-radius: 16px; box-shadow: 0 1px 2px rgba(18, 53, 91, .04); }
-  body.dash .mcard { flex: 1.3 1 0; min-width: 0; display: flex; flex-direction: column; padding: 18px 18px 18px; }
-  body.dash .mhead { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
-  body.dash .eyebrow { margin: 0 0 6px; font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--navy); }
-  body.dash .mtitle { margin: 0; font: 600 26px/1.15 var(--serif); letter-spacing: -.02em; color: var(--ink); }
-  body.dash .seg { display: flex; gap: 2px; margin: 0; padding: 3px; background: #eef2f5; border-radius: 10px; }
-  body.dash .seg a { padding: 7px 12px; border-radius: 8px; font-weight: 500; color: var(--muted); text-decoration: none; white-space: nowrap; }
-  body.dash .seg a:hover { color: var(--navy); }
-  body.dash .seg a[aria-current] { background: var(--navy); color: #fff; }
-  body.dash .hero-n { display: flex; align-items: center; gap: 10px; flex: none; }
-  body.dash .hero-n b { font: 800 56px/0.9 var(--serif); letter-spacing: -.05em; color: var(--crimson); }
-  body.dash .hero-n span { font-size: 14px; line-height: 1.25; color: var(--muted); font-weight: 500; }
-  body.dash .msub { margin: 6px 0 14px; color: var(--muted); font-size: 14px; }
-  body.dash .ic { display: inline-flex; align-items: center; gap: 8px; }
-  body.dash .ic svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; }
-  body.dash .mctrl { position: absolute; z-index: 2; top: 14px; left: 14px; display: flex; align-items: center; gap: 14px; padding: 8px 12px;
-                     background: rgba(255, 255, 255, .95); border-radius: 10px; box-shadow: 0 4px 16px rgba(18, 53, 91, .12); font-size: 14px; }
-  body.dash .mctrl .toggle { margin: 0; color: var(--muted); }
-  body.dash .inrange { color: var(--muted); }
-  body.dash .badge { display: inline-block; min-width: 26px; padding: 1px 7px; border-radius: 6px; background: #eef2f5; color: var(--navy); font-size: 13px; font-weight: 600; text-align: center; }
-  body.dash .mcard .map { flex: 1; min-height: 380px; border-radius: 12px; overflow: hidden; }
-  body.dash .mcard .key { position: absolute; z-index: 2; left: 14px; bottom: 14px; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; max-width: calc(100% - 80px);
-                margin: 0; padding: 8px 12px; border: 0; background: rgba(255, 255, 255, .95); border-radius: 10px; box-shadow: 0 4px 16px rgba(18, 53, 91, .12); font-size: 13px; }
-  body.dash .mcard .key span { display: inline-flex; align-items: center; gap: 7px; }
-  body.dash .mcard .key .size { color: var(--muted); }
-  body.dash .mcard .sw { display: inline-block; }
-  body.dash .mcard .reset { left: auto; right: 14px; top: 14px; bottom: auto; border-radius: 10px; }
-
-  body.dash .side { flex: 1 1 0; width: auto; min-width: 340px; max-width: 580px; border-left: 1px solid #dde4ea; padding: 18px 20px 4px; }
-  body.dash .shead { display: flex; align-items: center; justify-content: space-between; padding: 4px 4px 14px; }
-  body.dash .side .shead h2 { padding: 0; font-size: 20px; font-weight: 500; letter-spacing: -.01em; text-transform: none; color: var(--navy); }
-  body.dash .rows { border: 1px solid #dde4ea; border-radius: 12px; overflow: hidden; }
-  body.dash .row { gap: 14px; padding: 12px 14px; border-top: 1px solid #e6ebf0; }
-  body.dash .row:first-child { border-top: 0; }
-  body.dash .row .no { flex: none; width: 30px; height: 30px; display: grid; place-items: center; border-radius: 7px; background: #eef2f5; color: var(--navy); font-size: 13px; }
-  body.dash .row .site b { font-weight: 500; }
-  body.dash .row .site span { font-size: 13px; }
-  body.dash .row .big { flex: none; text-align: right; font-size: 22px; font-weight: 500; color: var(--crimson); font-variant-numeric: tabular-nums; }
-  body.dash .row .big small { margin-left: 2px; font-size: 13px; color: var(--muted); }
-  body.dash .row:not(.head):hover { background: #f5f8fa; }
-  body.dash .row.sel, body.dash .row.sel:hover { background: #eaf0f6; }
-  body.dash .row.sel .no { background: var(--navy); color: #fff; }
-  body.dash .side .case { flex: none; margin: 18px 0 0; padding: 22px 24px 8px; background: #f3f6f9; border: 1px solid #dde4ea; border-radius: 12px; }
-  body.dash .case .chead { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; padding: 0 0 12px; }
-  body.dash .case .chead .eyebrow { font-size: 11px; }
-  body.dash .case .chead h3 { font-size: 22px; font-weight: 500; }
-  body.dash .case .score { text-align: right; line-height: 1; }
-  body.dash .case .score b { display: block; font-size: 44px; font-weight: 500; color: var(--crimson); letter-spacing: -.02em; }
-  body.dash .case .score span { font-size: 12px; color: var(--muted); }
-  body.dash .case section { border-top-color: #dde4ea; }
-  body.dash .case .empty h2 { padding: 0 0 6px; font-size: 18px; font-weight: 500; text-transform: none; letter-spacing: 0; }
-  body.dash .side .foot { border-top: 0; padding: 14px 4px; font-size: 13px; }
-  @media (max-width: 900px) {
-    body.dash .body { padding: 12px; gap: 12px; } body.dash .mcard { flex: none; padding: 16px 14px 12px; } body.dash .mcard .map { flex: none; height: 62vh; }
-    body.dash .side { flex: none; max-width: none; min-width: 0; } body.dash .mhead { flex-direction: column; }
-  }
-
-
-  /* Dashboard interactions: shortlist pins, compact case card, Ask Genie in the right column */
-  body.dash .pin { display: flex; align-items: center; gap: 6px; padding: 4px 9px 4px 6px; font: 600 14px var(--sans); color: var(--crimson);
-                   background: #fff; border: 1.5px solid var(--navy); border-radius: 8px; box-shadow: 0 4px 12px rgba(18, 53, 91, .2); cursor: pointer;
-                   transition: transform .18s ease, background .18s ease, color .18s ease; position: relative; }
-  body.dash .pin::after { content: ""; position: absolute; left: 50%; bottom: -6px; width: 9px; height: 9px; background: inherit; border: inherit;
-                          border-top: 0; border-left: 0; transform: translateX(-50%) rotate(45deg); }
-  body.dash .pin .pn { padding-right: 6px; border-right: 1px solid #c9d3dd; color: var(--muted); font-weight: 500; font-size: 12px; }
-  body.dash .pin-wrap { padding-bottom: 6px; z-index: 2; } /* above the deck.gl canvas */
-  body.dash .pin-wrap:has(.pin:hover), body.dash .pin-wrap:has(.hot), body.dash .pin-wrap:has(.on) { z-index: 4; }
-  body.dash .pin:hover, body.dash .pin.hot { transform: translateY(-3px) scale(1.06); z-index: 5; }
-  body.dash .pin.on { background: var(--navy); color: #fff; transform: translateY(-3px) scale(1.1); }
-  body.dash .pin.on .pn { color: #c9d6e3; border-right-color: #45607d; }
-  body.dash .pin:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-  body.dash .row .big { transition: transform .15s ease; } body.dash .row:hover .big { transform: translateX(-3px); }
-  body.dash .pin-wrap { transition: opacity .4s ease, visibility .4s; }
-  body.dash .tilted .pin-wrap { opacity: 0 !important; visibility: hidden; pointer-events: none; }  /* maplibre sets marker opacity inline */
-  body.dash .cmeta { display: grid; gap: 2px; color: var(--muted); font-size: 14px; }
-  body.dash .cverdict { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin: 14px 0 0; font-size: 14px; }
-  body.dash .vchip { padding: 3px 10px; border-radius: 999px; font-size: 13px; font-weight: 600; text-transform: capitalize; background: #e6ebf0; color: var(--ink); }
-  body.dash .vchip.likely_breach { background: #fbe3e7; color: var(--crimson); }
-  body.dash .vchip.needs_review { background: #fbf1cc; color: #7a5d00; }
-  body.dash .vchip.likely_innocent { background: #e2ecf5; color: var(--navy); }
-  body.dash .cact { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 6px; }
-  body.dash .cact .btn { display: inline-flex; gap: 10px; border-radius: 10px; padding: 11px 16px; }
-  body.dash .cact .go { flex: 1; display: flex; justify-content: space-between; gap: 12px; }
-  body.dash .cmore { margin: 8px 0 12px; } body.dash .cmore summary { cursor: pointer; font-weight: 500; color: var(--navy); padding: 8px 0; }
-  body.dash .side .case { animation: rise .35s ease; }
-  @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-  @media (prefers-reduced-motion: reduce) { body.dash .side .case { animation: none; } body.dash .pin { transition: none; } }
-  body.dash .side > * { flex-shrink: 0; }  /* the card scrolls; nothing inside it gets squashed */
-  body.dash .askbox { position: fixed; z-index: 20; right: 28px; bottom: 28px; width: min(400px, calc(100vw - 32px)); max-height: min(640px, calc(100vh - 110px));
-                     border-radius: 14px; box-shadow: 0 14px 40px rgba(18, 53, 91, .28); }
-  body.dash .askbox.closed { width: auto; border-radius: 999px; }
-  body.dash .askbox.closed .ask-toggle { border-radius: 999px; padding: 12px 20px; font-size: 15px; box-shadow: 0 0 0 4px rgba(232, 197, 71, .35); }
-  body.dash .askbox:not(.closed) .ask-toggle { border-radius: 14px 14px 0 0; }
-  body.dash .askbox #ask-log { max-height: none; flex: 1; }
-  body.dash .askbox .ask-body { flex: 1; overflow: hidden; }
-  @media (max-width: 900px) { body.dash .askbox { right: 16px; bottom: 16px; } }
 </style>
 </head>
 <body>
@@ -320,60 +288,32 @@
     <span class="logo">Sentinels</span>
     <nav class="nav"><a href="#map" data-view="map" class="on">Map</a><a href="#cases" data-view="cases">Cases</a><a href="#reports" data-view="reports">Reports</a></nav>
   </div>
-  <span class="updated" id="updated"></span>
+  <div class="top-right"><span class="updated" id="updated"></span><a class="check" href="#postcode">Check your postcode</a></div>
 </header>
 <main class="body">
-  <section class="mcard">
-    <div class="mhead dash-only">
-      <div>
-        <p class="eyebrow">Sewage spill watch · England</p>
-        <h1 class="mtitle">The spills rain can't explain.</h1>
-        <p class="msub">Every storm overflow in England, 9 water companies · <span id="runat"></span></p>
+  <div class="map">
+    <button class="reset" id="reset" hidden>Show all of England</button>
+    <div id="map" role="img" aria-label="3D map of England: one column per spilling overflow, height is hours discharging"></div>
+    <div class="rail">
+    <details class="count" id="count" open>
+      <summary><span class="n" id="n"></span> <h1>dry spills in 48 hours</h1></summary>
+      <p id="of"></p>
+      <div class="key">
+        <div><span class="sw dry"></span>Dry spill candidate</div>
+        <div><span class="sw rain"></span>Rain explained</div>
+        <div><span class="sw none"></span>No gauge within 10 km</div>
+        <p id="size-key">Column height is hours discharging.</p>
+        <p class="views">Map: <a href="index.html" data-v="3d">3D columns</a> · <a href="2d.html" data-v="2d">2D dots</a></p>
+        <label class="toggle"><input type="checkbox" id="dryOnly"> Dry spills only</label>
       </div>
-      <div class="hero-n"><b id="n3"></b><span>dry spills<br>in 48 hours</span></div>
-    </div>
-    <div class="map">
-      <div class="mctrl dash-only">
-        <label class="toggle"><input type="checkbox" class="dry-only"> Dry spills only <span class="badge" id="n2"></span></label>
-        <span class="inrange" id="of2"></span>
-      </div>
-      <button class="reset" id="reset" hidden>Show all of England</button>
-      <div id="map" role="img" aria-label="Map of England: one mark per spilling overflow, sized by hours discharging"></div>
-      <div class="key dash-only">
-        <span><i class="sw dry"></i>Dry spill</span><span><i class="sw rain"></i>Rain explained</span><span><i class="sw none"></i>No gauge</span>
-        <span class="size" title="Dry spill: every rain gauge within 10 km saw under 0.25 mm in each of the two days before it began.">Size = hours discharging</span>
-      </div>
-      <div class="count classic-only">
-        <div class="n" id="n"></div>
-        <h1>dry spills in 48 hours</h1>
-        <p id="of"></p>
-        <div class="key">
-          <div><span class="sw dry"></span>Dry spill candidate</div>
-          <div><span class="sw rain"></span>Rain explained</div>
-          <div><span class="sw none"></span>No gauge within 10 km</div>
-          <p id="size-key">Column height is hours discharging.</p>
-          <p class="views">Map: <a href="index.html" data-v="3d">3D columns</a> · <a href="2d.html" data-v="2d">2D dots</a></p>
-          <label class="toggle"><input type="checkbox" class="dry-only"> Dry spills only</label>
-        </div>
-      </div>
-    <section class="askbox closed" id="askbox" aria-label="Ask Genie">
-      <button class="ask-toggle" id="ask-toggle" aria-expanded="false" aria-controls="ask-body"><span>Ask Genie about this data</span><span aria-hidden="true" id="ask-chev">▴</span></button>
-      <div class="ask-body" id="ask-body">
-        <p class="api-off" id="ask-off" hidden></p>
-        <div id="ask-log"></div>
-        <div class="chips" id="ask-chips"></div>
-        <form id="ask-form">
-          <input id="ask-q" maxlength="500" placeholder="Ask a question about the spills" aria-label="Your question" autocomplete="off">
-          <button class="btn" id="ask-go">Ask</button>
-        </form>
-        <button class="new" type="button" id="ask-new" hidden>New conversation</button>
-      </div>
+    </details>
+    <section class="spills" aria-labelledby="spills-h">
+      <h2 id="spills-h">Longest dry spills</h2>
+      <div class="rows" id="rows"></div>
     </section>
     </div>
-  </section>
+  </div>
   <aside class="side">
-    <div class="shead"><h2>Longest dry spills</h2><span class="badge dash-only" id="rows-n"></span></div>
-    <div class="rows" id="rows"></div>
     <div class="case" id="case"></div>
     <p class="foot">A candidate, not proof. A person approves any report before it is sent.</p>
   </aside>
@@ -405,6 +345,20 @@
   </div>
   <div class="detail" id="detail"></div>
 </main>
+<main class="pc-page" id="postcode-view" hidden>
+  <div class="pc-side">
+  <h1>Is there a dry spill near you?</h1>
+  <p class="intro">Enter a postcode in England to see sewage overflows within 5 km that spilled in the last 48 hours with no rain recorded nearby. These are candidates, not proof of pollution, and which way the water flows isn't known.</p>
+  <form class="pc" id="pc-form">
+    <label for="pc">Postcode</label>
+    <input id="pc" autocomplete="postal-code" required maxlength="8" placeholder="NN8 1AA">
+    <button>Check</button>
+  </form>
+  <p class="sub">Your postcode is sent to postcodes.io to find its location. It isn't saved.</p>
+  <div id="pc-out" aria-live="polite"></div>
+  </div>
+  <div class="pc-mapwrap" id="pc-mapwrap"><div class="pc-legend" id="pc-legend"></div></div>
+</main>
 <script>
 const RUN = /*DATA*/null;
 const sites = RUN.sites;
@@ -419,11 +373,9 @@ const AREA_M = 10000;          // the detector checks rain gauges within 10 km
 const DRY_MM = 0.25;           // detector threshold: under this in a 24 h window is a dry day
 const wet = g => g.mm_0_24h_before >= DRY_MM || g.mm_24_48h_before >= DRY_MM;
 let dryOnly = false;
-const MAP2D = /*MAP2D*/false;
-const DASH = /*DASH*/false;    // build.py writes dashboard.html with this set: the card layout, flat map  // build.py writes 2d.html with this set: the showcase site's flat dot map
+const MAP2D = /*MAP2D*/false;  // build.py writes 2d.html with this set: the showcase site's flat dot map
 const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
 document.body.classList.toggle("flat", MAP2D);
-document.body.classList.toggle("dash", DASH);
 if (MAP2D) document.getElementById("size-key").textContent = "Dot size is hours discharging.";
 document.querySelectorAll(".views a").forEach(a => { if ((a.dataset.v === "2d") === MAP2D) a.setAttribute("aria-current", "page"); a.href += location.hash; });
 let pulse = 0;
@@ -436,34 +388,13 @@ const dry = sites.filter(s => s.verdict === "dry_spill_candidate").sort((a, b) =
 
 document.getElementById("n").textContent = dry.length;
 document.getElementById("of").textContent = `of ${sites.length} spills started. No meaningful rain at any gauge within 10 km.`;
-document.getElementById("n2").textContent = document.getElementById("n3").textContent = dry.length;
-document.getElementById("of2").textContent = `${dry.length} of ${sites.length} spills in 48 h are dry`;
-document.getElementById("rows-n").textContent = dry.length;
 const when = new Date(RUN.run_at.replace(" ", "T"));
-document.getElementById("updated").textContent = document.getElementById("runat").textContent = isNaN(when) ? "" :
+document.getElementById("updated").textContent = isNaN(when) ? "" :
   `Updated ${when.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}, ${when.toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`;
 
 // One semi-transparent cylinder per site; height is hours discharging.
 const kind = s => VERDICT[s.verdict] ? s.verdict : "no_gauge";
-let selected = null, selectedAt = 0;
-// A unit hemisphere, z up, open at the bottom: the glass of each spill's dome.
-const DOME = DASH ? (() => {
-  const nlat = 16, nlong = 48, pos = [], nor = [], idx = [];
-  for (let i = 0; i <= nlat; i++) {
-    const phi = (i / nlat) * Math.PI / 2;  // 0 = top, pi/2 = ground
-    for (let j = 0; j <= nlong; j++) {
-      const th = (j / nlong) * 2 * Math.PI, x = Math.sin(phi) * Math.cos(th), y = Math.sin(phi) * Math.sin(th), z = Math.cos(phi);
-      pos.push(x, y, z); nor.push(x, y, z);
-    }
-  }
-  for (let i = 0; i < nlat; i++) for (let j = 0; j < nlong; j++) {
-    const a = i * (nlong + 1) + j, b = a + nlong + 1;
-    idx.push(a, b, a + 1, b, b + 1, a + 1);
-  }
-  return new luma.Geometry({ topology: "triangle-list", indices: { size: 1, value: new Uint16Array(idx) },
-    attributes: { POSITION: { size: 3, value: new Float32Array(pos) }, NORMAL: { size: 3, value: new Float32Array(nor) } } });
-})() : null;
-const easeOut = t => 1 - Math.pow(1 - Math.min(Math.max(t, 0), 1), 3);
+let selected = null;
 
 // 2D: the showcase site's dots. Area ~ hours, soft glow, pulsing ring on dry spills, white edge.
 const COL = { dry_spill_candidate: [200, 16, 46], rain_explained: [18, 53, 91], no_gauge: [110, 120, 125] };
@@ -493,10 +424,6 @@ function layers() {
   const m = 40075016.686 * Math.cos(map.getCenter().lat * Math.PI / 180) / (512 * 2 ** z)  // metres per pixel...
     * Math.min(2, 1 + Math.max(0, z - 6) * 0.25);                                          // ...grown a little when zoomed in
   const sel = selected && selected.id;
-  const area = new deck.ScatterplotLayer({
-    id: "area", data: selected ? [selected] : [], getPosition: s => [s.lon, s.lat], getRadius: AREA_M,
-    filled: true, stroked: true, getFillColor: [232, 197, 71, 70], getLineColor: [184, 146, 20, 255], lineWidthMinPixels: 2,
-  });
   const stack = v => new deck.ColumnLayer({
     id: v, data: sites.filter(s => kind(s) === v), diskResolution: 24, extruded: true,
     radius: VERDICT[v].px * m, getPosition: s => [s.lon, s.lat],
@@ -515,60 +442,35 @@ function layers() {
     filled: true, stroked: true, lineWidthUnits: "pixels", getLineWidth: 2,
     getFillColor: g => wet(g) ? [18, 53, 91, 255] : [243, 246, 241, 255], getLineColor: [18, 53, 91, 255],
   });
-  if (DASH) {  // dashboard: faint fill plus a dashed 10 km ring instead of the gold disc
-    const ring = selected ? [Array.from({ length: 97 }, (_, i) => {
-      const a = i / 96 * 2 * Math.PI, dLat = AREA_M / 111320 * Math.sin(a);
-      return [selected.lon + AREA_M / (111320 * Math.cos(selected.lat * Math.PI / 180)) * Math.cos(a), selected.lat + dLat];
-    })] : [];
-    const disc = area.clone({ stroked: false, getFillColor: [18, 53, 91, 22] });
-    const dashed = new deck.PathLayer({ id: "ring", data: ring, getPath: d => d, getColor: [18, 53, 91, 200], getWidth: 2, widthUnits: "pixels",
-      getDashArray: [5, 4], dashJustified: true, extensions: [new deck.PathStyleExtension({ dash: true })] });
-    // Tilted in on a spill: the dry spills stand up as columns (height = hours discharging), the selected one gold.
-    // Tilted in on a spill: each 2D dot's soft glow inflates into a flat-shaded dome (no lighting, like the rest of the
-    // site's flat graphics), with a crisp rim where it meets the ground; the 2D dot itself stays put inside it.
-    const rise = !selected ? 0 : REDUCED ? 1 : easeOut((performance.now() - selectedAt - 700) / 1500);
-    const show = rise > 0.02;
-    const domeR = s => dotSize(s) * 2.6 * m * (s.id === sel ? 1.3 : 1);  // metres; dotSize is the 2D dot's radius in px
-    const rgb = s => s.id === sel ? GOLD.slice(0, 3) : (COL[s.verdict] || COL.no_gauge);
-    const strong = s => s.id === sel || s.verdict === "dry_spill_candidate";
-    const shown = !show ? [] : sites.filter(s => !dryOnly || s.verdict === "dry_spill_candidate" || s.id === sel);
-    const cols = !selected ? [] : [
-      new deck.SimpleMeshLayer({ id: "dome", data: shown, mesh: DOME, material: false, pickable: true,
-        parameters: { depthWriteEnabled: false },
-        getPosition: s => [s.lon, s.lat, 0], getScale: s => [domeR(s), domeR(s), domeR(s) * rise],
-        getColor: s => [...rgb(s), strong(s) ? 60 : 34], updateTriggers: { getScale: [rise, m, sel], getColor: sel } }),
-      new deck.ScatterplotLayer({ id: "dome-rim", data: shown, getPosition: s => [s.lon, s.lat], radiusUnits: "meters", parameters: NO_DEPTH,
-        getRadius: domeR, filled: false, stroked: true, lineWidthUnits: "pixels", getLineWidth: s => s.id === sel ? 2 : 1.2,
-        getLineColor: s => [...rgb(s), (strong(s) ? 200 : 110) * rise], updateTriggers: { getRadius: [m, sel], getLineColor: [sel, rise] } }),
-      new deck.TextLayer({ id: "sel-label", data: rise > 0.05 ? [selected] : [], getPosition: s => [s.lon, s.lat, domeR(s) * rise + 8 * m],
-        getText: s => `${hrs(s)} h`, getSize: 17, getColor: [255, 255, 255, 255], fontFamily: "Inter Tight, system-ui, sans-serif", fontWeight: 700,
-        background: true, getBackgroundColor: [18, 53, 91, 235], backgroundPadding: [8, 4], getTextAnchor: "middle", getAlignmentBaseline: "bottom",
-        parameters: { depthCompare: "always" }, updateTriggers: { getPosition: [rise, m] } }),
-    ];
-    const flat = dotLayers([disc, dashed, links, gauges]);
-    return [...(rise > 0.3 ? flat.filter(l => l.id !== "glow") : flat), ...cols];  // the dome replaces the flat glow
-  }
-  if (MAP2D) return dotLayers([area, links, gauges]);
+  if (MAP2D) return dotLayers([links, gauges]);
   const context = dryOnly ? [] : [stack("rain_explained"), stack("no_gauge")];
-  return [area, links, gauges, ...context, stack("dry_spill_candidate")];
+  return [links, gauges, ...context, stack("dry_spill_candidate")];
 }
 
-const ENGLAND = DASH ? [[-5.75, 49.95], [1.77, 55.81]] : MAP2D ? [[-5.8, 49.9], [1.8, 55.85]] : [[-5.4, 50.0], [1.8, 55.2]];  // flat view needs all of England in frame
-const ENGLAND_PAD = DASH ? { top: 8, bottom: 40, left: 8, right: 8 } : MAP2D ? { top: 20, bottom: 20, left: 260, right: 20 } : { top: 0, bottom: 0, left: 240, right: 0 };
+const ENGLAND = MAP2D ? [[-5.8, 49.9], [1.8, 55.85]] : [[-5.4, 50.0], [1.8, 55.2]];  // flat view needs all of England in frame
+const ENGLAND_PAD = MAP2D ? { top: 20, bottom: 20, left: 380, right: 20 } : { top: 0, bottom: 0, left: 370, right: 0 };
 const map = new maplibregl.Map({
   container: "map", style: "https://basemaps.cartocdn.com/gl/positron-nolabels-gl-style/style.json",
   bounds: ENGLAND, fitBoundsOptions: { padding: ENGLAND_PAD },
-  pitch: MAP2D ? 0 : 45, maxPitch: MAP2D && !DASH ? 0 : 70, attributionControl: { compact: true },
+  pitch: MAP2D ? 0 : 45, maxPitch: MAP2D ? 0 : 70, attributionControl: { compact: true },
 });
-if (MAP2D && !DASH) { map.dragRotate.disable(); map.touchZoomRotate.disableRotation(); }
+if (MAP2D) { map.dragRotate.disable(); map.touchZoomRotate.disableRotation(); }
 map.on("style.load", () => {
-  if (MAP2D) return;  // flat map and dashboard keep the plain Positron basemap (Kang preferred it, 21:37)
+  // Nearby water the spill could reach, filled in by showAffected(); drawn above the basemap, under deck.gl.
+  map.addSource("affected", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
+  map.addLayer({ id: "affected-fill", type: "fill", source: "affected", filter: ["==", ["geometry-type"], "Polygon"],
+    paint: { "fill-color": "#c8102e", "fill-opacity": ["*", 0.45, ["get", "w"]] } });
+  map.addLayer({ id: "affected-glow", type: "line", source: "affected", filter: ["==", ["geometry-type"], "LineString"],
+    layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#c8102e", "line-width": 9, "line-opacity": ["*", 0.25, ["get", "w"]] } });
+  map.addLayer({ id: "affected-line", type: "line", source: "affected", filter: ["==", ["geometry-type"], "LineString"],
+    layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#c8102e", "line-width": 3, "line-opacity": ["get", "w"] } });
+  if (MAP2D) return;  // 2D keeps the showcase site's plain Positron basemap
   // Restyle Positron into the Figma palette: land, sea, coastline. Everything else is hidden.
   for (const l of map.getStyle().layers) {
     if (l.id === "background") map.setPaintProperty(l.id, "background-color", "#bfd6dd");  // sea, so unloaded tiles read as sea
     else if (l.id === "water") map.setPaintProperty(l.id, "fill-color", "#bfd6dd");
     else if (l.id === "waterway") map.setPaintProperty(l.id, "line-color", "#9fbcc6");
-    else map.setLayoutProperty(l.id, "visibility", "none");
+    else if (!l.id.startsWith("affected")) map.setLayoutProperty(l.id, "visibility", "none");
   }
   const water = map.getLayer("water");
   if (water) map.addLayer({ id: "land", type: "fill", source: water.source, "source-layer": "earth",
@@ -580,11 +482,6 @@ map.on("style.load", () => {
 
 const overlay = new deck.MapboxOverlay({
   layers: layers(),
-  useDevicePixels: DASH ? Math.max(2, window.devicePixelRatio || 1) : true,  // render at 2x or more: smoother column edges
-  effects: DASH ? [new deck.LightingEffect({  // soft key light from the north-west so the columns read as solid
-    ambient: new deck.AmbientLight({ color: [255, 255, 255], intensity: 1.15 }),
-    key: new deck.DirectionalLight({ color: [255, 248, 235], intensity: 1.1, direction: [-1, -2, -2.5] }),
-    fill: new deck.DirectionalLight({ color: [210, 225, 240], intensity: 0.5, direction: [2, 1, -1] }) })] : [],
   onClick: info => info.object && select(info.object),
   getTooltip: ({ object }) => object && { text: `${title(object.name)}  ${hrs(object)} h`,
     style: { background: "rgba(227,233,223,.95)", color: "#14202b", font: "600 15px 'Inter Tight', sans-serif", padding: "5px 10px", borderRadius: "6px" } },
@@ -592,9 +489,9 @@ const overlay = new deck.MapboxOverlay({
 map.addControl(overlay);
 map.on("zoom", () => overlay.setProps({ layers: layers() }));
 const resetBtn = document.getElementById("reset");
-document.querySelectorAll(".dry-only").forEach(c => c.onchange = e => { dryOnly = e.target.checked; overlay.setProps({ layers: layers() }); });
+document.getElementById("dryOnly").onchange = e => { dryOnly = e.target.checked; overlay.setProps({ layers: layers() }); };
 resetBtn.onclick = () => select(null);
-map.addControl(new maplibregl.NavigationControl({ visualizePitch: !MAP2D || DASH, showCompass: !MAP2D || DASH }), "bottom-right");
+map.addControl(new maplibregl.NavigationControl({ visualizePitch: !MAP2D, showCompass: !MAP2D }), "bottom-right");
 if (MAP2D && !REDUCED) requestAnimationFrame(function tick(now) {  // pulse rings on dry spills; first frame runs after the page script
   pulse = (now % 1800) / 1800;
   if (!views.map.hidden) overlay.setProps({ layers: layers() });
@@ -616,24 +513,9 @@ function showLabel(s, selected) {
 
 function renderRows() {
   const rows = document.getElementById("rows");
-  if (!DASH) return renderRowsClassic(rows);
-  rows.replaceChildren(...dry.slice(0, PINNED).map((s, i) => {
-    const b = el("button", "row" + (s === selected ? " sel" : ""));
-    const site = el("span", "site"), big = el("span", "big", hrs(s));
-    site.append(el("b", null, title(s.name)), el("span", null, `${s.company} · ${fmt(s.rain48, 2)} mm rain nearby`));
-    big.append(el("small", null, "h"));
-    b.append(el("span", "no", i + 1), site, big);
-    b.onmouseenter = b.onfocus = () => pins.get(s.id)?.classList.add("hot");
-    b.onmouseleave = b.onblur = () => pins.get(s.id)?.classList.remove("hot");
-    b.setAttribute("aria-pressed", s === selected);
-    b.onclick = () => select(s);
-    return b;
-  }));
-}
-function renderRowsClassic(rows) {
   const head = el("div", "row head");
   head.append(el("span", "site", "Site"), el("span", "h", "Hours"), el("span", "r", "Rain, mm"));
-  rows.replaceChildren(head, ...dry.slice(0, selected ? 4 : 7).map(s => {
+  rows.replaceChildren(head, ...dry.map(s => {
     const b = el("button", "row" + (s === selected ? " sel" : ""));
     const site = el("span", "site");
     site.append(el("b", null, title(s.name)), el("span", null, `${s.company} · ${s.id}`));
@@ -642,28 +524,22 @@ function renderRowsClassic(rows) {
     b.onclick = () => select(s);
     return b;
   }));
+  rows.querySelector(".sel")?.scrollIntoView({ block: "center" });
 }
 function renderCase() {
   const c = document.getElementById("case");
-  if (DASH && !selected && dry[0]) return renderCaseDash(c, dry[0], true);  // preview the longest dry spill until one is picked
   if (!selected) {
     const box = el("div", "empty");
-    box.append(el("h2", null, DASH ? "Pick a spill" : "Case"), el("p", null, DASH ? "Select a spill on the map or in the list above to read its case: the rain gauges checked and what the agents concluded." : "Select a spill on the map or a row above to read the case."));
+    box.append(el("h2", null, "Case"), el("p", null, "Select a spill on the map or in the list to read the case."));
     return c.replaceChildren(box);
   }
-  if (DASH) return renderCaseDash(c, selected);
   const s = selected, v = VERDICT[s.verdict] || VERDICT.no_gauge;
-  let head = el("section");
-  if (!DASH) head.append(el("h3", null, title(s.name)), el("div", "lede", `${s.company} · ${s.id} · discharging ${s.hours == null ? "for an unknown time (monitor offline)" : fmt(s.hours) + " h"}`));
-  else { head = el("div", "chead"); const info = el("div"), score = el("div", "score");
-  info.append(el("p", "eyebrow", `Selected spill · ${s.case ? "agent case" : "no agent case yet"}`), el("h3", null, title(s.name)),
-    el("div", "lede", `${s.company} · ${s.id}${s.hours == null ? " · monitor offline, duration unknown" : ""}`));
-  score.append(el("b", null, hrs(s)), el("span", null, "hours discharging"));
-  head.append(info, score); }
+  const head = el("section");
+  head.append(el("h3", null, title(s.name)), el("div", "lede", `${s.company} · ${s.id} · discharging ${s.hours == null ? "for an unknown time (monitor offline)" : fmt(s.hours) + " h"}`));
   const verdict = el("section");
   verdict.append(el("span", "tag" + (s.verdict === "dry_spill_candidate" ? " dry" : ""), v.name));
   const gauges = el("section");
-  gauges.append(el("span", "tag", "Rain gauges within 10 km"), el("div", "lede", "The gold ring on the map is this 10 km area. Dots are these gauges, filled navy if one recorded 0.25 mm or more in a day."));
+  gauges.append(el("span", "tag", "Rain gauges within 10 km"), el("div", "lede", "Dots on the map are these gauges, filled navy if one recorded 0.25 mm or more in a day."));
   if (s.gauges.length) {
     const ul = el("ul");
     for (const g of s.gauges) ul.append(el("li", null,
@@ -672,39 +548,121 @@ function renderCase() {
   } else gauges.append(el("p", "lede", "No Environment Agency gauge within 10 km, so rain can't be ruled in or out."));
   const agents = el("section");
   if (!s.case) agents.append(el("span", "tag", "Agents"), el("p", "lede", "No agent case for this site in this run yet."));
-  c.replaceChildren(head, verdict, gauges, ...(s.case ? agentSections(s.case, s) : [agents]));
+  const water = el("section"), list = el("div"); list.id = "affected";
+  list.append(el("p", "lede", "Finding nearby water…"));
+  water.append(el("span", "tag", "Water that could be affected"),
+    el("div", "lede", "Shown in red on the map, out to a distance set by the estimated impact. Which way the water flows isn't known."), list);
+  c.replaceChildren(head, verdict, water, gauges, ...(s.case ? agentSections(s.case, s) : [agents]), chatSection(s));
+  if (impact && impact.siteId === s.id) renderAffected();
 }
-// Dashboard case card: the headline facts and one action up front; the gauge list and agents' conversation fold away.
-function renderCaseDash(c, s, preview = false) {
-  const k = s.case, rank = dry.indexOf(s) + 1, pc = x => Math.round(x * 100);
-  const head = el("div", "chead"), info = el("div"), score = el("div", "score");
-  info.append(el("p", "eyebrow", preview ? "Longest dry spill right now" : rank ? `Dry spill · #${rank} longest` : (VERDICT[s.verdict] || VERDICT.no_gauge).name), el("h3", null, title(s.name)));
-  score.append(el("b", null, hrs(s)), el("span", null, s.hours == null ? "monitor offline" : "hours discharging"));
-  head.append(info, score);
-  const wettest = s.gauges.length ? Math.max(...s.gauges.map(g => Math.max(g.mm_0_24h_before ?? 0, g.mm_24_48h_before ?? 0))) : null;
-  const meta = el("div", "cmeta");
-  meta.append(el("span", null, `${s.company} · ${s.id}`),
-    el("span", null, s.gauges.length ? `${s.gauges.length} rain gauge${s.gauges.length === 1 ? "" : "s"} within 10 km · wettest day ${fmt(wettest, 2)} mm` : "No rain gauge within 10 km"));
-  const verdict = el("div", "cverdict");
-  if (k) {
-    const chip = el("span", "vchip " + k.final_verdict, k.final_verdict.replace(/_/g, " "));
-    verdict.append(chip, el("span", null, `${pc(k.breach_confidence)}% confident after the evidence check` + (k.skeptic ? ` (skeptic alone: ${pc(k.skeptic.breach_confidence)}%)` : "")));
-  } else verdict.append(el("span", "vchip none", "not reviewed"), el("span", null, s.verdict === "dry_spill_candidate" ? "No agent has looked at this spill yet." : "Rain nearby explains this spill."));
-  const act = el("div", "cact");
-  if (k && k.report) {
-    const go = el("button", "btn go"); go.append(el("span", null, "Review the evidence pack"), el("span", null, "→"));
-    go.onclick = () => { openReport = s; location.hash = "reports"; };
-    act.append(go);
+
+// "Ask about this spill": questions go to the team's Databricks Genie space via serve.py (sentinels/genie.py).
+// Genie answers by querying the pipeline's tables and keeps its own conversation, so we pass its id back.
+const chats = {};  // site id -> { msgs: [{role, content, sql?, columns?, rows?}], busy, conv }
+function chatSection(s) {
+  const sec = el("section", "chat");
+  sec.append(el("span", "tag", "Ask about this spill"));
+  if (!api) { sec.append(el("p", "lede", "The chat needs the local server: run python andrew-site/serve.py.")); return sec; }
+  const st = chats[s.id] || (chats[s.id] = { msgs: [], busy: false, conv: null });
+  const name = title(s.name);
+  const starters = [`How many dry spills has ${name} had?`, `How does ${s.company} compare with other companies?`,
+                    `What rain did the gauges near ${name} record?`];
+  const log = el("div", "chat-log"); log.setAttribute("aria-live", "polite");
+  const tips = el("div", "starters");
+  const form = el("form", "ask"), input = el("input"), go = el("button", "btn", "Ask");
+  input.placeholder = "Ask about this spill"; input.setAttribute("aria-label", "Ask about this spill"); input.maxLength = 1000;
+  go.type = "submit"; form.append(input, go);
+  const bubble = m => {
+    const p = el("div", "msg " + m.role);
+    p.append(el("p", null, m.content));
+    if (m.rows && m.rows.length) {  // Genie's query result
+      const wrap = el("div", "result"), t = el("table"), hr = el("tr");
+      for (const c of m.columns) hr.append(el("th", null, c));
+      t.append(hr);
+      for (const r of m.rows) { const tr = el("tr"); for (const v of r) tr.append(el("td", null, v == null ? "" : String(v))); t.append(tr); }
+      wrap.append(t); p.append(wrap);
+    }
+    if (m.sql) { const d = el("details"); d.append(el("summary", null, "SQL Genie ran"), el("pre", null, m.sql)); p.append(d); }
+    return p;
+  };
+  const draw = () => {
+    log.replaceChildren(...st.msgs.map(bubble));
+    if (st.busy) log.append(el("p", "msg assistant pending", "Genie is looking it up…"));
+    tips.hidden = st.msgs.length > 0;
+    go.disabled = input.disabled = st.busy;
+    log.scrollTop = log.scrollHeight;
+  };
+  const send = async q => {
+    q = q.trim(); if (!q || st.busy) return;
+    st.msgs.push({ role: "user", content: q }); st.busy = true; input.value = ""; draw();
+    // The first question names the site so Genie scopes its query; follow-ups keep Genie's own context.
+    const question = st.conv ? q : `About storm overflow ${s.id} (${name}, ${s.company}): ${q}`;
+    try {
+      const r = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question, conversation_id: st.conv }) });
+      const body = await r.json();
+      if (!r.ok) throw new Error(body.error || "No answer");
+      st.conv = body.conversation_id || st.conv;
+      st.msgs.push({ role: "assistant", content: body.answer, sql: body.sql, columns: body.columns, rows: body.rows });
+    } catch (e) { st.msgs.push({ role: "error", content: `Couldn't answer: ${e.message}` }); }
+    st.busy = false; draw();
+    if (selected === s) input.focus();
+  };
+  for (const q of starters) { const b = el("button", "chip-q", q); b.type = "button"; b.onclick = () => send(q); tips.append(b); }
+  form.onsubmit = e => { e.preventDefault(); send(input.value); };
+  sec.append(log, tips, form, el("p", "note", "Answers come from the Sentinels Genie space on Databricks, which queries the pipeline's tables. Check anything that matters against the sources."));
+  draw();
+  return sec;
+}
+// A few lines a reviewer can take in at a glance, all drawn from the agents' own output.
+function keyFindings(k, s) {
+  const pct = x => x == null ? "n/a" : Math.round(x * 100) + "%";
+  const short = t => {  // "Tidal influence: long explanation..." -> "Tidal influence", at most ~34 characters
+    t = String(t || "").trim();
+    const i = t.indexOf(":");
+    let h = i > 8 && i < 100 ? t.slice(0, i) : t.split(/(?<=\.)\s/)[0].replace(/\.$/, "");
+    if (h.length > 34) h = h.slice(0, 34).replace(/\s+\S*$/, "") + "…";
+    return h;
+  };
+  const first = xs => `${short(xs[0])}${xs.length > 1 ? ` (+${xs.length - 1})` : ""}`;
+  const sec = el("section", "findings"), tags = el("div", "ftags"), bits = [];
+  // Tags: verdict + confidence, coloured by the pipeline's thresholds (65% likely breach, 40% needs review).
+  const conf = k.breach_confidence ?? 0;
+  const tone = conf >= 0.65 ? "red" : conf >= 0.4 ? "yellow" : "green";
+  const verdictTag = el("span", "ftag " + tone, `${k.final_verdict.replace(/_/g, " ").replace(/^./, c => c.toUpperCase())} · ${pct(k.breach_confidence)}`);
+  verdictTag.title = "The agents' confidence that this is a genuine dry-day spill";
+  tags.append(verdictTag);
+  if (k.case && k.case.severity) tags.append(el("span", "ftag plain", `Severity ${k.case.severity}`));
+  // The rest in a few short sentences.
+  const seen = k.spill && Array.isArray(k.spill.gauges) ? k.spill : null;
+  const gs = seen ? seen.gauges : s.gauges;
+  if (gs.length) {
+    const max48 = Math.max(...gs.map(g => Math.max(g.mm_0_24h_before ?? 0, g.mm_24_48h_before ?? 0)));
+    const during = gs.some(g => g.mm_during != null) ? Math.max(...gs.map(g => g.mm_during ?? 0)) : null;
+    bits.push(`≤${fmt(max48, 2)} mm rain at ${gs.length} gauge${gs.length === 1 ? "" : "s"} (≤${fmt(Math.max(...gs.map(g => g.km)))} km) in 48 h before${during == null ? "" : during === 0 ? ", none during" : `, ${fmt(during, 2)} mm during`}.`);
+  } else bits.push("No rain gauge within 10 km.");
+  const searches = (k.evidence && k.evidence.searches) || [];
+  if (k.skeptic && k.ruling) bits.push(`Skeptic ${pct(k.skeptic.breach_confidence)} → ${pct(k.ruling.final_confidence)} (${searches.length} searches).`);
+  else if (k.skeptic) bits.push(`Skeptic ${pct(k.skeptic.breach_confidence)}, dismissed before any search.`);
+  const standing = (k.ruling && k.ruling.objections_standing) || [], refuted = (k.ruling && k.ruling.objections_refuted) || [];
+  if (standing.length) bits.push(`Open: ${first(standing)}.`);
+  if (refuted.length) bits.push(`Ruled out: ${first(refuted)}.`);
+  // The agents may have worked from an earlier detector run than the map shows: say so when the facts differ.
+  if (seen && (seen.gauges.length !== s.gauges.length || seen.duration_hours !== s.hours)) {
+    const t = el("span", "ftag plain", "Earlier run");
+    t.title = `The agents worked from an earlier detector run (${seen.gauges.length} gauge${seen.gauges.length === 1 ? "" : "s"}, ${seen.duration_hours == null ? "unknown duration" : fmt(seen.duration_hours) + " h"}) than the map and gauge list above.`;
+    t.tabIndex = 0;
+    tags.append(t);
   }
-  if (preview) { const fly = el("button", "btn " + (k && k.report ? "ghost" : "go")); fly.append(el("span", null, "Fly to it"), el("span", null, "→")); fly.onclick = () => select(s); act.append(fly); }
-  else { const back = el("button", "btn ghost", "Show all of England"); back.onclick = () => select(null); act.append(back); }
-  const more = el("details", "cmore"); more.append(el("summary", null, k ? "Read the gauges and the agents' conversation" : "Read the gauge readings"));
-  const gl = el("section"); gl.append(el("span", "tag", "Rain gauges within 10 km"));
-  if (s.gauges.length) { const ul = el("ul"); for (const g of s.gauges) ul.append(el("li", null, `${g.station}, ${fmt(g.km)} km: ${fmt(g.mm_0_24h_before, 2)} mm in the 24 h before, ${fmt(g.mm_24_48h_before, 2)} mm in the 24 h before that`)); gl.append(ul); }
-  else gl.append(el("p", "lede", "No Environment Agency gauge within 10 km, so rain can't be ruled in or out."));
-  more.append(gl, ...(k ? agentSections(k, s) : []));
-  c.replaceChildren(head, meta, verdict, act, more);
+  sec.append(el("span", "tag", "Key findings"), tags, el("p", "gist", bits.join(" ")));
+  if (k.report) {
+    const b = el("button", "btn ghost small", "Review the drafted evidence pack");
+    b.onclick = () => openInReports(s);
+    sec.append(b);
+  }
+  return sec;
 }
+
 // The agent conversation, in the order it happened. All text is model or web output: textContent only.
 function agentSections(k, s) {
   const pct = x => x == null ? "n/a" : Math.round(x * 100) + "%";
@@ -717,16 +675,10 @@ function agentSections(k, s) {
     b.append(el("b", null, "Example conversation"), el("span", null, "Made up to show how a case will look. No agent has run on this site, and none of the text below is real."));
     out.push(b);
   }
-  out.push(turn(`Agents' verdict: ${k.final_verdict.replace(/_/g, " ")}, ${pct(k.breach_confidence)} confident`));
-  out.at(-1).firstChild.classList.toggle("dry", k.final_verdict === "likely_breach");
-  // The agents may have worked from an earlier detector run than the map shows: say so when the facts differ.
-  const seen = k.spill && Array.isArray(k.spill.gauges) ? k.spill : null;
-  if (s && seen && (seen.gauges.length !== s.gauges.length || seen.duration_hours !== s.hours)) {
-    const h = seen.duration_hours == null ? "an unknown time" : `${fmt(seen.duration_hours)} h`;
-    out.at(-1).append(el("p", "lede", `The agents worked from an earlier detector run: ${seen.gauges.length} gauge${seen.gauges.length === 1 ? "" : "s"} within 10 km and ${h} discharging. The map and gauge list above are from a later run.`));
-  }
-  if (k.case) out.push(turn(`Investigator · severity ${k.case.severity}`, para(k.case.summary), list(k.case.breach_indicators)));
-  if (k.skeptic) out.push(turn(`Skeptic · ${k.skeptic.model || "model unknown"} · ${pct(k.skeptic.breach_confidence)} genuine`,
+  out.push(keyFindings(k, s));
+  const full = [];
+  if (k.case) full.push(turn(`Investigator · severity ${k.case.severity}`, para(k.case.summary), list(k.case.breach_indicators)));
+  if (k.skeptic) full.push(turn(`Skeptic · ${k.skeptic.model || "model unknown"} · ${pct(k.skeptic.breach_confidence)} genuine`,
     para(k.skeptic.strongest_objection), list(k.skeptic.innocent_explanations, x => `${x.explanation} (${x.plausibility} plausibility)`)));
   if (k.evidence) {
     const searches = (k.evidence.searches || []).map(q => {
@@ -740,11 +692,14 @@ function agentSections(k, s) {
       }
       d.append(ul); return d;
     });
-    out.push(turn(`Evidence agent · ${searches.length} web searches`, el("pre", null, k.evidence.report), ...searches));
-  } else out.push(turn("Evidence agent", para("Not run: the skeptic dismissed the case before any web search.")));
-  if (k.ruling) out.push(turn(`Adjudicator · ${pct(k.ruling.final_confidence)} genuine`, para(k.ruling.reasoning),
+    full.push(turn(`Evidence agent · ${searches.length} web searches`, el("pre", null, k.evidence.report), ...searches));
+  } else full.push(turn("Evidence agent", para("Not run: the skeptic dismissed the case before any web search.")));
+  if (k.ruling) full.push(turn(`Adjudicator · ${pct(k.ruling.final_confidence)} genuine`, para(k.ruling.reasoning),
     list(k.ruling.objections_refuted, x => `Refuted: ${x}`), list(k.ruling.objections_standing, x => `Still standing: ${x}`)));
-  if (k.report) { const d = el("details"); d.append(el("summary", null, "Read the draft"), el("pre", null, k.report)); out.push(turn("Drafted evidence pack", d)); }
+  if (k.report) { const d = el("details"); d.append(el("summary", null, "Read the draft"), el("pre", null, k.report)); full.push(turn("Drafted evidence pack", d)); }
+  const d = el("details", "full");
+  d.append(el("summary", null, `Read the full agent conversation (${full.length} steps)`), ...full);
+  out.push(d);
   return out;
 }
 let gaugeMarkers = [];
@@ -756,58 +711,288 @@ function showGauges() {
     return new maplibregl.Marker({ element: box, anchor: "top", offset: [0, 10] }).setLngLat([g.lon, g.lat]).addTo(map);
   });
 }
+// Rivers, streams and lakes near the selected spill, read from the basemap's vector tiles once they've loaded,
+// out to a reach set by an estimated impact score. Flow direction isn't known, so this is "could be affected".
+const AFFECT_KM = 5;  // the postcode check's radius
+const RECEIVING_KM = 20, SEA = new Set(["ocean", "sea", "bay", "strait", "reef", "dock"]);
+const BANDS = [[60, "high", 10], [30, "medium", 5], [0, "low", 2]];  // score threshold, label, reach in km
+let affectedNames = [], impact = null;
+function setAffected(features) {
+  const src = map.getSource("affected");
+  if (src) src.setData({ type: "FeatureCollection", features });
+}
+// Estimated impact, 0-100. Duration, still running, dryness (less dilution) and a small receiving water push it up;
+// the agents' confidence (or the detector's verdict when no agent has looked) scales it. No volume or flow data
+// exists, so it is a rough guide to how far to look, not a measurement.
+function impactScore(s, receivingKind) {
+  const parts = [];
+  const h = s.hours ?? 0;
+  const ph = Math.min(40, 40 * Math.log2(1 + h) / Math.log2(1 + 48));
+  parts.push([s.hours == null ? "duration unknown" : `${fmt(h)} h discharging`, ph]);
+  if (s.status === 1) parts.push(["still discharging", 10]);
+  const pd = s.rain48 == null ? 5 : 20 * Math.max(0, 1 - s.rain48 / 1);
+  parts.push([s.rain48 == null ? "no rain gauge" : `${fmt(s.rain48, 2)} mm rain in 48 h`, pd]);
+  const size = { stream: ["small stream", 20], ditch: ["small stream", 20], drain: ["small stream", 20], brook: ["small stream", 20],
+                 river: ["river", 10], canal: ["canal", 8], wide: ["lake or estuary", 5] }[receivingKind] || ["receiving water not found", 10];
+  parts.push(size);
+  const conf = s.case ? 0.5 + 0.5 * (s.case.breach_confidence ?? 0)
+    : { dry_spill_candidate: 0.8, no_gauge: 0.6, rain_explained: 0.4 }[s.verdict] ?? 0.6;
+  const score = Math.round(Math.min(100, parts.reduce((a, [, p]) => a + p, 0) * 100 / 90 * conf));
+  const [, band, reach] = BANDS.find(([t]) => score >= t);
+  return { siteId: s.id, hasCase: !!s.case, score, band, reach, conf, parts };
+}
+// Water features near a spill on map m (from its loaded vector tiles), then the subset within the impact reach.
+function waterAround(m, s) {
+  const waterLayer = m.getLayer("water");
+  if (!waterLayer) return null;
+  const norm = x => String(x || "").toLowerCase().replace(/\(.*?\)/g, "").replace(/[^a-z ]/g, " ").replace(/\s+/g, " ").trim();
+  const recv = norm(s.name);
+  const kx = Math.cos(s.lat * Math.PI / 180) * 111.32, ky = 110.57;
+  const nearest = g => {  // km from the spill to the closest vertex of a geometry
+    let best = Infinity;
+    const walk = c => { if (typeof c[0] === "number") best = Math.min(best, Math.hypot((c[0] - s.lon) * kx, (c[1] - s.lat) * ky)); else c.forEach(walk); };
+    walk(g.coordinates);
+    return best;
+  };
+  const found = [];
+  for (const f of m.querySourceFeatures(waterLayer.source, { sourceLayer: waterLayer.sourceLayer })) {
+    if (SEA.has(f.properties.kind)) continue;
+    const name = f.properties.name || f.properties["name:en"] || "", n = norm(name);
+    const receiving = recv.length > 3 && n.length > 3 && (n.includes(recv) || recv.includes(n));
+    const km = nearest(f.geometry);
+    if (km <= RECEIVING_KM) found.push({ f, name, km, receiving });
+  }
+  return found;
+}
+function pickWater(s, found) {
+  // The receiving watercourse's type sets the dilution part of the score; polygons are lakes, estuaries, wide rivers.
+  const recvHit = found.filter(x => x.receiving).sort((a, b) => a.km - b.km)[0];
+  const kind = !recvHit ? null : recvHit.f.geometry.type.includes("Polygon") ? "wide" : recvHit.f.properties.kind_detail || "river";
+  const imp = impactScore(s, kind), R = imp.reach, keep = [], names = new Map();
+  for (const { f, name, km, receiving } of found) {
+    if (km > (receiving ? 2 * R : R)) continue;  // the receiving water gets twice the reach: it takes the sewage first
+    keep.push({ type: "Feature", properties: { w: Math.max(0.25, 1 - km / (receiving ? 2 * R : R)) }, geometry: f.geometry });
+    if (name && (!names.has(name) || km < names.get(name).km)) names.set(name, { km, isReceiving: receiving });
+  }
+  return { impact: imp, keep, names: [...names.entries()].sort((a, b) => b[1].isReceiving - a[1].isReceiving || a[1].km - b[1].km) };
+}
+function showAffected(s) {
+  affectedNames = []; impact = null;
+  setAffected([]);
+  if (!s) return;
+  let tries = 0;
+  const run = () => {  // after the zoom-in: draw what's loaded now, then redraw while the rest of the tiles arrive
+    if (selected !== s) return;
+    const found = waterAround(map, s);
+    if (!found) return;
+    if (!map.areTilesLoaded() && tries++ < 8) setTimeout(run, 500);
+    const r = pickWater(s, found);
+    impact = r.impact; affectedNames = r.names;
+    setAffected(r.keep);
+    renderAffected();
+  };
+  map.once("moveend", () => setTimeout(run, 200));
+}
+function renderAffected() {
+  const box = document.getElementById("affected");
+  if (!box || !impact) return;
+  const tag = el("span", `ftag ${impact.band === "high" ? "red" : impact.band === "medium" ? "yellow" : "green"}`, `Estimated impact ${impact.score} · ${impact.band}`);
+  tag.title = "A rough guide from duration, whether it's still running, rain, the size of the receiving water and how sure we are it's real. No spill volume or river flow data exists.";
+  tag.tabIndex = 0;
+  const why = el("p", "lede", `${impact.parts.map(([label, p]) => `${label} +${Math.round(p)}`).join(" · ")} · × ${impact.conf.toFixed(2)} ${impact.hasCase ? "agents' confidence" : "detector verdict"}. Showing water within ${impact.reach} km (${2 * impact.reach} km along the receiving watercourse); red fades with distance.`);
+  const out = [el("div", "ftags", null), why];
+  out[0].append(tag);
+  if (!affectedNames.length) out.push(el("p", "lede", `No named rivers, streams or lakes within ${impact.reach} km. Any unnamed water nearby is still shown on the map.`));
+  else {
+    const ul = el("ul");
+    for (const [name, info] of affectedNames.slice(0, 8))
+      ul.append(el("li", null, `${name}${info.isReceiving ? " (receiving watercourse)" : ""} · ${info.km < 0.1 ? "at the outfall" : fmt(info.km) + " km"}`));
+    out.push(ul);
+  }
+  box.replaceChildren(...out);
+}
+
 function select(s) {
   selected = s === selected ? null : s;  // clicking the selected spill again clears it
-  selectedAt = performance.now();
   renderRows(); renderCase(); showGauges();
   overlay.setProps({ layers: layers() });
   if (!selected) {
     resetBtn.hidden = true;
-    if (DASH) { siteMarker.remove(); markPins(); }
-    else if (dry[0]) showLabel(dry[0], false);
-    return map.fitBounds(ENGLAND, { padding: ENGLAND_PAD, pitch: MAP2D ? 0 : 45, bearing: 0, duration: DASH && !REDUCED ? 1800 : 1200 });
-  }
-  if (DASH) {  // a slow arc out and back in, so you see where in England the spill is
-    markPins();
-    if (pins.has(s.id)) siteMarker.remove(); else showLabel(s, true);
-    map.flyTo({ center: [s.lon, s.lat], zoom: 9.4, pitch: 62, bearing: -24, curve: 1.7, duration: REDUCED ? 0 : 2600,
-                padding: { top: 200, bottom: 20, left: 40, right: 40 }, essential: true });  // spill sits low so its column has headroom
-    return resetBtn.hidden = false;
+    if (dry[0]) showLabel(dry[0], false);
+    showAffected(null);
+    return map.fitBounds(ENGLAND, { padding: ENGLAND_PAD, pitch: MAP2D ? 0 : 45, bearing: 0, duration: 1200 });
   }
   showLabel(s, true);
-  map.flyTo({ center: [s.lon, s.lat], zoom: 10.3, pitch: MAP2D ? 0 : 55, bearing: 0, padding: { top: 60, bottom: 0, left: 300, right: 0 }, duration: 1600, essential: true });
+  map.flyTo({ center: [s.lon, s.lat], zoom: 10.3, pitch: MAP2D ? 0 : 55, bearing: 0, padding: { top: 60, bottom: 0, left: 380, right: 0 }, duration: 1600, essential: true });
+  showAffected(s);
   resetBtn.hidden = false;
 }
-// Dashboard: numbered pins for the shortlist, matching the list on the right. Click one to fly to it.
-const pins = new Map();
-const PINNED = 6;
-function markPins() {
-  for (const [id, p] of pins) p.classList.toggle("on", !!selected && selected.id === id);
-  document.querySelector(".mcard .map").classList.toggle("tilted", !!selected);  // pins step aside; the 3D label takes over
-}
-if (DASH) dry.slice(0, PINNED).forEach((s, i) => {
-  const p = el("button", "pin"); p.append(el("span", "pn", i + 1), el("b", null, hrs(s)));
-  p.title = `${title(s.name)}, ${hrs(s)} h`; p.setAttribute("aria-label", `${i + 1}: ${title(s.name)}, ${hrs(s)} hours`);
-  p.onclick = e => { e.stopPropagation(); select(s); };
-  pins.set(s.id, p);
-  const wrap = el("div", "pin-wrap"); wrap.append(p);  // the marker positions the wrapper; the button can animate freely
-  new maplibregl.Marker({ element: wrap, anchor: "bottom", offset: [0, -8] }).setLngLat([s.lon, s.lat]).addTo(map);
-});
 renderRows(); renderCase();
-if (!DASH && dry[0]) showLabel(dry[0], false);
+if (dry[0]) showLabel(dry[0], false);
 
 // ---------- Cases tab ----------
 const pctN = x => Math.round(x * 100);
-const views = { map: document.querySelector("main.body"), cases: document.getElementById("cases-view"), reports: document.getElementById("reports-view") };
+const views = { map: document.querySelector("main.body"), cases: document.getElementById("cases-view"), reports: document.getElementById("reports-view"), postcode: document.getElementById("postcode-view") };
 function show(v) {
   if (!views[v]) v = "map";
   for (const [k, node] of Object.entries(views)) node.hidden = k !== v;
   document.querySelectorAll(".nav a").forEach(a => a.classList.toggle("on", a.dataset.view === v));
-  if (v === "map") map.resize(); else if (v === "cases") renderCases(); else if (v === "reports") renderReports();
+  if (v === "map") map.resize(); else if (v === "cases") renderCases(); else if (v === "reports") renderReports(); else if (v === "postcode") ensurePcMap();
   if (location.hash !== "#" + v) history.replaceState(null, "", "#" + v);
 }
 window.addEventListener("hashchange", () => show(location.hash.slice(1)));
 function openOnMap(s) { show("map"); if (selected !== s) select(s); }
+
+// ---------- Postcode check ----------
+// Dry-spill candidates within AFFECT_KM of a point, nearest first.
+function nearby(lat, lon) {
+  const kx = Math.cos(lat * Math.PI / 180) * 111.32, ky = 110.57;
+  return dry.map(s => ({ s, km: Math.hypot((s.lon - lon) * kx, (s.lat - lat) * ky) })).filter(x => x.km <= AFFECT_KM).sort((a, b) => a.km - b.km);
+}
+if (dry[0]) console.assert(nearby(dry[0].lat, dry[0].lon)[0].km === 0 && !nearby(dry[0].lat + 1, dry[0].lon).some(x => x.s === dry[0]), "nearby() distance check");
+document.getElementById("pc-form").onsubmit = async e => {
+  e.preventDefault();
+  const out = document.getElementById("pc-out"), say = t => out.replaceChildren(el("p", "sub", t));
+  say("Checking…");
+  let r;
+  try {
+    const res = await fetch("https://api.postcodes.io/postcodes/" + encodeURIComponent(document.getElementById("pc").value.trim()));
+    if (res.status === 404) return say("That postcode wasn't found. Check it and try again.");
+    if (!res.ok) throw new Error(res.status);
+    r = (await res.json()).result;
+  } catch { return say("The postcode lookup didn't answer. Check your connection and try again."); }
+  if (r.latitude == null) return say(`${r.postcode} has no map location, so it can't be checked.`);
+  const hits = nearby(r.latitude, r.longitude);
+  const asOf = `As of ${document.getElementById("updated").textContent.replace("Updated ", "") || "the latest run"}.`;
+  if (!hits.length) {
+    out.replaceChildren(el("h2", null, `No dry-weather sewage spills found within ${AFFECT_KM} km of ${r.postcode}`),
+      el("p", "sub", `${asOf} This only covers monitored overflows in England, and sewage can still be released after heavy rain, so it isn't a guarantee the water is clean.`),
+    );
+    pcLegend(false);
+    return drawPcMap(r, []);
+  }
+  const still = hits.filter(h => h.s.status === 1).length;
+  const head = el("h2", null, `${hits.length} sewage spill${hits.length > 1 ? "s" : ""} on a dry day within ${AFFECT_KM} km of ${r.postcode}`);
+  const lead = el("p", "lede-big", still
+    ? `${still} ${still === 1 ? "is" : "are"} still spilling now. Avoid the water marked in red.`
+    : "Avoid the water marked in red for the next couple of days.");
+  const rows = el("ol", "pc-list");
+  hits.forEach(({ s, km }, i) => {
+    const li = el("li"), b = el("button", "pc-item");
+    b.append(el("span", "pc-num", String(i + 1)));
+    const txt = el("span");
+    txt.append(el("b", null, title(s.name)), el("span", null,
+      `${fmt(km)} km away · ${s.company} · ${s.hours == null ? "length unknown" : `sewage released for ${fmt(s.hours)} hours`}${s.status === 1 ? " · still spilling" : ""}`));
+    b.append(txt);
+    b.onclick = () => focusPc(s, b);
+    b.title = "Show this spill on the map";
+    const full = el("a", "pc-full", "Details on the full map"); full.href = "#map";
+    full.onclick = e => { e.preventDefault(); openOnMap(s); };
+    li.append(b, full); rows.append(li);
+  });
+  pcLegend(true);
+  out.replaceChildren(head, lead, rows, adviceBox(hits),
+    el("p", "sub", `${asOf} These are possible dry-day spills found in the water companies' own monitoring data, not confirmed pollution. Which way the water flows isn't known.`));
+  drawPcMap(r, hits);
+};
+
+// A simple map for the postcode page: your postcode, the area checked, numbered spills and the water near them.
+// It sits beside the text (on phones, pinned above it) so it stays in view while reading the advice.
+const pcMapBox = el("div", "pc-map");
+pcMapBox.setAttribute("role", "img");
+pcMapBox.setAttribute("aria-label", "Map of your postcode, nearby sewage overflows that spilled on a dry day, and the water they could affect");
+document.getElementById("pc-mapwrap").prepend(pcMapBox);
+let pcMap = null, pcReady = false, pcPending = null, pcMarkers = [], pcDots = [];
+function pcLegend(any) {
+  const l = document.getElementById("pc-legend");
+  const item = (cls, text) => { const s = el("span"); s.append(el("i", cls), text); return s; };
+  const items = any === null ? [item("lg-all", "Dry-weather sewage spill, last 48 hours")]
+    : [item("lg-home", "Your postcode"), item("lg-area", `Area checked (${AFFECT_KM} km)`), ...(any ? [item("lg-spill", "Spill near you"), item("lg-water", "Water that could be affected")] : []), item("lg-all", "Other spills")];
+  l.replaceChildren(...items);
+}
+function ensurePcMap() {
+  if (pcMap) return pcMap.resize();
+  pcMap = new maplibregl.Map({ container: pcMapBox, style: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
+    bounds: [[-5.8, 49.9], [1.8, 55.85]], fitBoundsOptions: { padding: 30 }, pitch: 0, maxPitch: 0, dragRotate: false,
+    attributionControl: { compact: true } });
+  pcMap.touchZoomRotate.disableRotation();
+  pcMap.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+  pcLegend(null);
+  pcMap.on("load", () => {
+    const empty = { type: "FeatureCollection", features: [] };
+    pcMap.addSource("pc-all", { type: "geojson", data: { type: "FeatureCollection", features: dry.map(d => ({ type: "Feature", properties: {}, geometry: { type: "Point", coordinates: [d.lon, d.lat] } })) } });
+    pcMap.addSource("pc-area", { type: "geojson", data: empty });
+    pcMap.addSource("pc-water", { type: "geojson", data: empty });
+    pcMap.addLayer({ id: "pc-area-fill", type: "fill", source: "pc-area", paint: { "fill-color": "#12355b", "fill-opacity": 0.05 } });
+    pcMap.addLayer({ id: "pc-area-line", type: "line", source: "pc-area", paint: { "line-color": "#12355b", "line-width": 1.5, "line-dasharray": [3, 2] } });
+    pcMap.addLayer({ id: "pc-water-fill", type: "fill", source: "pc-water", filter: ["==", ["geometry-type"], "Polygon"],
+      paint: { "fill-color": "#c8102e", "fill-opacity": ["*", 0.45, ["get", "w"]] } });
+    pcMap.addLayer({ id: "pc-water-line", type: "line", source: "pc-water", filter: ["==", ["geometry-type"], "LineString"],
+      layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#c8102e", "line-width": 3.5, "line-opacity": ["get", "w"] } });
+    pcMap.addLayer({ id: "pc-all", type: "circle", source: "pc-all",
+      paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 5, 3, 11, 6], "circle-color": "#c8102e", "circle-opacity": 0.55,
+               "circle-stroke-color": "#fff", "circle-stroke-width": 1 } });
+    pcReady = true;
+    if (pcPending) paintPc(...pcPending);
+  });
+}
+function drawPcMap(r, hits) {
+  pcPending = [r, hits];
+  ensurePcMap();
+  if (pcReady) paintPc(r, hits);
+}
+function paintPc(r, hits) {
+  const kx = Math.cos(r.latitude * Math.PI / 180) * 111.32, ky = 110.57, ring = [];
+  for (let i = 0; i <= 64; i++) { const a = i / 64 * 2 * Math.PI; ring.push([r.longitude + AFFECT_KM * Math.cos(a) / kx, r.latitude + AFFECT_KM * Math.sin(a) / ky]); }
+  pcMap.getSource("pc-area").setData({ type: "FeatureCollection", features: [{ type: "Feature", properties: {}, geometry: { type: "Polygon", coordinates: [ring] } }] });
+  pcMap.getSource("pc-water").setData({ type: "FeatureCollection", features: [] });
+  pcMarkers.forEach(m => m.remove());
+  const home = el("div", "pc-home"); home.title = r.postcode;
+  pcMarkers = [new maplibregl.Marker({ element: home, anchor: "bottom" }).setLngLat([r.longitude, r.latitude]).addTo(pcMap)];
+  pcDots = hits.map(({ s }, i) => {
+    const d = el("div", "pc-dot", String(i + 1)); d.title = title(s.name);
+    const m = new maplibregl.Marker({ element: d }).setLngLat([s.lon, s.lat]).addTo(pcMap);
+    pcMarkers.push(m);
+    return { s, d };
+  });
+  const pts = [...ring, ...hits.map(h => [h.s.lon, h.s.lat])];
+  const lons = pts.map(q => q[0]), lats = pts.map(q => q[1]);
+  pcMap.fitBounds([[Math.min(...lons), Math.min(...lats)], [Math.max(...lons), Math.max(...lats)]], { padding: { top: 40, right: 50, bottom: 70, left: 40 }, duration: 900 });
+  let tries = 0;
+  const water = () => {  // red water around each spill, once this view's tiles have loaded
+    if (!pcMap.areTilesLoaded() && tries++ < 10) return setTimeout(water, 400);
+    const feats = hits.flatMap(({ s }) => { const f = waterAround(pcMap, s); return f ? pickWater(s, f).keep : []; });
+    pcMap.getSource("pc-water").setData({ type: "FeatureCollection", features: feats });
+  };
+  pcMap.once("moveend", () => setTimeout(water, 200));
+}
+function focusPc(s, btn) {  // list item -> fly the small map to that spill and mark both
+  document.querySelectorAll(".pc-item.on").forEach(b => b.classList.remove("on"));
+  btn.classList.add("on");
+  pcDots.forEach(({ s: x, d }) => d.classList.toggle("on", x === s));
+  pcMap.flyTo({ center: [s.lon, s.lat], zoom: Math.max(pcMap.getZoom(), 12.5), duration: 900 });
+}
+
+// Plain-language precautions for people living near a recent dry-day spill.
+function adviceBox(hits) {
+  const box = el("section", "advice");
+  const companies = [...new Set(hits.map(h => h.s.company))];
+  box.append(el("h2", null, "What to do"));
+  const ol = el("ul");
+  const tip = (b, t) => { const li = el("li"); li.append(el("b", null, b + " "), t); ol.append(li); };
+  tip("Stay out of the water marked in red,", "and keep children and dogs out, while it's spilling and for at least 2 days after it stops. Don't let dogs drink it. This matters most downstream of the overflow.");
+  tip("If you've already been in:", "shower, wash your hands before eating, and cover any cuts. Try not to swallow the water.");
+  tip("If you feel unwell in the next few days", "(stomach upset, diarrhoea, vomiting, or an ear, eye or skin infection), contact your GP or call NHS 111 and say you were in water that may have had sewage in it.");
+  tip("Don't collect shellfish or forage", "on the banks near the overflow.");
+  const rep = el("li");
+  const tel = el("a", null, "0800 80 70 60"); tel.href = "tel:08008070600";
+  rep.append(el("b", null, "Report what you see:"), " sewage, dead fish, a bad smell or discoloured water. Call the Environment Agency's 24-hour incident hotline on ", tel,
+    `, and tell ${companies.length === 1 ? companies[0] : "the water company (" + companies.join(", ") + ")"}.`);
+  ol.append(rep);
+  tip("Before you swim anywhere,", "check local bathing water information or a water-quality alert service, especially after rain.");
+  box.append(ol);
+  return box;
+}
 const siteLine = s => `${s.company} · ${s.id}`;
 const example = s => s.case && s.case.illustrative ? el("span", "chip", "Example") : null;
 
@@ -1033,58 +1218,10 @@ function downloadPack(s, d) {
   a.download = `sentinels-${c.illustrative ? "EXAMPLE-" : ""}evidence-pack-${s.id}.md`;
   document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
-
-// ---------- Ask Genie (small chat on the map) ----------
-// Questions go to POST /api/genie on serve.py, which asks the Databricks Genie agent. Everything Genie returns
-// is shown with textContent only. Without serve.py (e.g. the hosted static copy) the box says it is off.
-{
-  const off = document.getElementById("ask-off"), form = document.getElementById("ask-form"), q = document.getElementById("ask-q");
-  const go = document.getElementById("ask-go"), fresh = document.getElementById("ask-new"), log = document.getElementById("ask-log");
-  let conv = null, busy = false;
-  const setOff = msg => { off.textContent = msg; off.hidden = !msg; q.disabled = go.disabled = !!msg; chips.forEach(b => b.disabled = !!msg); };
-  const chips = ["Which water company has the most dry spills?", "Show the longest dry spills", "Which cases did the agents rate likely breach, and why?"]
-    .map(t => { const b = el("button", null, t); b.type = "button"; b.onclick = () => { q.value = t; form.requestSubmit(); }; return b; });
-  document.getElementById("ask-chips").append(...chips);
-  setOff("Checking for the Genie connection…");
-  fetch("/api/genie").then(r => r.ok ? r.json() : Promise.reject())
-    .then(d => setOff(d.configured ? "" : "Genie isn't set up on this machine. Set DATABRICKS_HOST, DATABRICKS_TOKEN and GENIE_SPACE_ID, then restart python andrew-site/serve.py."))
-    .catch(() => setOff("Needs the local server: start the page with python andrew-site/serve.py."));
-  if (DASH) document.body.append(document.getElementById("askbox"));  // dashboard: a floating button that stays on screen
-  const box = document.getElementById("askbox"), tog = document.getElementById("ask-toggle"), chipBox = document.getElementById("ask-chips");
-  tog.onclick = () => { const open = box.classList.toggle("closed") === false; tog.setAttribute("aria-expanded", open);
-                        document.getElementById("ask-chev").textContent = open ? "▾" : "▴"; if (open && !q.disabled) q.focus(); };
-  fresh.onclick = () => { conv = null; log.replaceChildren(); fresh.hidden = true; chipBox.hidden = false; q.focus(); };
-  form.onsubmit = async e => {
-    e.preventDefault();
-    const question = q.value.trim();
-    if (!question || busy) return;
-    busy = true; go.disabled = true; q.value = "";
-    const turn = el("div", "turn"), a = el("p", "a wait", "Genie is working on it. This can take up to a minute.");
-    turn.append(el("p", "q", question), a); log.append(turn); chipBox.hidden = true; turn.scrollIntoView({ block: "nearest" });
-    try {
-      const r = await fetch("/api/genie", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ question, conversation_id: conv }) });
-      const d = await r.json();
-      if (!r.ok) throw new Error(d.error || "Genie didn't answer");
-      conv = d.conversation_id || conv; fresh.hidden = !conv;
-      a.className = "a" + (d.status === "COMPLETED" ? "" : " err");
-      a.textContent = d.text || (d.rows && d.rows.length ? "Here is what the query returned:" : "Genie returned no answer text.");
-      if (d.columns && d.columns.length) {
-        const wrap = el("div", "tbl"), t = el("table"), hr = el("tr");
-        for (const c of d.columns) hr.append(el("th", null, String(c)));
-        t.append(hr);
-        for (const row of d.rows || []) { const tr = el("tr"); for (const v of row) tr.append(el("td", null, v == null ? "" : String(v))); t.append(tr); }
-        wrap.append(t); turn.append(wrap);
-        if ((d.rows || []).length >= 50) turn.append(el("p", "meta", "Showing the first 50 rows."));
-      }
-      if (d.sql) {
-        const det = el("details"); det.append(el("summary", null, "Show SQL"));
-        if (d.sql_description) det.append(el("p", "meta", d.sql_description));
-        det.append(el("pre", null, d.sql)); turn.append(det);
-      }
-    } catch (err) { a.className = "a err"; a.textContent = `Not answered: ${err.message}`; }
-    busy = false; go.disabled = false; q.focus(); log.scrollTop = turn.offsetTop - log.offsetTop;
-  };
-}
+// The count card's open/closed state is remembered per browser.
+const countBox = document.getElementById("count");
+if (store.get("sentinels-count") === "closed") countBox.open = false;
+countBox.addEventListener("toggle", () => store.set("sentinels-count", countBox.open ? "open" : "closed"));
 show(location.hash.slice(1) || "map");
 </script>
 </body>

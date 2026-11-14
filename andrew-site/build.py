@@ -24,7 +24,8 @@ def rain48(a):
 sites = [{"id": a["id"], "company": a["company"], "name": a.get("receivingwatercourse") or a["id"],
           "lat": a["latitude"], "lon": a["longitude"], "verdict": a["verdict"],
           "hours": a.get("duration_hours"),  # None = monitor offline
-          "rain48": rain48(a), "gauges": a.get("gauges") or []}
+          "rain48": rain48(a), "gauges": a.get("gauges") or [],
+          "status": a.get("status")}  # feed status: 1 discharging now, 0 stopped, -1 monitor offline
          for a in run["assessed"] if a.get("longitude") is not None and a.get("latitude") is not None]
 cases = {}
 for f in sorted([*(root / "data" / "reports").glob("*.json"), *(f for f in (root / "data").glob("example_*.json") if f.name != "example_run.json"),
@@ -59,9 +60,8 @@ template = (here / "app.html").read_text(encoding="utf-8")
 assert "/*DATA*/null" in template
 out = here / "build" / "index.html"
 out.parent.mkdir(exist_ok=True)
-# The Map tab is the dashboard layout: flat dot map that tilts into 3D when a spill is selected.
-# (The template still holds the older full-bleed 3D/2D map behind MAP2D=false / DASH=false; it is no longer built.)
-out.write_text(template.replace("/*DATA*/null", data).replace("/*MAP2D*/false", "true").replace("/*DASH*/false", "true"), encoding="utf-8")
+out.write_text(template.replace("/*DATA*/null", data), encoding="utf-8")  # 3D columns
 print("wrote", out)
-for old_page in ("2d.html", "dashboard.html"):  # pages from before the merge
-    out.with_name(old_page).unlink(missing_ok=True)
+flat = out.with_name("2d.html")  # same page with the showcase site's flat 2D dot map
+flat.write_text(template.replace("/*DATA*/null", data).replace("/*MAP2D*/false", "true"), encoding="utf-8")
+print("wrote", flat)
