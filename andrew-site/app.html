@@ -225,6 +225,9 @@
   body.dash .seg a { padding: 7px 12px; border-radius: 8px; font-weight: 500; color: var(--muted); text-decoration: none; white-space: nowrap; }
   body.dash .seg a:hover { color: var(--navy); }
   body.dash .seg a[aria-current] { background: var(--navy); color: #fff; }
+  body.dash .hero-n { display: flex; align-items: center; gap: 10px; flex: none; }
+  body.dash .hero-n b { font: 800 56px/0.9 var(--serif); letter-spacing: -.05em; color: var(--crimson); }
+  body.dash .hero-n span { font-size: 14px; line-height: 1.25; color: var(--muted); font-weight: 500; }
   body.dash .mmeta { display: flex; justify-content: space-between; gap: 12px; margin: 16px 0 12px; color: var(--muted); font-size: 14px; }
   body.dash .ic { display: inline-flex; align-items: center; gap: 8px; }
   body.dash .ic svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; }
@@ -313,7 +316,7 @@
 <header class="top">
   <div class="brand">
     <span class="logo">Sentinels</span>
-    <nav class="nav"><a href="#map" data-view="map" class="on" id="nav-map">Map</a><a href="dashboard.html" id="nav-dash">Dashboard</a><a href="#cases" data-view="cases">Cases</a><a href="#reports" data-view="reports">Reports</a></nav>
+    <nav class="nav"><a href="#map" data-view="map" class="on">Map</a><a href="#cases" data-view="cases">Cases</a><a href="#reports" data-view="reports">Reports</a></nav>
   </div>
   <span class="updated" id="updated"></span>
 </header>
@@ -324,6 +327,7 @@
         <p class="eyebrow">Sewage spill watch · England</p>
         <h1 class="mtitle">The spills rain can't explain.</h1>
       </div>
+      <div class="hero-n"><b id="n3"></b><span>dry spills<br>in 48 hours</span></div>
     </div>
     <div class="mmeta dash-only">
       <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>Every storm overflow in England, 9 water companies</span>
@@ -422,10 +426,6 @@ const DASH = /*DASH*/false;    // build.py writes dashboard.html with this set: 
 const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
 document.body.classList.toggle("flat", MAP2D);
 document.body.classList.toggle("dash", DASH);
-if (DASH) {  // on the dashboard page the "map" view is the dashboard; Map links back to the full-bleed page
-  const m = document.getElementById("nav-map"), d = document.getElementById("nav-dash");
-  m.href = "index.html#map"; m.removeAttribute("data-view"); d.href = "#map"; d.dataset.view = "map";
-}
 if (MAP2D) document.getElementById("size-key").textContent = "Dot size is hours discharging.";
 document.querySelectorAll(".views a").forEach(a => { if ((a.dataset.v === "2d") === MAP2D) a.setAttribute("aria-current", "page"); a.href += location.hash; });
 let pulse = 0;
@@ -438,7 +438,7 @@ const dry = sites.filter(s => s.verdict === "dry_spill_candidate").sort((a, b) =
 
 document.getElementById("n").textContent = dry.length;
 document.getElementById("of").textContent = `of ${sites.length} spills started. No meaningful rain at any gauge within 10 km.`;
-document.getElementById("n2").textContent = dry.length;
+document.getElementById("n2").textContent = document.getElementById("n3").textContent = dry.length;
 document.getElementById("of2").textContent = `${dry.length} of ${sites.length} spills in 48 h are dry`;
 document.getElementById("rows-n").textContent = dry.length;
 const when = new Date(RUN.run_at.replace(" ", "T"));
@@ -508,7 +508,11 @@ function layers() {
     const dashed = new deck.PathLayer({ id: "ring", data: ring, getPath: d => d, getColor: [18, 53, 91, 200], getWidth: 2, widthUnits: "pixels",
       getDashArray: [5, 4], dashJustified: true, extensions: [new deck.PathStyleExtension({ dash: true })] });
     // Tilted in on a spill: the dry spills stand up as columns (height = hours discharging), the selected one gold.
-    const cols = selected ? [new deck.ColumnLayer({ id: "dash-cols", data: dry, diskResolution: 24, extruded: true, radius: 5 * m,
+    const ctx = selected && !dryOnly ? [new deck.ColumnLayer({ id: "ctx-cols", data: sites.filter(s => s.verdict !== "dry_spill_candidate"),
+      diskResolution: 16, extruded: true, radius: 3.5 * m, getPosition: s => [s.lon, s.lat],
+      getElevation: s => Math.max(s.hours || 0, 0.5) * PX_PER_HOUR * 2.5 * m, getFillColor: s => VERDICT[kind(s)].fill,
+      pickable: true, updateTriggers: { getElevation: m } })] : [];  // rain-explained and no-gauge spills, faint, for contrast
+    const cols = selected ? [...ctx, new deck.ColumnLayer({ id: "dash-cols", data: dry, diskResolution: 24, extruded: true, radius: 5 * m,
       getPosition: s => [s.lon, s.lat], getElevation: s => Math.max(s.hours || 0, 0.5) * PX_PER_HOUR * 2.5 * m,
       getFillColor: s => s.id === sel ? GOLD : [200, 16, 46, 200], pickable: true, updateTriggers: { getFillColor: sel, getElevation: m } })] : [];
     return [...dotLayers([disc, dashed, links, gauges]), ...cols];
@@ -527,7 +531,7 @@ const map = new maplibregl.Map({
 });
 if (MAP2D && !DASH) { map.dragRotate.disable(); map.touchZoomRotate.disableRotation(); }
 map.on("style.load", () => {
-  if (MAP2D) return;  // 2D keeps the showcase site's plain Positron basemap
+  if (MAP2D && !DASH) return;  // the flat 2D page keeps the showcase site's plain Positron basemap
   // Restyle Positron into the Figma palette: land, sea, coastline. Everything else is hidden.
   for (const l of map.getStyle().layers) {
     if (l.id === "background") map.setPaintProperty(l.id, "background-color", "#bfd6dd");  // sea, so unloaded tiles read as sea

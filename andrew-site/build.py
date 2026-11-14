@@ -59,11 +59,9 @@ template = (here / "app.html").read_text(encoding="utf-8")
 assert "/*DATA*/null" in template
 out = here / "build" / "index.html"
 out.parent.mkdir(exist_ok=True)
-out.write_text(template.replace("/*DATA*/null", data), encoding="utf-8")
+# The Map tab is the dashboard layout: flat dot map that tilts into 3D when a spill is selected.
+# (The template still holds the older full-bleed 3D/2D map behind MAP2D=false / DASH=false; it is no longer built.)
+out.write_text(template.replace("/*DATA*/null", data).replace("/*MAP2D*/false", "true").replace("/*DASH*/false", "true"), encoding="utf-8")
 print("wrote", out)
-flat = out.with_name("2d.html")  # same page with the showcase site's flat 2D dot map
-flat.write_text(template.replace("/*DATA*/null", data).replace("/*MAP2D*/false", "true"), encoding="utf-8")
-print("wrote", flat)
-dash = out.with_name("dashboard.html")  # card-layout dashboard tab, flat map
-dash.write_text(template.replace("/*DATA*/null", data).replace("/*MAP2D*/false", "true").replace("/*DASH*/false", "true"), encoding="utf-8")
-print("wrote", dash)
+for old_page in ("2d.html", "dashboard.html"):  # pages from before the merge
+    out.with_name(old_page).unlink(missing_ok=True)

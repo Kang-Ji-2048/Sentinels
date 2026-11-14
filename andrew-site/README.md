@@ -14,24 +14,22 @@ python andrew-site/serve.py                       # open http://localhost:8000
 
 ## What's on the page
 
-- **Map:** one semi-transparent column per spill in the last 48 hours. Height is hours discharging; red is a
-  dry-spill candidate, faint navy is rain-explained, grey has no gauge within 10 km. "Dry spills only" hides
-  the rest.
-- **Selecting a spill** (click a column or a row) zooms in, draws the 10 km rain-check area as a gold ring, and
-  plots the rain gauges inside it with their 48-hour readings (white = dry, navy = 0.25 mm or more in a day).
-  Click it again, or "Show all of England", to zoom back out.
-- **Side panel:** the longest dry spills, then the selected site's case: verdict, gauge readings and the agents'
-  conversation when one exists.
-
-- **Dashboard tab** (`dashboard.html`): the same map and data as a card layout: flat dot map on the left, the
-  numbered list of longest dry spills and the selected case on the right. Same Cases and Reports tabs.
+- **Map tab:** a flat dot map of every spill in the last 48 hours (red = dry-spill candidate, navy =
+  rain-explained, grey = no gauge within 10 km; dot size = hours discharging), with numbered pins on the six
+  longest dry spills. "Dry spills only" hides the rest.
+- **Selecting a spill** (a dot, a pin or a list row) flies the map in and tilts it into 3D: spills stand up as
+  columns (height = hours discharging, selected one gold), a dashed ring marks the 10 km rain-check area and
+  the gauges inside it show their readings. "Show all of England" flies back out flat.
+- **Right column:** the longest dry spills, then the selected spill's card: hours, gauges, the agents' verdict,
+  a button to its evidence pack, and the full agent conversation folded underneath.
+- **Ask Genie:** a floating button, bottom right (see below).
 - **Cases tab:** a status board (New, Ruled innocent, Needs review, Report drafted, Approved, Rejected), the
   confidence swing (how far the web evidence moved the skeptic's view) and repeat sites (overflows with more
   than one dry-spill candidate across detector runs). Click any case to open it on the map.
 - **Reports tab:** the drafted evidence packs. A reviewer can edit the draft, approve it (with their name) or
   reject it (with a reason), download the approved pack as Markdown, mark it as sent, or undo. Nothing is
   emailed: a person sends the downloaded pack.
-- **Ask Genie box** (bottom right of the map, click to open): plain-English follow-up questions to the Sentinels Genie agent on Databricks, which writes and
+- **Ask Genie** (floating button, bottom right): plain-English follow-up questions to the Sentinels Genie agent on Databricks, which writes and
   runs the SQL. Each answer shows the text, a results table and the SQL. Needs `serve.py` running with these
   set in the shell (never commit them):
 
