@@ -22,8 +22,10 @@ import os, json
 # they're saved to the keys file and reused on every later run.
 dbutils.widgets.text("anthropic_key", "")
 dbutils.widgets.text("linkup_key", "")
+dbutils.widgets.text("adaption_key", "")  # optional: only for an adaption:<model> skeptic and notebook 04
 dbutils.widgets.text("top_n", "3")
-dbutils.widgets.text("skeptic_model", "system.ai.databricks-gpt-5-5")
+# Databricks model (system.ai.gpt-oss-120b) or an Adaption Labs model (adaption:qwen3.5-397b)
+dbutils.widgets.text("skeptic_model", "system.ai.gpt-oss-120b")
 
 _user = spark.sql("SELECT current_user()").first()[0]
 KEYS_FILE = f"/Workspace/Users/{_user}/.sentinels_keys.json"
@@ -46,8 +48,10 @@ def _key(name, widget):
 
 os.environ["ANTHROPIC_API_KEY"] = _key("anthropic", "anthropic_key")
 os.environ["LINKUP_API_KEY"] = _key("linkup", "linkup_key")
+os.environ["ADAPTION_API_KEY"] = _key("adaption", "adaption_key")
 print("Anthropic key:", "set" if os.environ["ANTHROPIC_API_KEY"] else "MISSING",
-      "| Linkup key:", "set" if os.environ["LINKUP_API_KEY"] else "MISSING", f"| saved in {KEYS_FILE}")
+      "| Linkup key:", "set" if os.environ["LINKUP_API_KEY"] else "MISSING",
+      "| Adaption key:", "set" if os.environ["ADAPTION_API_KEY"] else "not set", f"| saved in {KEYS_FILE}")
 
 # COMMAND ----------
 
@@ -60,7 +64,15 @@ from sentinels.memory import CaseMemory
 # Skeptic runs on a Databricks foundation model via Unity Gateway: a different model family from Claude
 w = WorkspaceClient()
 token = w.config.authenticate()["Authorization"].split(" ", 1)[1]
-if dbutils.widgets.get("skeptic_model").strip():
+_skeptic = dbutils.widgets.get("skeptic_model").strip()
+if _skeptic.startswith("adaption:"):
+    llm.SKEPTIC_DATABRICKS_MODEL = _skeptic
+    from sentinels import adaption
+    try:
+        print("Adaption hosted models:", adaption.list_models())
+    except Exception as e:
+        print("Adaption model list unavailable:", e)
+elif _skeptic:
     llm.SKEPTIC_CLIENT = llm.gateway_client(w.config.host, token)
     llm.SKEPTIC_DATABRICKS_MODEL = dbutils.widgets.get("skeptic_model").strip()
     try:  # names the gateway will actually serve (the catalog list below can include unserved ones)
@@ -111,6 +123,12 @@ spark.createDataFrame(new).write.mode("append").saveAsTable(T("gold_case_memory"
 reports = pd.DataFrame([{"site_id": r["site_id"], "decided_at": r["decided_at"], "final_verdict": r["final_verdict"],
                          "report_md": r["report"] or "", "evidence_json": json.dumps(r["evidence"] or {})} for r in results])
 spark.createDataFrame(reports).write.mode("append").option("mergeSchema", "true").saveAsTable(T("gold_evidence_packs"))
+# Training rows for the Adaption triage model (notebook 04): spill data -> the team's verdict
+from sentinels import adaption
+train_rows = [dict(site_id=r["site_id"], decided_at=r["decided_at"], **ex) for r in results
+              if (ex := adaption.training_example(r))]
+if train_rows:
+    spark.createDataFrame(pd.DataFrame(train_rows)).write.mode("append").saveAsTable(T("gold_training_examples"))
 display(new)
 
 # COMMAND ----------

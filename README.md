@@ -103,7 +103,9 @@ sentinels/memory.py        Case memory per site (JSONL locally, Delta on Databri
 notebooks/00_setup         Schema + check this workspace can reach the APIs
 notebooks/01_ingest_bronze Snapshot all overflows + gauges into Delta (schedule every 15 min)
 notebooks/02_detect_...    Silver events (MERGE), rain readings, gold assessments
-notebooks/03_agents        Top candidates -> agent team -> gold_case_memory + gold_evidence_packs
+notebooks/03_agents        Top candidates -> agent team -> gold_case_memory + gold_evidence_packs + gold_training_examples
+notebooks/04_adaption      Train a cheap spill-triage model on the team's past verdicts (Adaption AutoScientist)
+sentinels/adaption.py      Adaption Labs API: hosted models (optional skeptic), dataset upload, training
 scripts/detect.py          Run the detector locally and print the top candidates
 scripts/agents.py          Run the agent team locally on the top N candidates
 scripts/map.py             3D map of the latest run -> docs/map.html
@@ -131,10 +133,20 @@ with a working monitor: Carnon River (South West Water, SBB00211), still dischar
 under 0.25 mm of rain at three gauges within 7 km. (Spills whose monitor has gone offline get an unknown duration
 rather than a guessed one.)
 
+## Learning from its own verdicts (Adaption)
+
+Every case the agent team decides is saved as a training row: the prompt holds only what is known before
+the expensive agents run (the spill and the rainfall), and the answer is the team's final verdict, confidence
+and reasoning. `notebooks/04_adaption` uploads these rows to Adaption and runs AutoScientist to instruction-tune
+a small model on them. The aim is a cheap triage model that can rank thousands of new candidates and send only
+the promising ones to the full investigator, skeptic, Linkup and adjudicator loop. It needs a few dozen decided
+cases first, so run 03 with a larger `top_n`.
+
 ## Models and APIs used
 
 - Anthropic Claude (investigator, drafter)
-- An open model served through Databricks Foundation Model APIs (skeptic)
+- An open model served through Databricks Foundation Model APIs (skeptic), or an Adaption Labs hosted model (`skeptic_model = adaption:qwen3.5-397b`)
+- Adaption Labs AutoScientist (trains the spill-triage model from adjudicated cases)
 - Linkup Search API (evidence agent)
 - Databricks: Delta Lake, Unity Catalog volumes, Jobs, MLflow Tracing
 - Water company ArcGIS feeds, EA flood-monitoring API
