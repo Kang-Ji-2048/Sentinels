@@ -37,7 +37,25 @@
   .map { position: relative; flex: 1; min-width: 0; }
   #map { position: absolute; inset: 0; }
 
-  .count { position: absolute; top: 20px; left: 24px; width: 274px; padding: 8px 12px 12px; background: rgba(243, 246, 241, .92); z-index: 2; pointer-events: none; }
+  .map .reset { left: 384px; }  /* clear of the left rail */
+  .rail { position: absolute; z-index: 2; top: 20px; left: 24px; bottom: 24px; width: 340px; display: flex; flex-direction: column; gap: 12px; pointer-events: none; }
+  .rail > * { pointer-events: auto; }
+  .count { flex: none; padding: 8px 14px 12px; background: rgba(243, 246, 241, .94); }
+  .count summary { position: relative; list-style: none; cursor: pointer; padding-right: 28px; }
+  .count summary::-webkit-details-marker { display: none; }
+  .count summary::after { content: ""; position: absolute; top: 14px; right: 4px; width: 9px; height: 9px; border-right: 2px solid var(--ink); border-bottom: 2px solid var(--ink); transform: rotate(-135deg); transition: transform .2s; }
+  .count:not([open]) summary::after { top: 50%; margin-top: -8px; transform: rotate(45deg); }
+  .count summary:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
+  .count:not([open]) { padding-block: 8px; }
+  .count:not([open]) summary { display: flex; align-items: baseline; gap: 8px; }
+  .count:not([open]) .n { font-size: 30px; line-height: 1; }
+  .count:not([open]) h1 { font-size: 17px; }
+  .spills { flex: 0 1 auto; min-height: 0; display: flex; flex-direction: column; background: rgba(243, 246, 241, .96); border-radius: 6px; box-shadow: 0 10px 30px rgba(18, 53, 91, .12); overflow: hidden; }
+  .spills h2 { flex: none; margin: 0; padding: 12px 14px 8px; font-size: 13px; font-weight: 600; letter-spacing: .9px; text-transform: uppercase; }
+  .spills .rows { min-height: 0; overflow-y: auto; overscroll-behavior: contain; border-bottom: 0; }
+  .spills .row { padding: 8px 14px; font-size: 14px; }
+  .spills .row .h { width: 44px; } .spills .row .r { width: 62px; }
+  .spills .row.head { position: sticky; top: 0; z-index: 1; background: var(--paper); }
   .count .n { font: 800 88px/88px var(--serif); letter-spacing: -.05em; color: var(--crimson); }
   .count h1 { margin: 0; font-size: 22px; font-weight: 600; }
   .count p { margin: 0; color: var(--muted); line-height: 21px; }
@@ -96,6 +114,40 @@
   .case .example, .detail .example { display: grid; gap: 2px; margin-top: 14px; padding: 10px 12px; border: 2px dashed var(--crimson); background: #fbeaec; }
   .case .example b, .detail .example b { color: var(--crimson); text-transform: uppercase; letter-spacing: .9px; font-size: 13px; }
   .case .example ~ section { opacity: .85; }
+  .ftags { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 6px; }
+  .ftag { padding: 2px 9px; border-radius: 10px; font-size: 13px; font-weight: 600; }
+  .ftag.red { background: var(--crimson); color: #fff; }
+  .ftag.yellow { background: var(--gold); color: var(--ink); }
+  .ftag.green { background: #2e7d4f; color: #fff; }
+  .ftag.plain { background: #fff; color: var(--ink); border: 1px solid var(--rule); }
+  .case .findings .gist { margin: 0; font-size: 14px; line-height: 1.45; }
+  .btn.small { margin-top: 10px; padding: 6px 12px; font-size: 14px; border-radius: 6px; }
+  .case details.full { padding: 12px 0; border-top: 1px solid var(--rule); }
+  .case details.full > summary { color: var(--navy); font-weight: 600; }
+  .case details.full > section:first-of-type { border-top: 0; }
+  .case .chat { margin-top: 8px; padding-top: 16px; border-top: 2px solid var(--ink); }
+  .chat-log { display: flex; flex-direction: column; gap: 8px; max-height: 420px; overflow-y: auto; margin-top: 10px; }
+  .chat-log:empty { display: none; }
+  .msg { margin: 0; padding: 8px 12px; border-radius: 10px; white-space: pre-wrap; overflow-wrap: anywhere; max-width: 92%; min-width: 0; }
+  .msg.user { align-self: flex-end; background: var(--navy); color: #fff; }
+  .msg p { margin: 0; }
+  .msg .result { margin-top: 8px; max-height: 240px; overflow: auto; }
+  .msg table { border-collapse: collapse; font-size: 13px; }
+  .msg th, .msg td { padding: 3px 8px; border-bottom: 1px solid var(--rule); text-align: left; white-space: nowrap; }
+  .msg th { font-weight: 600; position: sticky; top: 0; background: #fff; }
+  .msg details { margin-top: 6px; font-size: 13px; }
+  .msg details pre { margin: 4px 0 0; white-space: pre-wrap; font: 12px/1.4 ui-monospace, monospace; }
+  .msg.assistant { align-self: flex-start; background: #fff; border: 1px solid var(--rule); }
+  .msg.pending { color: var(--muted); font-style: italic; }
+  .msg.error { align-self: flex-start; color: var(--crimson); background: #fbeaec; }
+  .starters { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .starters[hidden] { display: none; }
+  .chip-q { padding: 5px 10px; font-size: 14px; background: #fff; border: 1px solid var(--rule); border-radius: 14px; cursor: pointer; }
+  .chip-q:hover { border-color: var(--navy); }
+  .ask { display: flex; gap: 8px; margin-top: 10px; }
+  .ask input { flex: 1; min-width: 0; padding: 9px 12px; font: inherit; border: 1px solid var(--ink); border-radius: 6px; background: #fff; }
+  .ask .btn { border-radius: 6px; }
+  .chat .note { margin: 8px 0 0; font-size: 13px; color: var(--muted); }
   .case .empty h2 { padding: 20px 0 10px; }
   .case .empty p { margin: 0; color: var(--muted); }
   .foot { padding: 16px 24px; color: var(--muted); border-top: 1px solid var(--rule); }
@@ -164,9 +216,11 @@
     .queue, .detail { overflow: visible; padding: 20px 16px; } .detail .cols { grid-template-columns: 1fr; }
     .cases { padding: 20px 16px 40px; } .two { grid-template-columns: 1fr; }
     .body { flex-direction: column; overflow-y: auto; }
-    .map { flex: none; height: 70vh; }
+    .map { flex: none; }
     .side { width: 100%; border-left: 0; border-top: 1px solid var(--ink); overflow: visible; }
-    .count { left: 16px; top: 16px; }
+    .map { height: auto; } #map { position: relative; height: 60vh; }
+    .map .reset { left: 16px; top: calc(60vh - 56px); bottom: auto; }
+    .rail { position: static; width: auto; margin: 12px 16px; } .spills .rows { max-height: 50vh; }
     .count .n { font-size: 64px; line-height: 64px; }
     .top { padding: 0 16px; } .brand { gap: 16px; } .updated { display: none; }
   }
@@ -190,9 +244,9 @@
   <div class="map">
     <button class="reset" id="reset" hidden>Show all of England</button>
     <div id="map" role="img" aria-label="3D map of England: one column per spilling overflow, height is hours discharging"></div>
-    <div class="count">
-      <div class="n" id="n"></div>
-      <h1>dry spills in 48 hours</h1>
+    <div class="rail">
+    <details class="count" id="count" open>
+      <summary><span class="n" id="n"></span> <h1>dry spills in 48 hours</h1></summary>
       <p id="of"></p>
       <div class="key">
         <div><span class="sw dry"></span>Dry spill candidate</div>
@@ -202,11 +256,14 @@
         <p class="views">Map: <a href="index.html" data-v="3d">3D columns</a> · <a href="2d.html" data-v="2d">2D dots</a></p>
         <label class="toggle"><input type="checkbox" id="dryOnly"> Dry spills only</label>
       </div>
+    </details>
+    <section class="spills" aria-labelledby="spills-h">
+      <h2 id="spills-h">Longest dry spills</h2>
+      <div class="rows" id="rows"></div>
+    </section>
     </div>
   </div>
   <aside class="side">
-    <h2>Longest dry spills</h2>
-    <div class="rows" id="rows"></div>
     <div class="case" id="case"></div>
     <p class="foot">A candidate, not proof. A person approves any report before it is sent.</p>
   </aside>
@@ -331,7 +388,7 @@ function layers() {
 }
 
 const ENGLAND = MAP2D ? [[-5.8, 49.9], [1.8, 55.85]] : [[-5.4, 50.0], [1.8, 55.2]];  // flat view needs all of England in frame
-const ENGLAND_PAD = MAP2D ? { top: 20, bottom: 20, left: 260, right: 20 } : { top: 0, bottom: 0, left: 240, right: 0 };
+const ENGLAND_PAD = MAP2D ? { top: 20, bottom: 20, left: 380, right: 20 } : { top: 0, bottom: 0, left: 370, right: 0 };
 const map = new maplibregl.Map({
   container: "map", style: "https://basemaps.cartocdn.com/gl/positron-nolabels-gl-style/style.json",
   bounds: ENGLAND, fitBoundsOptions: { padding: ENGLAND_PAD },
@@ -390,7 +447,7 @@ function renderRows() {
   const rows = document.getElementById("rows");
   const head = el("div", "row head");
   head.append(el("span", "site", "Site"), el("span", "h", "Hours"), el("span", "r", "Rain, mm"));
-  rows.replaceChildren(head, ...dry.slice(0, selected ? 4 : 7).map(s => {
+  rows.replaceChildren(head, ...dry.map(s => {
     const b = el("button", "row" + (s === selected ? " sel" : ""));
     const site = el("span", "site");
     site.append(el("b", null, title(s.name)), el("span", null, `${s.company} · ${s.id}`));
@@ -399,12 +456,13 @@ function renderRows() {
     b.onclick = () => select(s);
     return b;
   }));
+  rows.querySelector(".sel")?.scrollIntoView({ block: "center" });
 }
 function renderCase() {
   const c = document.getElementById("case");
   if (!selected) {
     const box = el("div", "empty");
-    box.append(el("h2", null, "Case"), el("p", null, "Select a spill on the map or a row above to read the case."));
+    box.append(el("h2", null, "Case"), el("p", null, "Select a spill on the map or in the list to read the case."));
     return c.replaceChildren(box);
   }
   const s = selected, v = VERDICT[s.verdict] || VERDICT.no_gauge;
@@ -422,8 +480,116 @@ function renderCase() {
   } else gauges.append(el("p", "lede", "No Environment Agency gauge within 10 km, so rain can't be ruled in or out."));
   const agents = el("section");
   if (!s.case) agents.append(el("span", "tag", "Agents"), el("p", "lede", "No agent case for this site in this run yet."));
-  c.replaceChildren(head, verdict, gauges, ...(s.case ? agentSections(s.case, s) : [agents]));
+  c.replaceChildren(head, verdict, gauges, ...(s.case ? agentSections(s.case, s) : [agents]), chatSection(s));
 }
+
+// "Ask about this spill": questions go to the team's Databricks Genie space via serve.py (sentinels/genie.py).
+// Genie answers by querying the pipeline's tables and keeps its own conversation, so we pass its id back.
+const chats = {};  // site id -> { msgs: [{role, content, sql?, columns?, rows?}], busy, conv }
+function chatSection(s) {
+  const sec = el("section", "chat");
+  sec.append(el("span", "tag", "Ask about this spill"));
+  if (!api) { sec.append(el("p", "lede", "The chat needs the local server: run python andrew-site/serve.py.")); return sec; }
+  const st = chats[s.id] || (chats[s.id] = { msgs: [], busy: false, conv: null });
+  const name = title(s.name);
+  const starters = [`How many dry spills has ${name} had?`, `How does ${s.company} compare with other companies?`,
+                    `What rain did the gauges near ${name} record?`];
+  const log = el("div", "chat-log"); log.setAttribute("aria-live", "polite");
+  const tips = el("div", "starters");
+  const form = el("form", "ask"), input = el("input"), go = el("button", "btn", "Ask");
+  input.placeholder = "Ask about this spill"; input.setAttribute("aria-label", "Ask about this spill"); input.maxLength = 1000;
+  go.type = "submit"; form.append(input, go);
+  const bubble = m => {
+    const p = el("div", "msg " + m.role);
+    p.append(el("p", null, m.content));
+    if (m.rows && m.rows.length) {  // Genie's query result
+      const wrap = el("div", "result"), t = el("table"), hr = el("tr");
+      for (const c of m.columns) hr.append(el("th", null, c));
+      t.append(hr);
+      for (const r of m.rows) { const tr = el("tr"); for (const v of r) tr.append(el("td", null, v == null ? "" : String(v))); t.append(tr); }
+      wrap.append(t); p.append(wrap);
+    }
+    if (m.sql) { const d = el("details"); d.append(el("summary", null, "SQL Genie ran"), el("pre", null, m.sql)); p.append(d); }
+    return p;
+  };
+  const draw = () => {
+    log.replaceChildren(...st.msgs.map(bubble));
+    if (st.busy) log.append(el("p", "msg assistant pending", "Genie is looking it up…"));
+    tips.hidden = st.msgs.length > 0;
+    go.disabled = input.disabled = st.busy;
+    log.scrollTop = log.scrollHeight;
+  };
+  const send = async q => {
+    q = q.trim(); if (!q || st.busy) return;
+    st.msgs.push({ role: "user", content: q }); st.busy = true; input.value = ""; draw();
+    // The first question names the site so Genie scopes its query; follow-ups keep Genie's own context.
+    const question = st.conv ? q : `About storm overflow ${s.id} (${name}, ${s.company}): ${q}`;
+    try {
+      const r = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question, conversation_id: st.conv }) });
+      const body = await r.json();
+      if (!r.ok) throw new Error(body.error || "No answer");
+      st.conv = body.conversation_id || st.conv;
+      st.msgs.push({ role: "assistant", content: body.answer, sql: body.sql, columns: body.columns, rows: body.rows });
+    } catch (e) { st.msgs.push({ role: "error", content: `Couldn't answer: ${e.message}` }); }
+    st.busy = false; draw();
+    if (selected === s) input.focus();
+  };
+  for (const q of starters) { const b = el("button", "chip-q", q); b.type = "button"; b.onclick = () => send(q); tips.append(b); }
+  form.onsubmit = e => { e.preventDefault(); send(input.value); };
+  sec.append(log, tips, form, el("p", "note", "Answers come from the Sentinels Genie space on Databricks, which queries the pipeline's tables. Check anything that matters against the sources."));
+  draw();
+  return sec;
+}
+// A few lines a reviewer can take in at a glance, all drawn from the agents' own output.
+function keyFindings(k, s) {
+  const pct = x => x == null ? "n/a" : Math.round(x * 100) + "%";
+  const short = t => {  // "Tidal influence: long explanation..." -> "Tidal influence", at most ~34 characters
+    t = String(t || "").trim();
+    const i = t.indexOf(":");
+    let h = i > 8 && i < 100 ? t.slice(0, i) : t.split(/(?<=\.)\s/)[0].replace(/\.$/, "");
+    if (h.length > 34) h = h.slice(0, 34).replace(/\s+\S*$/, "") + "…";
+    return h;
+  };
+  const first = xs => `${short(xs[0])}${xs.length > 1 ? ` (+${xs.length - 1})` : ""}`;
+  const sec = el("section", "findings"), tags = el("div", "ftags"), bits = [];
+  // Tags: verdict + confidence, coloured by the pipeline's thresholds (65% likely breach, 40% needs review).
+  const conf = k.breach_confidence ?? 0;
+  const tone = conf >= 0.65 ? "red" : conf >= 0.4 ? "yellow" : "green";
+  const verdictTag = el("span", "ftag " + tone, `${k.final_verdict.replace(/_/g, " ").replace(/^./, c => c.toUpperCase())} · ${pct(k.breach_confidence)}`);
+  verdictTag.title = "The agents' confidence that this is a genuine dry-day spill";
+  tags.append(verdictTag);
+  if (k.case && k.case.severity) tags.append(el("span", "ftag plain", `Severity ${k.case.severity}`));
+  // The rest in a few short sentences.
+  const seen = k.spill && Array.isArray(k.spill.gauges) ? k.spill : null;
+  const gs = seen ? seen.gauges : s.gauges;
+  if (gs.length) {
+    const max48 = Math.max(...gs.map(g => Math.max(g.mm_0_24h_before ?? 0, g.mm_24_48h_before ?? 0)));
+    const during = gs.some(g => g.mm_during != null) ? Math.max(...gs.map(g => g.mm_during ?? 0)) : null;
+    bits.push(`≤${fmt(max48, 2)} mm rain at ${gs.length} gauge${gs.length === 1 ? "" : "s"} (≤${fmt(Math.max(...gs.map(g => g.km)))} km) in 48 h before${during == null ? "" : during === 0 ? ", none during" : `, ${fmt(during, 2)} mm during`}.`);
+  } else bits.push("No rain gauge within 10 km.");
+  const searches = (k.evidence && k.evidence.searches) || [];
+  if (k.skeptic && k.ruling) bits.push(`Skeptic ${pct(k.skeptic.breach_confidence)} → ${pct(k.ruling.final_confidence)} (${searches.length} searches).`);
+  else if (k.skeptic) bits.push(`Skeptic ${pct(k.skeptic.breach_confidence)}, dismissed before any search.`);
+  const standing = (k.ruling && k.ruling.objections_standing) || [], refuted = (k.ruling && k.ruling.objections_refuted) || [];
+  if (standing.length) bits.push(`Open: ${first(standing)}.`);
+  if (refuted.length) bits.push(`Ruled out: ${first(refuted)}.`);
+  // The agents may have worked from an earlier detector run than the map shows: say so when the facts differ.
+  if (seen && (seen.gauges.length !== s.gauges.length || seen.duration_hours !== s.hours)) {
+    const t = el("span", "ftag plain", "Earlier run");
+    t.title = `The agents worked from an earlier detector run (${seen.gauges.length} gauge${seen.gauges.length === 1 ? "" : "s"}, ${seen.duration_hours == null ? "unknown duration" : fmt(seen.duration_hours) + " h"}) than the map and gauge list above.`;
+    t.tabIndex = 0;
+    tags.append(t);
+  }
+  sec.append(el("span", "tag", "Key findings"), tags, el("p", "gist", bits.join(" ")));
+  if (k.report) {
+    const b = el("button", "btn ghost small", "Review the drafted evidence pack");
+    b.onclick = () => openInReports(s);
+    sec.append(b);
+  }
+  return sec;
+}
+
 // The agent conversation, in the order it happened. All text is model or web output: textContent only.
 function agentSections(k, s) {
   const pct = x => x == null ? "n/a" : Math.round(x * 100) + "%";
@@ -436,16 +602,10 @@ function agentSections(k, s) {
     b.append(el("b", null, "Example conversation"), el("span", null, "Made up to show how a case will look. No agent has run on this site, and none of the text below is real."));
     out.push(b);
   }
-  out.push(turn(`Agents' verdict: ${k.final_verdict.replace(/_/g, " ")}, ${pct(k.breach_confidence)} confident`));
-  out.at(-1).firstChild.classList.toggle("dry", k.final_verdict === "likely_breach");
-  // The agents may have worked from an earlier detector run than the map shows: say so when the facts differ.
-  const seen = k.spill && Array.isArray(k.spill.gauges) ? k.spill : null;
-  if (s && seen && (seen.gauges.length !== s.gauges.length || seen.duration_hours !== s.hours)) {
-    const h = seen.duration_hours == null ? "an unknown time" : `${fmt(seen.duration_hours)} h`;
-    out.at(-1).append(el("p", "lede", `The agents worked from an earlier detector run: ${seen.gauges.length} gauge${seen.gauges.length === 1 ? "" : "s"} within 10 km and ${h} discharging. The map and gauge list above are from a later run.`));
-  }
-  if (k.case) out.push(turn(`Investigator · severity ${k.case.severity}`, para(k.case.summary), list(k.case.breach_indicators)));
-  if (k.skeptic) out.push(turn(`Skeptic · ${k.skeptic.model || "model unknown"} · ${pct(k.skeptic.breach_confidence)} genuine`,
+  out.push(keyFindings(k, s));
+  const full = [];
+  if (k.case) full.push(turn(`Investigator · severity ${k.case.severity}`, para(k.case.summary), list(k.case.breach_indicators)));
+  if (k.skeptic) full.push(turn(`Skeptic · ${k.skeptic.model || "model unknown"} · ${pct(k.skeptic.breach_confidence)} genuine`,
     para(k.skeptic.strongest_objection), list(k.skeptic.innocent_explanations, x => `${x.explanation} (${x.plausibility} plausibility)`)));
   if (k.evidence) {
     const searches = (k.evidence.searches || []).map(q => {
@@ -459,11 +619,14 @@ function agentSections(k, s) {
       }
       d.append(ul); return d;
     });
-    out.push(turn(`Evidence agent · ${searches.length} web searches`, el("pre", null, k.evidence.report), ...searches));
-  } else out.push(turn("Evidence agent", para("Not run: the skeptic dismissed the case before any web search.")));
-  if (k.ruling) out.push(turn(`Adjudicator · ${pct(k.ruling.final_confidence)} genuine`, para(k.ruling.reasoning),
+    full.push(turn(`Evidence agent · ${searches.length} web searches`, el("pre", null, k.evidence.report), ...searches));
+  } else full.push(turn("Evidence agent", para("Not run: the skeptic dismissed the case before any web search.")));
+  if (k.ruling) full.push(turn(`Adjudicator · ${pct(k.ruling.final_confidence)} genuine`, para(k.ruling.reasoning),
     list(k.ruling.objections_refuted, x => `Refuted: ${x}`), list(k.ruling.objections_standing, x => `Still standing: ${x}`)));
-  if (k.report) { const d = el("details"); d.append(el("summary", null, "Read the draft"), el("pre", null, k.report)); out.push(turn("Drafted evidence pack", d)); }
+  if (k.report) { const d = el("details"); d.append(el("summary", null, "Read the draft"), el("pre", null, k.report)); full.push(turn("Drafted evidence pack", d)); }
+  const d = el("details", "full");
+  d.append(el("summary", null, `Read the full agent conversation (${full.length} steps)`), ...full);
+  out.push(d);
   return out;
 }
 let gaugeMarkers = [];
@@ -485,7 +648,7 @@ function select(s) {
     return map.fitBounds(ENGLAND, { padding: ENGLAND_PAD, pitch: MAP2D ? 0 : 45, bearing: 0, duration: 1200 });
   }
   showLabel(s, true);
-  map.flyTo({ center: [s.lon, s.lat], zoom: 10.3, pitch: MAP2D ? 0 : 55, bearing: 0, padding: { top: 60, bottom: 0, left: 300, right: 0 }, duration: 1600, essential: true });
+  map.flyTo({ center: [s.lon, s.lat], zoom: 10.3, pitch: MAP2D ? 0 : 55, bearing: 0, padding: { top: 60, bottom: 0, left: 380, right: 0 }, duration: 1600, essential: true });
   resetBtn.hidden = false;
 }
 renderRows(); renderCase();
@@ -728,6 +891,10 @@ function downloadPack(s, d) {
   a.download = `sentinels-${c.illustrative ? "EXAMPLE-" : ""}evidence-pack-${s.id}.md`;
   document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
+// The count card's open/closed state is remembered per browser.
+const countBox = document.getElementById("count");
+if (store.get("sentinels-count") === "closed") countBox.open = false;
+countBox.addEventListener("toggle", () => store.set("sentinels-count", countBox.open ? "open" : "closed"));
 show(location.hash.slice(1) || "map");
 </script>
 </body>

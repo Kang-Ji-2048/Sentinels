@@ -2,6 +2,10 @@
 
     python andrew-site/serve.py          -> http://localhost:8000
 
+The "Ask about this spill" chat goes to the team's Databricks Genie space (sentinels/genie.py), which answers by
+querying the pipeline's tables. It needs DATABRICKS_HOST, DATABRICKS_TOKEN and GENIE_SPACE_ID, either in the
+environment or in the repo's .env file.
+
 Decisions go to andrew-site/decisions.json. A rejection of a real (non-example) case is also added to the agents'
 case memory (data/case_memory.jsonl), so its reason is in front of the agents next time they look at that site.
 Local use only: binds to 127.0.0.1.
@@ -31,6 +35,27 @@ def save(decisions: dict) -> None:
     tmp = DECISIONS.with_suffix(".tmp")
     tmp.write_text(json.dumps(decisions, indent=1))
     os.replace(tmp, DECISIONS)  # never leave a half-written file
+
+
+GENIE_VARS = ("DATABRICKS_HOST", "DATABRICKS_TOKEN", "GENIE_SPACE_ID")
+
+
+def chat(body: dict) -> dict:
+    """One question to Genie; pass the conversation_id back in to follow up in the same conversation."""
+    question, conv = body.get("question"), body.get("conversation_id")
+    if not isinstance(question, str) or not 0 < len(question.strip()) <= 1500:
+        raise ValueError("question must be 1 to 1500 characters")
+    if conv is not None and not (isinstance(conv, str) and re.fullmatch(r"[\w-]{1,100}", conv)):
+        raise ValueError("bad conversation_id")
+    if not all(os.environ.get(k) for k in GENIE_VARS):
+        raise LookupError("Genie isn't connected. Set DATABRICKS_HOST, DATABRICKS_TOKEN and GENIE_SPACE_ID in .env "
+                          "(or the environment) and restart serve.py.")
+    sys.path.insert(0, str(HERE.parent))
+    from sentinels import genie  # imported here so the page still serves without it
+    out = genie.ask(question.strip(), conv)
+    return {"answer": out["text"] or ("Genie ran a query; the result is below." if out["rows"] else "Genie gave no answer."),
+            "conversation_id": out["conversation_id"], "status": out["status"], "sql": out["sql"],
+            "columns": out["columns"], "rows": out["rows"][:20]}
 
 
 def text(body: dict, key: str, limit: int) -> str:
@@ -91,7 +116,7 @@ class Handler(SimpleHTTPRequestHandler):
         return super().do_GET()
 
     def do_POST(self):
-        if self.path != "/api/decisions":
+        if self.path not in ("/api/decisions", "/api/chat"):
             return self._json(404, {"error": "not found"})
         # Only this page may write: other sites in the same browser can't send JSON here without a CORS preflight,
         # and anything carrying a foreign Origin is refused.
@@ -104,14 +129,34 @@ class Handler(SimpleHTTPRequestHandler):
             length = int(self.headers.get("Content-Length", 0))
             if length > 200_000:
                 raise ValueError("request too large")
-            return self._json(200, decide(json.loads(self.rfile.read(length))))
+            body = json.loads(self.rfile.read(length))
+            if self.path == "/api/chat":
+                return self._json(200, chat(body))
+            return self._json(200, decide(body))
         except (ValueError, json.JSONDecodeError) as e:
             return self._json(400, {"error": str(e)})
+        except LookupError as e:
+            return self._json(503, {"error": str(e)})
+        except Exception as e:  # Genie or network failure: report it, keep the server up
+            print("chat error:", repr(e)[:500])  # full detail in the terminal, not the browser
+            return self._json(502, {"error": f"Genie didn't answer ({type(e).__name__}). Check the Databricks settings and network."})
+
+
+def load_env(path: Path) -> None:
+    """KEY=VALUE lines from .env, without overriding what the environment already sets."""
+    if path.exists():
+        for line in path.read_text().splitlines():
+            key, sep, value = line.strip().partition("=")
+            if sep and key and not key.startswith("#"):
+                os.environ.setdefault(key.removeprefix("export ").strip(), value.strip().strip("'\""))
 
 
 if __name__ == "__main__":
+    load_env(HERE.parent / ".env")
     build = HERE / "build"
     if not (build / "index.html").exists():
         sys.exit("No page yet: run python andrew-site/build.py first.")
     print(f"Sentinels on http://localhost:{PORT}  (decisions saved to {DECISIONS})")
+    missing = [k for k in GENIE_VARS if not os.environ.get(k)]
+    print("chat (Genie):", "on" if not missing else f"off (missing {', '.join(missing)} in the environment or .env)")
     ThreadingHTTPServer(("127.0.0.1", PORT), partial(Handler, directory=str(build))).serve_forever()

@@ -20,9 +20,14 @@ python andrew-site/serve.py                       # open http://localhost:8000
 - **Selecting a spill** (click a column or a row) zooms in, draws the 10 km rain-check area as a gold ring, and
   plots the rain gauges inside it with their 48-hour readings (white = dry, navy = 0.25 mm or more in a day).
   Click it again, or "Show all of England", to zoom back out.
-- **Side panel:** the longest dry spills, then the selected site's case: verdict, gauge readings and the agents'
-  conversation when one exists.
-
+- **Case panel:** the selected site's verdict and gauge readings, then **Key findings** from the agents'
+  case (confidence before and after the evidence check, rain, severity, objections still open and ruled out,
+  sources). The full agent conversation is folded underneath.
+- **Ask about this spill:** a chat at the bottom of the case panel, answered by the team's Databricks Genie
+  space (`sentinels/genie.py`), which queries the pipeline's tables. The first question names the site so
+  Genie scopes its query; follow-ups continue the same Genie conversation. Answers show Genie's result table
+  and the SQL it ran. It runs through `serve.py` and needs `DATABRICKS_HOST`, `DATABRICKS_TOKEN` and
+  `GENIE_SPACE_ID` in the environment or in the repo's `.env` file (restart `serve.py` after adding them).
 - **Cases tab:** a status board (New, Ruled innocent, Needs review, Report drafted, Approved, Rejected), the
   confidence swing (how far the web evidence moved the skeptic's view) and repeat sites (overflows with more
   than one dry-spill candidate across detector runs). Click any case to open it on the map.
