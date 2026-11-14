@@ -24,7 +24,10 @@ def rain48(a):
 sites = [{"id": a["id"], "company": a["company"], "name": a.get("receivingwatercourse") or a["id"],
           "lat": a["latitude"], "lon": a["longitude"], "verdict": a["verdict"],
           "hours": a.get("duration_hours"),  # None = monitor offline
-          "rain48": rain48(a), "gauges": a.get("gauges") or []}
+          "rain48": rain48(a), "gauges": a.get("gauges") or [],
+          # feed status: 1 discharging now, 0 stopped, -1 monitor offline (older runs have no Status, so derive it)
+          "status": a.get("status") if a.get("status") is not None else
+                    -1 if a.get("monitor_offline") else 1 if not a.get("latesteventend") else 0}
          for a in run["assessed"] if a.get("longitude") is not None and a.get("latitude") is not None]
 cases = {}
 for f in sorted([*(root / "data" / "reports").glob("*.json"), *(f for f in (root / "data").glob("example_*.json") if f.name != "example_run.json"),

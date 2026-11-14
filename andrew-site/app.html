@@ -376,6 +376,41 @@
   body.dash .row .big { transition: transform .15s ease; } body.dash .row:hover .big { transform: translateX(-3px); }
   body.dash .pin-wrap { transition: opacity .4s ease, visibility .4s; }
   body.dash .tilted .pin-wrap { opacity: 0 !important; visibility: hidden; pointer-events: none; }  /* maplibre sets marker opacity inline */
+  /* Postcode check + affected water, ported from Andrew's water-systems-and-postcode branch into the one map (Kang 23:05) */
+  .top-right { display: flex; align-items: center; gap: 16px; }
+  .check { padding: 8px 14px; border: 0; border-radius: 3px; background: var(--gold); color: var(--ink); font: inherit; font-weight: 600; cursor: pointer; white-space: nowrap; }
+  .check:hover { background: #f0d264; } .check:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
+  body.dash .pcbox { position: absolute; z-index: 2; top: 62px; left: 14px; display: flex; gap: 0; background: #fff; border-radius: 10px; box-shadow: 0 4px 16px rgba(18,53,91,.12); overflow: hidden; }
+  body.dash .pcbox input { width: 9.5em; padding: 8px 12px; border: 0; font: inherit; font-size: 14px; text-transform: uppercase; background: none; color: var(--ink); }
+  body.dash .pcbox input::placeholder { text-transform: none; color: var(--muted); }
+  body.dash .pcbox input:focus { outline: none; } body.dash .pcbox:focus-within { box-shadow: 0 0 0 2px var(--gold), 0 4px 16px rgba(18,53,91,.12); }
+  body.dash .pcbox button { padding: 8px 14px; border: 0; background: var(--navy); color: #fff; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+  body.dash .mcard .map.pcmode .pin-wrap { display: none; }
+  .pc-home { width: 20px; height: 20px; background: var(--navy); border: 2px solid #fff; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); box-shadow: 0 2px 6px rgba(0,0,0,.3); }
+  .pc-dot { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--crimson); color: #fff; font: 700 12px var(--sans); border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.3); cursor: pointer; padding: 0; }
+  .pc-dot.hot { transform: scale(1.3); }
+  body.dash .side.pcmode .shead, body.dash .side.pcmode .rows, body.dash .side.pcmode .case { display: none; }
+  body.dash .near { padding: 4px 4px 12px; }
+  body.dash .near h2 { padding: 0; }
+  @media (max-width: 700px) { .check { display: none; } }
+  .near h2 { margin: 0 0 4px; font-size: 20px !important; font-weight: 600 !important; line-height: 1.25; letter-spacing: -.01em !important; text-transform: none !important; color: var(--ink) !important; }
+  .near .lead { margin: 0 0 12px; font-weight: 600; color: var(--crimson); }
+  .near .sub { margin: 8px 0; color: var(--muted); font-size: 13px; }
+  .near ol { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--ink); }
+  .near ol button { display: grid; grid-template-columns: 26px 1fr; gap: 10px; align-items: center; width: 100%; padding: 9px 2px; border: 0; border-bottom: 1px solid var(--rule); background: none; text-align: left; font: inherit; color: inherit; cursor: pointer; }
+  .near ol button:hover { background: #f7f9fb; }
+  .near ol .pc-dot { width: 22px; height: 22px; font-size: 11px; box-shadow: none; }
+  .near ol b { font-weight: 600; } .near ol small { display: block; color: var(--muted); font-size: 13px; }
+  .near .still { color: var(--crimson); font-weight: 600; }
+  .advice { margin: 16px 0 6px; padding: 2px 0 2px 14px; border-left: 3px solid var(--crimson); }
+  .advice h3 { margin: 0 0 6px; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; }
+  .advice ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 14px; line-height: 1.45; }
+  .advice a { color: var(--navy); font-weight: 600; }
+  .near .tlink, .case .back { margin-top: 6px; }
+  .affect { margin: 10px 0 0; padding-top: 10px; border-top: 1px solid #e6ebf0; font-size: 13px; color: var(--muted); }
+  .affect b { color: var(--ink); font-weight: 600; }
+  .affect .itag { display: inline-block; margin-right: 6px; padding: 1px 7px; border-radius: 3px; font-weight: 600; font-size: 12px; }
+  .itag.high { background: #fbe3e7; color: var(--crimson); } .itag.medium { background: #fbf1cc; color: #7a5d00; } .itag.low { background: #e2ecf5; color: var(--navy); }
   /* Agents' verdict badges, tour button, restyled gauge labels (dashboard) */
   body.dash .vdot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(20, 32, 43, .25); background: #8a6800; flex: none; }
   body.dash .vdot.likely_breach { background: var(--crimson); } body.dash .vdot.likely_innocent { background: var(--navy); }
@@ -419,7 +454,7 @@
     <span class="logo">Sentinels</span>
     <nav class="nav"><a href="#map" data-view="map" class="on">Map</a><a href="#cases" data-view="cases">Cases</a><a href="#reports" data-view="reports">Reports</a></nav>
   </div>
-  <span class="updated" id="updated"></span>
+  <div class="top-right"><span class="updated" id="updated"></span><button class="check dash-only" id="pc-go">Check your postcode</button></div>
 </header>
 <main class="body">
   <section class="mcard">
@@ -436,6 +471,10 @@
         <label class="toggle"><input type="checkbox" class="dry-only"> Dry spills only <span class="badge" id="n2"></span></label>
         <span class="inrange" id="of2"></span>
       </div>
+      <form class="pcbox dash-only" id="pc-form" autocomplete="on">
+        <input id="pc" autocomplete="postal-code" required maxlength="8" placeholder="Your postcode" aria-label="Postcode">
+        <button>Check</button>
+      </form>
       <button class="reset" id="reset" hidden>Show all of England</button>
       <button class="tour dash-only" id="tour">▶ Play tour</button>
       <div id="map" role="img" aria-label="Map of England: one mark per spilling overflow, sized by hours discharging"></div>
@@ -476,6 +515,7 @@
     <div class="shead"><h2>Longest dry spills</h2><span class="badge dash-only" id="rows-n"></span></div>
     <div class="rows" id="rows"></div>
     <div class="case" id="case"></div>
+    <div class="near" id="near" hidden aria-live="polite"></div>
     <p class="foot">A candidate, not proof. A person approves any report before it is sent.</p>
   </aside>
 </main>
@@ -535,6 +575,8 @@ const title = s => s === s.toUpperCase() ? s.toLowerCase().replace(/\b\w/g, c =>
 const fmt = (x, d = 1) => x == null ? "n/a" : x.toFixed(d);
 const hrs = s => s.hours == null ? "?" : fmt(s.hours);  // null = monitor offline, duration unknown
 const dry = sites.filter(s => s.verdict === "dry_spill_candidate").sort((a, b) => (b.hours ?? -1) - (a.hours ?? -1));
+const AFFECT_KM = 5;  // the postcode check's radius
+let pcState = null, pcBack = null, pcMarkers = [], affectedNames = [], impact = null;  // postcode check + affected water (see below)
 
 document.getElementById("n").textContent = dry.length;
 document.getElementById("of").textContent = `of ${sites.length} spills started. No meaningful rain at any gauge within 10 km.`;
@@ -622,7 +664,11 @@ function layers() {
       const a = i / 96 * 2 * Math.PI, dLat = AREA_M / 111320 * Math.sin(a);
       return [selected.lon + AREA_M / (111320 * Math.cos(selected.lat * Math.PI / 180)) * Math.cos(a), selected.lat + dLat];
     })] : [];
-    const disc = area.clone({ stroked: false, getFillColor: [18, 53, 91, 22] });
+    const circle = (lon, lat, km) => Array.from({ length: 97 }, (_, i) => { const a = i / 96 * 2 * Math.PI;
+      return [lon + km / (111.32 * Math.cos(lat * Math.PI / 180)) * Math.cos(a), lat + km / 110.57 * Math.sin(a)]; });
+    const pcRing = new deck.PathLayer({ id: "pc-ring", data: pcState ? [circle(pcState.r.longitude, pcState.r.latitude, AFFECT_KM)] : [],
+      getPath: d => d, getColor: [18, 53, 91, 220], getWidth: 1.6, widthUnits: "pixels",
+      getDashArray: [5, 4], dashJustified: true, extensions: [new deck.PathStyleExtension({ dash: true })] });
     const dashed = new deck.PathLayer({ id: "ring", data: ring, getPath: d => d, getColor: [18, 53, 91, 200], getWidth: 2, widthUnits: "pixels",
       getDashArray: [5, 4], dashJustified: true, extensions: [new deck.PathStyleExtension({ dash: true })] });
     // Tilted in on a spill: the dry spills stand up as columns (height = hours discharging), the selected one gold.
@@ -653,7 +699,7 @@ function layers() {
         background: true, getBackgroundColor: [18, 53, 91, 235], backgroundPadding: [8, 4], getTextAnchor: "middle", getAlignmentBaseline: "bottom",
         parameters: { depthCompare: "always" }, updateTriggers: { getPosition: [rise, m] } }),
     ];
-    const flat = dotLayers([disc, dashed, links, gauges]);
+    const flat = dotLayers([pcRing, dashed, links, gauges]);
     return [...(rise > 0.3 ? flat.filter(l => l.id !== "glow") : flat), ...cols];  // the dome replaces the flat glow
   }
   if (MAP2D) return dotLayers([area, links, gauges]);
@@ -670,13 +716,21 @@ const map = new maplibregl.Map({
 });
 if (MAP2D && !DASH) { map.dragRotate.disable(); map.touchZoomRotate.disableRotation(); }
 map.on("style.load", () => {
+  // Nearby water a spill could reach, filled in by showAffected(); drawn on the basemap, under deck.gl. (Andrew)
+  map.addSource("affected", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
+  map.addLayer({ id: "affected-fill", type: "fill", source: "affected", filter: ["==", ["geometry-type"], "Polygon"],
+    paint: { "fill-color": "#c8102e", "fill-opacity": ["*", 0.45, ["get", "w"]] } });
+  map.addLayer({ id: "affected-glow", type: "line", source: "affected", filter: ["==", ["geometry-type"], "LineString"],
+    layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#c8102e", "line-width": 9, "line-opacity": ["*", 0.25, ["get", "w"]] } });
+  map.addLayer({ id: "affected-line", type: "line", source: "affected", filter: ["==", ["geometry-type"], "LineString"],
+    layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#c8102e", "line-width": 3, "line-opacity": ["get", "w"] } });
   if (MAP2D) return;  // flat map and dashboard keep the plain Positron basemap (Kang preferred it, 21:37)
   // Restyle Positron into the Figma palette: land, sea, coastline. Everything else is hidden.
   for (const l of map.getStyle().layers) {
     if (l.id === "background") map.setPaintProperty(l.id, "background-color", "#bfd6dd");  // sea, so unloaded tiles read as sea
     else if (l.id === "water") map.setPaintProperty(l.id, "fill-color", "#bfd6dd");
     else if (l.id === "waterway") map.setPaintProperty(l.id, "line-color", "#9fbcc6");
-    else map.setLayoutProperty(l.id, "visibility", "none");
+    else if (!l.id.startsWith("affected")) map.setLayoutProperty(l.id, "visibility", "none");
   }
   const water = map.getLayer("water");
   if (water) map.addLayer({ id: "land", type: "fill", source: water.source, "source-layer": "earth",
@@ -815,7 +869,11 @@ function renderCaseDash(c, s, preview = false) {
   if (s.gauges.length) { const ul = el("ul"); for (const g of s.gauges) ul.append(el("li", null, `${g.station}, ${fmt(g.km)} km: ${fmt(g.mm_0_24h_before, 2)} mm in the 24 h before, ${fmt(g.mm_24_48h_before, 2)} mm in the 24 h before that`)); gl.append(ul); }
   else gl.append(el("p", "lede", "No Environment Agency gauge within 10 km, so rain can't be ruled in or out."));
   more.append(gl, ...(k ? agentSections(k, s) : []));
-  c.replaceChildren(head, meta, verdict, act, more);
+  const out = [head, meta, verdict, act];
+  if (!preview) { const aff = el("div", "affect"); aff.id = "affected"; aff.append("Finding the water nearby…"); out.push(aff); }
+  if (!preview && pcBack) { const b = el("button", "tlink back", `← Back to spills near ${pcBack.r.postcode}`); b.onclick = () => showPc(pcBack); out.unshift(b); }
+  c.replaceChildren(...out, more);
+  if (!preview && impact && impact.siteId === s.id) renderAffected();
 }
 // The agent conversation, in the order it happened. All text is model or web output: textContent only.
 function agentSections(k, s) {
@@ -869,9 +927,10 @@ function showGauges() {
     return new maplibregl.Marker({ element: box, anchor: "top", offset: [0, 10] }).setLngLat([g.lon, g.lat]).addTo(map);
   });
 }
-function select(s) {
+function select(s, fromPc = false) {
   selected = s === selected ? null : s;  // clicking the selected spill again clears it
   selectedAt = performance.now();
+  if (DASH) { if (pcState) endPc(); if (!fromPc) pcBack = null; showAffected(selected); }
   if (DASH && views.map && !views.map.hidden)  // shareable link straight to this spill: #map/<site id>
     history.replaceState(null, "", selected ? `#map/${encodeURIComponent(selected.id)}` : "#map");
   renderRows(); renderCase(); showGauges();
@@ -893,6 +952,165 @@ function select(s) {
   map.flyTo({ center: [s.lon, s.lat], zoom: 10.3, pitch: MAP2D ? 0 : 55, bearing: 0, padding: { top: 60, bottom: 0, left: 300, right: 0 }, duration: 1600, essential: true });
   resetBtn.hidden = false;
 }
+// ---------- Affected water (Andrew, water-systems-and-postcode) ----------
+// Rivers, streams and lakes near a spill, read from the basemap's vector tiles once they've loaded, out to a reach set
+// by an estimated impact score. Flow direction isn't known, so this is "could be affected", not a plume.
+const RECEIVING_KM = 20, SEA = new Set(["ocean", "sea", "bay", "strait", "reef", "dock"]);
+const BANDS = [[60, "high", 10], [30, "medium", 5], [0, "low", 2]];  // score threshold, label, reach in km
+function setAffected(features) { const src = map.getSource("affected"); if (src) src.setData({ type: "FeatureCollection", features }); }
+// Estimated impact, 0-100: duration, still running, dryness (less dilution) and a small receiving water push it up; the
+// agents' confidence (or the detector's verdict) scales it. No volume or flow data exists: a rough guide, not a measurement.
+function impactScore(s, receivingKind) {
+  const parts = [], h = s.hours ?? 0;
+  parts.push([s.hours == null ? "duration unknown" : `${fmt(h)} h discharging`, Math.min(40, 40 * Math.log2(1 + h) / Math.log2(1 + 48))]);
+  if (s.status === 1) parts.push(["still discharging", 10]);
+  parts.push([s.rain48 == null ? "no rain gauge" : `${fmt(s.rain48, 2)} mm rain in 48 h`, s.rain48 == null ? 5 : 20 * Math.max(0, 1 - s.rain48)]);
+  parts.push({ stream: ["small stream", 20], ditch: ["small stream", 20], drain: ["small stream", 20], brook: ["small stream", 20],
+               river: ["river", 10], canal: ["canal", 8], wide: ["lake or estuary", 5] }[receivingKind] || ["receiving water not found", 10]);
+  const conf = s.case ? 0.5 + 0.5 * (s.case.breach_confidence ?? 0) : { dry_spill_candidate: 0.8, no_gauge: 0.6, rain_explained: 0.4 }[s.verdict] ?? 0.6;
+  const score = Math.round(Math.min(100, parts.reduce((a, [, p]) => a + p, 0) * 100 / 90 * conf));
+  const [, band, reach] = BANDS.find(([t]) => score >= t);
+  return { siteId: s.id, hasCase: !!s.case, score, band, reach, conf, parts };
+}
+function waterAround(m, s) {  // water features within RECEIVING_KM of a spill, from the loaded vector tiles
+  const waterLayer = m.getLayer("water");
+  if (!waterLayer) return null;
+  const norm = x => String(x || "").toLowerCase().replace(/\(.*?\)/g, "").replace(/[^a-z ]/g, " ").replace(/\s+/g, " ").trim();
+  const recv = norm(s.name), kx = Math.cos(s.lat * Math.PI / 180) * 111.32, ky = 110.57;
+  const nearest = g => { let best = Infinity; const walk = c => { if (typeof c[0] === "number") best = Math.min(best, Math.hypot((c[0] - s.lon) * kx, (c[1] - s.lat) * ky)); else c.forEach(walk); }; walk(g.coordinates); return best; };
+  const found = [];
+  for (const f of m.querySourceFeatures(waterLayer.source, { sourceLayer: waterLayer.sourceLayer })) {
+    if (SEA.has(f.properties.kind)) continue;
+    const name = f.properties.name || f.properties["name:en"] || "", n = norm(name);
+    const receiving = recv.length > 3 && n.length > 3 && (n.includes(recv) || recv.includes(n));
+    const km = nearest(f.geometry);
+    if (km <= RECEIVING_KM) found.push({ f, name, km, receiving });
+  }
+  return found;
+}
+function pickWater(s, found) {  // the receiving water gets twice the reach: it takes the sewage first
+  const recvHit = found.filter(x => x.receiving).sort((a, b) => a.km - b.km)[0];
+  const kind = !recvHit ? null : recvHit.f.geometry.type.includes("Polygon") ? "wide" : recvHit.f.properties.kind_detail || "river";
+  const imp = impactScore(s, kind), R = imp.reach, keep = [], names = new Map();
+  for (const { f, name, km, receiving } of found) {
+    const reach = receiving ? 2 * R : R;
+    if (km > reach) continue;
+    keep.push({ type: "Feature", properties: { w: Math.max(0.25, 1 - km / reach) }, geometry: f.geometry });
+    if (name && (!names.has(name) || km < names.get(name).km)) names.set(name, { km, isReceiving: receiving });
+  }
+  return { impact: imp, keep, names: [...names.entries()].sort((a, b) => b[1].isReceiving - a[1].isReceiving || a[1].km - b[1].km) };
+}
+// After the camera arrives: draw what's loaded, then redraw while the rest of the tiles come in.
+function waterWhenLoaded(spills, done) {
+  map.once("idle", () => {
+    const feats = [], picks = [];
+    for (const s of spills) { const f = waterAround(map, s); if (f) { const r = pickWater(s, f); feats.push(...r.keep); picks.push(r); } }
+    setAffected(feats); done(picks);
+  });
+}
+function showAffected(s) {
+  affectedNames = []; impact = null; setAffected([]);
+  if (!s) return;
+  map.once("moveend", () => { if (selected === s) waterWhenLoaded([s], ([r]) => {
+    if (selected !== s) return;
+    if (!r) return document.getElementById("affected")?.remove();  // basemap without a water layer: nothing to show
+    impact = r.impact; affectedNames = r.names; renderAffected(); }); });
+}
+function renderAffected() {
+  const box = document.getElementById("affected");
+  if (!box || !impact) return;
+  const tag = el("span", "itag " + impact.band, `Estimated impact ${impact.score} · ${impact.band}`);
+  tag.title = `${impact.parts.map(([l, p]) => `${l} +${Math.round(p)}`).join(" · ")} · × ${impact.conf.toFixed(2)} ${impact.hasCase ? "agents' confidence" : "detector verdict"}. A rough guide: no spill volume or river flow data exists.`;
+  const names = affectedNames.slice(0, 4).map(([n, i]) => `${n}${i.isReceiving ? " (receiving)" : ""}`);
+  box.replaceChildren(tag, el("b", null, "Water that could be affected, in red: "),
+    names.length ? names.join(", ") + (affectedNames.length > 4 ? ` and ${affectedNames.length - 4} more` : "") : "no named rivers or lakes nearby",
+    `. Out to ${impact.reach} km (${2 * impact.reach} km along the receiving water); which way it flows isn't known.`);
+}
+
+// ---------- Check your postcode (Andrew), on the same map ----------
+// postcodes.io turns the postcode into a point; dry spills within AFFECT_KM are numbered on the map and listed on the right,
+// with the water they could affect in red and plain-language advice.
+const nearbyDry = (lat, lon) => { const kx = Math.cos(lat * Math.PI / 180) * 111.32, ky = 110.57;
+  return dry.map(s => ({ s, km: Math.hypot((s.lon - lon) * kx, (s.lat - lat) * ky) })).filter(x => x.km <= AFFECT_KM).sort((a, b) => a.km - b.km); };
+if (dry[0]) console.assert(nearbyDry(dry[0].lat, dry[0].lon)[0].km === 0 && !nearbyDry(dry[0].lat + 1, dry[0].lon).some(x => x.s === dry[0]), "nearbyDry() distance check");
+const howLong = s => s.hours == null ? "length unknown" : s.hours < 0.1 ? (s.status === 1 ? "just started" : "a few minutes") : `${fmt(s.hours)} hours`;
+const side = on => document.querySelector(".side").classList.toggle("pcmode", on);  // the postcode results replace the list + case card
+function endPc() {
+  pcState = null; pcMarkers.forEach(m => m.remove()); pcMarkers = []; setAffected([]);
+  document.getElementById("near").hidden = true; side(false);
+  document.querySelector(".mcard .map").classList.remove("pcmode");
+}
+document.getElementById("pc-go").onclick = () => { show("map"); const i = document.getElementById("pc"); i.focus(); i.select(); };
+document.getElementById("pc-form").onsubmit = async e => {
+  e.preventDefault(); stopTour();
+  const near = document.getElementById("near"), say = t => { side(true); near.hidden = false; near.replaceChildren(el("p", "sub", t)); };
+  say("Checking…");
+  let r;
+  try {
+    const res = await fetch("https://api.postcodes.io/postcodes/" + encodeURIComponent(document.getElementById("pc").value.trim()));
+    if (res.status === 404) return say("That postcode wasn't found. Check it and try again.");
+    if (!res.ok) throw new Error(res.status);
+    r = (await res.json()).result;
+  } catch { return say("The postcode lookup didn't answer. Check your connection and try again."); }
+  if (!r || r.latitude == null) return say(`${r ? r.postcode : "That postcode"} has no map location, so it can't be checked.`);
+  showPc({ r, hits: nearbyDry(r.latitude, r.longitude) });
+};
+function showPc(state) {
+  if (selected) { selected = null; renderRows(); renderCase(); showGauges(); siteMarker.remove(); markPins(); }
+  showAffected(null); endPc(); pcState = state; pcBack = null;
+  const { r, hits } = state, near = document.getElementById("near");
+  side(true); near.hidden = false;
+  document.querySelector(".mcard .map").classList.add("pcmode");
+  const asOf = `As of ${document.getElementById("updated").textContent.replace("Updated ", "") || "the latest run"}.`;
+  const clear = el("button", "tlink", "Clear postcode"); clear.onclick = () => select(null);
+  const home = el("div", "pc-home"); home.title = r.postcode;
+  pcMarkers = [new maplibregl.Marker({ element: home, anchor: "bottom" }).setLngLat([r.longitude, r.latitude]).addTo(map)];
+  if (!hits.length) {
+    near.replaceChildren(el("h2", null, `No dry-weather sewage spills within ${AFFECT_KM} km of ${r.postcode}`),
+      el("p", "sub", `${asOf} This only covers monitored overflows in England, and sewage can still be released after heavy rain, so it isn't a guarantee the water is clean.`), clear);
+  } else {
+    const still = hits.filter(h => h.s.status === 1).length;
+    const ol = el("ol");
+    hits.forEach(({ s, km }, i) => {
+      const dot = el("button", "pc-dot", String(i + 1)); dot.title = title(s.name); dot.onclick = e => { e.stopPropagation(); select(s, true); pcBack = state; renderCase(); };
+      pcMarkers.push(new maplibregl.Marker({ element: dot }).setLngLat([s.lon, s.lat]).addTo(map));
+      const b = el("button"), t = el("span");
+      t.append(el("b", null, title(s.name)), el("small", null, `${fmt(km)} km away · ${s.company} · sewage released for ${howLong(s)}`));
+      if (s.status === 1) t.querySelector("small").append(" · ", el("span", "still", "still spilling"));
+      b.append(el("span", "pc-dot", String(i + 1)), t);
+      b.onmouseenter = () => dot.classList.add("hot"); b.onmouseleave = () => dot.classList.remove("hot");
+      b.onclick = () => { select(s, true); pcBack = state; renderCase(); };
+      const li = el("li"); li.append(b); ol.append(li);
+    });
+    near.replaceChildren(el("h2", null, `${hits.length} sewage spill${hits.length > 1 ? "s" : ""} on a dry day within ${AFFECT_KM} km of ${r.postcode}`),
+      el("p", "lead", still ? `${still} ${still === 1 ? "is" : "are"} still spilling now. Avoid the water marked in red.` : "Avoid the water marked in red for the next couple of days."),
+      ol, adviceBox(hits),
+      el("p", "sub", `${asOf} Possible dry-day spills from the water companies' own monitoring, not confirmed pollution. Which way the water flows isn't known.`), clear);
+  }
+  resetBtn.hidden = false;
+  overlay.setProps({ layers: layers() });
+  const kx = Math.cos(r.latitude * Math.PI / 180) * 111.32, ky = 110.57, dLon = AFFECT_KM / kx, dLat = AFFECT_KM / ky;
+  const lons = [r.longitude - dLon, r.longitude + dLon, ...hits.map(h => h.s.lon)], lats = [r.latitude - dLat, r.latitude + dLat, ...hits.map(h => h.s.lat)];
+  map.fitBounds([[Math.min(...lons), Math.min(...lats)], [Math.max(...lons), Math.max(...lats)]],
+    { padding: { top: 110, bottom: 60, left: 40, right: 40 }, pitch: 0, bearing: 0, duration: REDUCED ? 0 : 2200 });
+  map.once("moveend", () => { if (pcState === state) waterWhenLoaded(hits.map(h => h.s), () => {}); });
+}
+// Plain-language precautions for people near a recent dry-day spill.
+function adviceBox(hits) {
+  const box = el("section", "advice"), ul = el("ul"), companies = [...new Set(hits.map(h => h.s.company))];
+  const tip = (b, t) => { const li = el("li"); li.append(el("b", null, b + " "), t); ul.append(li); };
+  tip("Stay out of the water marked in red,", "and keep children and dogs out, while it's spilling and for at least 2 days after it stops. Don't let dogs drink it.");
+  tip("If you've already been in:", "shower, wash your hands before eating, and cover any cuts.");
+  tip("If you feel unwell in the next few days", "(stomach upset, or an ear, eye or skin infection), contact your GP or call NHS 111 and say you were in water that may have had sewage in it.");
+  tip("Don't collect shellfish or forage", "on the banks near the overflow.");
+  const rep = el("li"), tel = el("a", null, "0800 80 70 60"); tel.href = "tel:0800807060";
+  rep.append(el("b", null, "Report what you see:"), " sewage, dead fish, a bad smell or discoloured water. Call the Environment Agency's 24-hour incident hotline on ", tel,
+    `, and tell ${companies.length === 1 ? companies[0] : "the water company (" + companies.join(", ") + ")"}.`);
+  ul.append(rep);
+  box.append(el("h3", null, "What to do"), ul);
+  return box;
+}
+
 // Dashboard: numbered pins for the shortlist, matching the list on the right. Click one to fly to it.
 const pins = new Map();
 const PINNED = 6;
@@ -920,7 +1138,7 @@ const tourStops = () => { const c = dry.filter(s => s.case); return (c.length ? 
 const wait = (ms, run) => new Promise(r => setTimeout(() => r(run === touring), ms));
 async function tour() {
   const run = ++touring; tourBtn.textContent = "■ Stop tour"; tourBtn.classList.add("on");
-  if (selected) select(null);
+  if (selected || pcState) select(null);
   if (!(await wait(2500, run))) return;
   for (const s of tourStops()) {
     select(s);
@@ -940,6 +1158,7 @@ const pctN = x => Math.round(x * 100);
 const views = { map: document.querySelector("main.body"), cases: document.getElementById("cases-view"), reports: document.getElementById("reports-view") };
 function show(hash) {
   let [v, id] = String(hash).split("/");
+  if (v === "postcode" && DASH) { setTimeout(() => document.getElementById("pc").focus(), 0); v = "map"; }
   if (!views[v]) v = "map";
   for (const [k, node] of Object.entries(views)) node.hidden = k !== v;
   document.querySelectorAll(".nav a").forEach(a => a.classList.toggle("on", a.dataset.view === v));
