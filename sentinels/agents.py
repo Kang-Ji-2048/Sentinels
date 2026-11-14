@@ -93,10 +93,10 @@ LINKUP_URL = "https://api.linkup.so/v1/search"
 
 
 def linkup_search(query: str, depth: str = "standard", from_date: str | None = None) -> dict:
-    params = {"q": query, "depth": depth, "outputType": "sourcedAnswer"}
+    body = {"q": query, "depth": depth, "outputType": "sourcedAnswer"}
     if from_date:
-        params["fromDate"] = from_date
-    r = requests.get(LINKUP_URL, params=params, timeout=60,
+        body["fromDate"] = from_date
+    r = requests.post(LINKUP_URL, json=body, timeout=60,
                      headers={"Authorization": f"Bearer {os.environ['LINKUP_API_KEY']}"})
     r.raise_for_status()
     data = r.json()
