@@ -112,61 +112,55 @@
   .pick .meta { color: var(--muted); font-size: 14px; }
   .chip { justify-self: start; padding: 0 5px; font-size: 12px; font-weight: 600; letter-spacing: .6px; text-transform: uppercase; color: var(--crimson); border: 1px dashed var(--crimson); }
   .two { display: grid; grid-template-columns: 1fr 1fr; gap: 0 48px; }
-  /* Cases tab: funnel, agent case files, table of every dry spill */
-  .cases > h1, .cases > .intro, .cases > h2, .cases > div, .cases > section { max-width: 1340px; margin-left: auto; margin-right: auto; }
-  .cases .panel, .funnel, .file, .ctable { background: #fff; border: 1px solid #e3e8ee; border-radius: 12px; box-shadow: 0 1px 2px rgba(18,53,91,.05), 0 6px 18px rgba(18,53,91,.05); }
-  .funnel { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 18px; }
-  .funnel div { padding: 14px 18px; border-left: 1px solid #e3e8ee; position: relative; }
-  .funnel div:first-child { border-left: 0; }
-  .funnel div + div::before { content: "→"; position: absolute; left: -8px; top: 50%; transform: translateY(-50%); background: #fff; color: #9aa7b4; }
-  .funnel b { display: block; font-size: 28px; line-height: 1.1; color: var(--navy); }
+  /* Cases tab (Kang 22:21: shorter, flatter, less "AI"): ruled lists, square corners, no card shadows */
+  .cases > * { max-width: 1340px; margin-left: auto; margin-right: auto; }
+  .chead { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; }
+  .funnel { display: flex; margin: 0; }
+  .funnel div { padding: 0 18px; border-left: 1px solid var(--rule); }
+  .funnel div:first-child { border-left: 0; padding-left: 0; }
+  .funnel b { display: block; font-size: 26px; line-height: 1.1; color: var(--navy); font-weight: 700; font-variant-numeric: tabular-nums; }
   .funnel div:first-child b { color: var(--crimson); }
-  .funnel span { font-size: 13px; color: var(--muted); }
-  .files { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 16px; }
-  .file { padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; }
-  .file .fhead { display: flex; justify-content: space-between; gap: 10px; }
-  .file h3 { margin: 0; font-size: 19px; font-weight: 600; }
-  .file .meta { font-size: 13px; color: var(--muted); }
-  .file .hrs { font-size: 30px; color: var(--crimson); font-weight: 600; line-height: 1; text-align: right; white-space: nowrap; }
-  .file .hrs small { display: block; font-size: 11px; color: var(--muted); font-weight: 400; margin-top: 3px; }
-  .file .verdict { display: flex; gap: 8px; align-items: center; font-size: 13px; color: var(--muted); }
-  .chain { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-  .chain div { background: #f4f6f9; border-radius: 8px; padding: 9px 10px; font-size: 12px; color: var(--muted); }
-  .chain b { display: block; font-size: 17px; color: var(--ink); font-weight: 600; }
-  .chain div:last-child { background: var(--navy); color: #c9d6e4; } .chain div:last-child b { color: #fff; }
-  .file .track { margin: 0 6px; }
-  .obj { font-size: 13px; border-left: 3px solid var(--gold); padding: 2px 0 2px 10px; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
-  .obj i { font-style: normal; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 2px; }
-  .file .src { font-size: 12px; color: var(--muted); }
-  .file .ffoot { display: flex; gap: 8px; align-items: center; justify-content: space-between; border-top: 1px solid #eef1f4; padding-top: 12px; margin-top: auto; }
-  .file .acts { display: flex; gap: 6px; }
-  .cbtn { white-space: nowrap; border: 1px solid var(--navy); border-radius: 8px; padding: 8px 12px; font: inherit; font-size: 13px; font-weight: 600; background: var(--navy); color: #fff; cursor: pointer; }
-  .cbtn.ghost { background: #fff; color: var(--navy); border-color: #c8d3df; }
-  .cbtn:hover { filter: brightness(1.1); } .cbtn.ghost:hover { border-color: var(--navy); }
-  .rpill { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 99px; background: #eef1f4; color: var(--muted); white-space: nowrap; }
-  .rpill.draft { background: #fff4cc; color: #6d5300; } .rpill.approved, .rpill.sent { background: #e2ecf5; color: var(--navy); }
-  .ctable { overflow: hidden; }
-  .cfilt { display: flex; gap: 8px; padding: 12px 14px; border-bottom: 1px solid #e3e8ee; flex-wrap: wrap; align-items: center; }
-  .cfilt input, .cfilt select { border: 1px solid #c8d3df; border-radius: 8px; padding: 7px 11px; font: inherit; font-size: 13px; background: #fff; color: var(--ink); }
+  .funnel span { font-size: 12px; color: var(--muted); }
+  .cases h2 { margin: 26px auto 8px; font-size: 12px; letter-spacing: .12em; }
+  .files { border-top: 2px solid var(--ink); }
+  .file { display: grid; grid-template-columns: minmax(200px, 280px) 64px 130px 230px minmax(200px, 1fr) 160px; gap: 18px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--rule); }
+  .file h3 { margin: 0; font-size: 16px; font-weight: 600; }
+  .file .meta, .file .src { font-size: 12px; color: var(--muted); }
+  .file .hrs { font-size: 22px; color: var(--crimson); font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .file .hrs small { font-size: 12px; font-weight: 400; color: var(--muted); }
+  .file .verdict { display: grid; gap: 3px; justify-items: start; font-size: 12px; color: var(--muted); }
+  .file .swing2 { font-size: 12px; color: var(--muted); } .file .swing2 b { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .file .track { margin: 2px 6px 0; }
+  .obj { font-size: 13px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .obj i { font-style: normal; color: var(--muted); }
+  .file .acts { display: flex; gap: 14px; white-space: nowrap; justify-content: flex-end; }
+  .tlink { border: 0; padding: 0; background: none; font: inherit; font-size: 13px; font-weight: 600; color: var(--navy); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(18,53,91,.3); }
+  .tlink:hover { text-decoration-color: currentColor; }
+  .rpill { font-size: 12px; color: var(--muted); white-space: nowrap; }
+  .rpill.draft { color: #7a5d00; } .rpill.approved, .rpill.sent { color: var(--navy); font-weight: 600; } .rpill.rejected { text-decoration: line-through; }
+  body.dash .cases .vchip { border-radius: 3px; }
+  .cfilt { display: flex; gap: 6px 18px; padding: 0 0 10px; flex-wrap: wrap; align-items: center; }
+  .cfilt input, .cfilt select { border: 1px solid var(--rule); border-radius: 3px; padding: 6px 10px; font: inherit; font-size: 13px; background: #fff; color: var(--ink); }
   .cfilt input { min-width: 220px; flex: 0 1 260px; }
-  .cfilt .fchip { border: 1px solid #c8d3df; border-radius: 99px; padding: 6px 12px; font: inherit; font-size: 13px; background: #fff; color: var(--ink); cursor: pointer; }
-  .cfilt .fchip[aria-pressed="true"] { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .cfilt .fchip { border: 0; border-bottom: 2px solid transparent; padding: 4px 0; font: inherit; font-size: 13px; background: none; color: var(--muted); cursor: pointer; }
+  .cfilt .fchip:hover { color: var(--ink); }
+  .cfilt .fchip[aria-pressed="true"] { color: var(--ink); font-weight: 600; border-bottom-color: var(--gold); }
   .tscroll { overflow-x: auto; }
-  .ctable table { width: 100%; border-collapse: collapse; font-size: 14px; }
-  .ctable th { text-align: left; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 600; padding: 0; border-bottom: 1px solid #e3e8ee; background: #fafbfc; white-space: nowrap; }
-  .ctable th > span, .ctable th > button { display: block; padding: 10px 14px; }
+  .ctable table { width: 100%; border-collapse: collapse; font-size: 14px; border-top: 2px solid var(--ink); }
+  .ctable th { text-align: left; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 600; padding: 0; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+  .ctable th > span, .ctable th > button { display: block; padding: 8px 12px 8px 0; }
   .ctable th button { width: 100%; border: 0; background: none; font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit; text-align: left; cursor: pointer; }
   .ctable th button:hover, .ctable th[aria-sort] button { color: var(--navy); }
-  .ctable td { padding: 10px 14px; border-bottom: 1px solid #eef1f4; vertical-align: middle; }
-  .ctable tbody tr { cursor: pointer; } .ctable tbody tr:hover td { background: #f7f9fb; }
+  .ctable td { padding: 7px 12px 7px 0; border-bottom: 1px solid var(--rule); vertical-align: middle; }
+  .ctable tbody tr { cursor: pointer; } .ctable tbody tr:hover td { background: rgba(255,255,255,.7); }
   .ctable tbody tr:focus-visible { outline: 2px solid var(--navy); outline-offset: -2px; }
   .ctable .nm { font-weight: 600; } .ctable .co { font-size: 12px; color: var(--muted); }
   .ctable .num { font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .hbar { display: flex; align-items: center; gap: 8px; } .hbar i { display: block; height: 6px; border-radius: 3px; background: var(--crimson); opacity: .8; }
-  .ctable .track { width: 110px; margin: 0; }
+  .hbar { display: flex; align-items: center; gap: 8px; } .hbar i { display: block; height: 5px; background: var(--crimson); opacity: .8; }
+  .ctable .track { width: 100px; margin: 0; }
   .swing { display: flex; gap: 10px; align-items: center; }
-  .tmore { display: block; width: 100%; padding: 12px; border: 0; background: #fafbfc; font: inherit; font-size: 13px; font-weight: 600; color: var(--navy); cursor: pointer; }
-  .cempty { padding: 24px 14px; color: var(--muted); }
+  .tmore { margin-top: 10px; }
+  .cempty { padding: 16px 0; color: var(--muted); }
   .pick { display: grid; gap: 4px; width: 100%; padding: 12px 10px; text-align: left; background: none; border: 1px solid transparent; border-top-color: var(--rule); cursor: pointer; }
   .track { position: relative; height: 22px; margin: 2px 6px; }
   .track i { position: absolute; display: block; }
@@ -211,8 +205,8 @@
     .reports { grid-template-columns: 1fr; overflow-y: auto; } .queue { border-right: 0; border-bottom: 1px solid var(--ink); }
     .queue, .detail { overflow: visible; padding: 20px 16px; } .detail .cols { grid-template-columns: 1fr; }
     .cases { padding: 20px 16px 40px; } .two { grid-template-columns: 1fr; }
-    .funnel { grid-template-columns: repeat(2, 1fr); } .funnel div:nth-child(3) { border-left: 0; } .funnel div:nth-child(3)::before { content: none; } .funnel div:nth-child(n+3) { border-top: 1px solid #e3e8ee; }
-    .files { grid-template-columns: 1fr; } .cfilt input { flex: 1 1 100%; }
+    .funnel div { padding: 0 10px; } .funnel b { font-size: 20px; }
+    .file { grid-template-columns: 1fr auto; gap: 6px 12px; } .file > .swing2, .file > .objs, .file > .acts { grid-column: 1 / -1; } .file .acts { justify-content: flex-start; } .cfilt input { flex: 1 1 100%; }
     .body { flex-direction: column; overflow-y: auto; }
     .map { flex: none; height: 70vh; }
     .side { width: 100%; border-left: 0; border-top: 1px solid var(--ink); overflow: visible; }
@@ -446,9 +440,10 @@
   </aside>
 </main>
 <main class="cases" id="cases-view" hidden>
-  <h1>Cases</h1>
-  <p class="intro">What the agents did with each dry spill. A skeptic argues the spill was innocent, a researcher checks the web with cited sources, and a judge makes the final call. A person decides what gets sent.</p>
-  <div class="funnel" id="funnel"></div>
+  <div class="chead">
+    <div><h1>Cases</h1><p class="intro">A skeptic argues each spill was innocent, a researcher checks the web, a judge makes the call. A person decides what gets sent.</p></div>
+    <div class="funnel" id="funnel"></div>
+  </div>
   <h2>Checked by the agents</h2>
   <div class="files" id="files"></div>
   <h2>All dry spills</h2>
@@ -940,8 +935,8 @@ function reportPill(s) {
 }
 function renderFunnel() {
   const f = document.getElementById("funnel"), cased = sites.filter(s => s.case);
-  f.replaceChildren(...[[dry.length, "dry spills flagged"], [cased.length, "checked by the agents"],
-    [cased.filter(s => s.case.report).length, "evidence packs drafted"], [decidedN(), "decided by a reviewer"]]
+  f.replaceChildren(...[[dry.length, "dry spills"], [cased.length, "checked by agents"],
+    [cased.filter(s => s.case.report).length, "packs drafted"], [decidedN(), "decided"]]
     .map(([n, label]) => { const d = el("div"); d.append(el("b", null, n), el("span", null, label)); return d; }));
 }
 function renderFiles() {
@@ -950,29 +945,26 @@ function renderFiles() {
   if (!cased.length) return box.replaceChildren(el("p", "sub", "No agent cases yet. Run scripts/agents.py to investigate the top candidates."));
   box.replaceChildren(...cased.map(s => {
     const c = s.case, f = el("article", "file");
-    const head = el("div", "fhead"), left = el("div"), big = el("div", "hrs", hrs(s));
-    left.append(el("h3", null, title(s.name)), el("div", "meta", siteLine(s)));
-    big.append(el("small", null, "hours discharging")); head.append(left, big);
-    const v = el("div", "verdict"); v.append(el("span", "vchip " + c.final_verdict, VERDICT_NAME[c.final_verdict] || c.final_verdict.replace(/_/g, " ")), `${pctN(c.breach_confidence)}% likely a breach`);
-    const step = (label, val) => { const d = el("div"); d.append(label, el("b", null, val)); return d; };
-    const chain = el("div", "chain");
-    chain.append(step("1 · Skeptic", typeof c.skeptic_confidence === "number" ? `${pctN(c.skeptic_confidence)}%` : "—"),
-                 step("2 · Web evidence", c.evidence ? `${c.n_sources ?? "?"} sources` : "skipped"),
-                 step("3 · Final call", `${pctN(c.breach_confidence)}%`));
-    f.append(head, v, chain);
-    if (typeof c.skeptic_confidence === "number") f.append(swingTrack(c.skeptic_confidence, c.breach_confidence));
+    const who = el("div"); who.append(el("h3", null, title(s.name)), el("div", "meta", siteLine(s)));
+    const ex = example(s); if (ex) who.append(ex);
+    const big = el("div", "hrs", hrs(s)); big.append(el("small", null, " h"));
+    const v = el("div", "verdict"); v.append(el("span", "vchip " + c.final_verdict, VERDICT_NAME[c.final_verdict] || c.final_verdict.replace(/_/g, " ")), reportPill(s));
+    const sw = el("div", "swing2");
+    if (typeof c.skeptic_confidence === "number") {
+      sw.append("Skeptic ", el("b", null, `${pctN(c.skeptic_confidence)}%`), " → final ", el("b", null, `${pctN(c.breach_confidence)}%`), swingTrack(c.skeptic_confidence, c.breach_confidence));
+    } else sw.append("Final ", el("b", null, `${pctN(c.breach_confidence)}%`));
     const standing = c.ruling?.objections_standing || [], refuted = c.ruling?.objections_refuted || [];
-    const objText = standing[0] ? standing[0].split(": ")[0] : c.strongest_objection;
-    if (objText) { const o = el("div", "obj"); o.append(el("i", null, standing[0] ? "Objection still standing" : "Strongest objection"), objText.replace(/\.?$/, ".")); f.append(o); }
-    const src = [];
-    if (c.citations) src.push(`${c.citations.verified} of ${c.citations.checked} citations verified`);
+    const right = el("div"), objText = standing[0] ? standing[0].split(": ")[0] : c.strongest_objection;
+    if (objText) { const o = el("div", "obj"); o.append(el("i", null, standing[0] ? "Still standing: " : "Strongest objection: "), objText.replace(/\.?$/, ".")); right.append(o); }
+    const src = [`${c.n_sources ?? "?"} sources`];
+    if (c.citations) src.push(`${c.citations.verified}/${c.citations.checked} citations verified`);
     src.push(`${refuted.length} objection${refuted.length === 1 ? "" : "s"} refuted`);
-    f.append(el("div", "src", src.join(" · ")));
-    const ex = example(s); if (ex) f.append(ex);
-    const foot = el("div", "ffoot"), acts = el("div", "acts"), onMap = el("button", "cbtn ghost", "On the map");
+    right.append(el("div", "src", src.join(" · ")));
+    right.className = "objs";
+    const acts = el("div", "acts"), onMap = el("button", "tlink", "Map");
     onMap.onclick = () => openOnMap(s); acts.append(onMap);
-    if (c.report) { const r = el("button", "cbtn", "Evidence pack →"); r.onclick = () => openInReports(s); acts.append(r); }
-    foot.append(reportPill(s), acts); f.append(foot);
+    if (c.report) { const r = el("button", "tlink", "Evidence pack →"); r.onclick = () => openInReports(s); acts.append(r); }
+    f.append(who, big, v, sw, right, acts);
     return f;
   }));
 }
@@ -1011,7 +1003,7 @@ function renderTable() {
     const chips = box.querySelector(".chips");
     chips.replaceChildren(...TFILTERS.map(([k, label, fn]) => {
       const n = pool.filter(fn).length; if (!n && k !== "all") return "";
-      const b = el("button", "fchip", `${label} · ${n}`); b.setAttribute("aria-pressed", tbl.f === k);
+      const b = el("button", "fchip", `${label} ${n}`); b.setAttribute("aria-pressed", tbl.f === k);
       b.onclick = () => { tbl.f = k; tbl.all = false; renderRows2(); }; return b;
     }));
     box.querySelectorAll("th").forEach(th => { const k = th.querySelector("button")?.dataset.key; if (k === tbl.sort) th.setAttribute("aria-sort", tbl.dir < 0 ? "descending" : "ascending"); else th.removeAttribute("aria-sort"); const b = th.querySelector("button"); if (b) b.textContent = b.textContent.replace(/ [↓↑]$/, "") + (k === tbl.sort ? (tbl.dir < 0 ? " ↓" : " ↑") : ""); });
@@ -1020,7 +1012,7 @@ function renderTable() {
     const list = pool.filter(fn).filter(s => !tbl.co || s.company === tbl.co)
       .filter(s => !tbl.q || `${s.name} ${s.company} ${s.id}`.toLowerCase().includes(tbl.q))
       .sort((a, b) => tbl.dir * (TSORT[tbl.sort](a) - TSORT[tbl.sort](b)) || (b.hours ?? -1) - (a.hours ?? -1));
-    const max = Math.max(...pool.map(s => s.hours ?? 0), 1), LIMIT = 15;
+    const max = Math.max(...pool.map(s => s.hours ?? 0), 1), LIMIT = 10;
     const tb = box.querySelector("tbody");
     tb.replaceChildren(...(tbl.all ? list : list.slice(0, LIMIT)).map(s => {
       const r = el("tr"); r.tabIndex = 0;
@@ -1038,7 +1030,7 @@ function renderTable() {
     }));
     const foot = box.querySelector(".tfoot");
     if (!list.length) foot.replaceChildren(el("p", "cempty", "No dry spills match."));
-    else if (list.length > LIMIT && !tbl.all) { const m = el("button", "tmore", `Show all ${list.length}`); m.onclick = () => { tbl.all = true; renderRows2(); }; foot.replaceChildren(m); }
+    else if (list.length > LIMIT && !tbl.all) { const m = el("button", "tlink tmore", `Show all ${list.length}`); m.onclick = () => { tbl.all = true; renderRows2(); }; foot.replaceChildren(m); }
     else foot.replaceChildren();
   }
 }
