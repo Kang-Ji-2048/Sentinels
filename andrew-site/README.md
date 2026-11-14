@@ -9,7 +9,7 @@ Nothing outside this folder is changed.
 pip install -r requirements.txt
 python scripts/detect.py                          # live data -> data/latest_run.json
 python andrew-site/build.py                       # -> andrew-site/build/index.html
-python -m http.server 8000 -d andrew-site/build   # open http://localhost:8000
+python andrew-site/serve.py                       # open http://localhost:8000
 ```
 
 ## What's on the page
@@ -22,6 +22,22 @@ python -m http.server 8000 -d andrew-site/build   # open http://localhost:8000
   Click it again, or "Show all of England", to zoom back out.
 - **Side panel:** the longest dry spills, then the selected site's case: verdict, gauge readings and the agents'
   conversation when one exists.
+
+- **Cases tab:** a status board (New, Ruled innocent, Needs review, Report drafted, Approved, Rejected), the
+  confidence swing (how far the web evidence moved the skeptic's view) and repeat sites (overflows with more
+  than one dry-spill candidate across detector runs). Click any case to open it on the map.
+- **Reports tab:** the drafted evidence packs. A reviewer can edit the draft, approve it (with their name) or
+  reject it (with a reason), download the approved pack as Markdown, mark it as sent, or undo. Nothing is
+  emailed: a person sends the downloaded pack.
+
+## Files it writes (all git-ignored)
+
+- `andrew-site/build/index.html`: the page.
+- `andrew-site/history.json`: every spill seen by each build, for repeat sites. Rebuild after each detector run.
+- `andrew-site/decisions.json`: approvals, rejections and sends, written by `serve.py`. Opening the page with
+  any other static server works, but read-only.
+- A rejection of a real (non-example) case is also appended to `data/case_memory.jsonl`, so the agents see the
+  reviewer's reason next time they look at that site.
 
 ## Things to know
 
