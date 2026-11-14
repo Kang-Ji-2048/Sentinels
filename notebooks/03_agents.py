@@ -96,3 +96,10 @@ display(new)
 from IPython.display import Markdown
 first = next((r for r in results if r["report"]), None)
 Markdown(first["report"]) if first else print("No case survived the skeptic.")
+
+# COMMAND ----------
+
+# Export one complete case for the showcase site (data/example_case.json): copy this output.
+best = max((r for r in results if r["report"]), key=lambda r: r["breach_confidence"], default=None)
+if best:
+    print(json.dumps(best, default=str, indent=1))
