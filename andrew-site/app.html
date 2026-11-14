@@ -100,7 +100,7 @@
   .case .empty p { margin: 0; color: var(--muted); }
   .foot { padding: 16px 24px; color: var(--muted); border-top: 1px solid var(--rule); }
 
-  .body[hidden], .cases[hidden], .reports[hidden] { display: none; }
+  .body[hidden], .cases[hidden], .reports[hidden], .ask[hidden] { display: none; }
   .cases { flex: 1; min-height: 0; overflow-y: auto; background: var(--paper); padding: 28px 36px 48px; }
   .cases h1 { margin: 0; font: 700 40px var(--serif); }
   .cases .intro { margin: 4px 0 0; color: var(--muted); max-width: 70ch; }
@@ -176,13 +176,38 @@
   .count { border-radius: 6px; box-shadow: 0 10px 30px rgba(18, 53, 91, .12); }
   .reset { border-radius: 6px; }
   .gauge-label, .site-label { border-radius: 6px; }
+  /* Ask tab: questions to the Databricks Genie agent, through serve.py */
+  .ask { flex: 1; min-height: 0; overflow-y: auto; background: var(--paper); padding: 28px 36px 48px; }
+  .ask > * { max-width: 900px; }
+  .ask h1 { margin: 0; font: 700 40px var(--serif); }
+  .ask .intro { margin: 4px 0 16px; color: var(--muted); max-width: 70ch; }
+  .ask .api-off { margin: 0 0 16px; padding: 10px 12px; background: #fbf3d4; border: 1px solid var(--gold); border-radius: 6px; }
+  .ask .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .ask .chips button { padding: 6px 12px; border: 1px solid var(--navy); border-radius: 999px; background: #fff; color: var(--navy); cursor: pointer; }
+  .ask .chips button:hover { background: rgba(232, 197, 71, .25); }
+  .ask form { display: flex; gap: 8px; margin-bottom: 20px; }
+  .ask input { flex: 1; min-width: 0; padding: 9px 12px; font: inherit; border: 1px solid var(--rule); border-radius: 6px; background: #fff; }
+  .ask input:focus-visible, .ask .chips button:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+  .ask .btn { border-radius: 6px; }
+  .turn { padding: 16px 0; border-top: 1px solid var(--rule); }
+  .turn .q { margin: 0 0 8px; font-weight: 600; }
+  .turn .a { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .turn .a.err { color: var(--crimson); }
+  .turn .a.wait { color: var(--muted); }
+  .turn .tbl { margin-top: 10px; overflow-x: auto; }
+  .turn table { border-collapse: collapse; font-size: 14px; background: #fff; }
+  .turn th, .turn td { padding: 5px 10px; border: 1px solid var(--rule); text-align: left; white-space: nowrap; }
+  .turn th { background: #e9eee7; font-weight: 600; }
+  .turn details { margin-top: 8px; } .turn summary { cursor: pointer; font-weight: 500; color: var(--navy); }
+  .turn pre { margin: 6px 0 0; padding: 10px; background: #fff; border: 1px solid var(--rule); border-radius: 6px; font: 13px/1.45 ui-monospace, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+  @media (max-width: 720px) { .ask { padding: 20px 16px 40px; } .ask form { flex-wrap: wrap; } }
 </style>
 </head>
 <body>
 <header class="top">
   <div class="brand">
     <span class="logo">Sentinels</span>
-    <nav class="nav"><a href="#map" data-view="map" class="on">Map</a><a href="#cases" data-view="cases">Cases</a><a href="#reports" data-view="reports">Reports</a></nav>
+    <nav class="nav"><a href="#map" data-view="map" class="on">Map</a><a href="#cases" data-view="cases">Cases</a><a href="#reports" data-view="reports">Reports</a><a href="#ask" data-view="ask">Ask</a></nav>
   </div>
   <span class="updated" id="updated"></span>
 </header>
@@ -237,6 +262,18 @@
     <div id="queue"></div>
   </div>
   <div class="detail" id="detail"></div>
+</main>
+<main class="ask" id="ask-view" hidden>
+  <h1>Ask the data</h1>
+  <p class="intro">Ask a follow-up question in plain English. The Sentinels Genie agent on Databricks writes the SQL against our tables, runs it and answers. Check the SQL under each answer.</p>
+  <p class="api-off" id="ask-off" hidden></p>
+  <div class="chips" id="ask-chips"></div>
+  <form id="ask-form">
+    <input id="ask-q" maxlength="500" placeholder="e.g. Which water company has the most dry spills?" aria-label="Your question" autocomplete="off">
+    <button class="btn" id="ask-go">Ask</button>
+    <button class="btn ghost" type="button" id="ask-new" hidden>New conversation</button>
+  </form>
+  <div id="ask-log"></div>
 </main>
 <script>
 const RUN = /*DATA*/null;
@@ -493,12 +530,12 @@ if (dry[0]) showLabel(dry[0], false);
 
 // ---------- Cases tab ----------
 const pctN = x => Math.round(x * 100);
-const views = { map: document.querySelector("main.body"), cases: document.getElementById("cases-view"), reports: document.getElementById("reports-view") };
+const views = { map: document.querySelector("main.body"), cases: document.getElementById("cases-view"), reports: document.getElementById("reports-view"), ask: document.getElementById("ask-view") };
 function show(v) {
   if (!views[v]) v = "map";
   for (const [k, node] of Object.entries(views)) node.hidden = k !== v;
   document.querySelectorAll(".nav a").forEach(a => a.classList.toggle("on", a.dataset.view === v));
-  if (v === "map") map.resize(); else if (v === "cases") renderCases(); else renderReports();
+  if (v === "map") map.resize(); else if (v === "cases") renderCases(); else if (v === "reports") renderReports();
   if (location.hash !== "#" + v) history.replaceState(null, "", "#" + v);
 }
 window.addEventListener("hashchange", () => show(location.hash.slice(1)));
@@ -727,6 +764,54 @@ function downloadPack(s, d) {
   const a = el("a"); a.href = URL.createObjectURL(new Blob([L.join("\n")], { type: "text/markdown" }));
   a.download = `sentinels-${c.illustrative ? "EXAMPLE-" : ""}evidence-pack-${s.id}.md`;
   document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+// ---------- Ask tab ----------
+// Questions go to POST /api/genie on serve.py, which asks the Databricks Genie agent. Everything Genie returns
+// is shown with textContent only. Without serve.py (e.g. the hosted static copy) the tab says it is off.
+{
+  const off = document.getElementById("ask-off"), form = document.getElementById("ask-form"), q = document.getElementById("ask-q");
+  const go = document.getElementById("ask-go"), fresh = document.getElementById("ask-new"), log = document.getElementById("ask-log");
+  let conv = null, busy = false;
+  const setOff = msg => { off.textContent = msg; off.hidden = !msg; q.disabled = go.disabled = !!msg; chips.forEach(b => b.disabled = !!msg); };
+  const chips = ["Which water company has the most dry spills?", "Show the longest dry spills", "Which cases did the agents rate likely breach, and why?"]
+    .map(t => { const b = el("button", null, t); b.type = "button"; b.onclick = () => { q.value = t; form.requestSubmit(); }; return b; });
+  document.getElementById("ask-chips").append(...chips);
+  setOff("Checking for the Genie connection…");
+  fetch("/api/genie").then(r => r.ok ? r.json() : Promise.reject())
+    .then(d => setOff(d.configured ? "" : "Genie isn't set up on this machine. Set DATABRICKS_HOST, DATABRICKS_TOKEN and GENIE_SPACE_ID, then restart python andrew-site/serve.py."))
+    .catch(() => setOff("Asking questions needs the local server: start the page with python andrew-site/serve.py."));
+  fresh.onclick = () => { conv = null; log.replaceChildren(); fresh.hidden = true; q.focus(); };
+  form.onsubmit = async e => {
+    e.preventDefault();
+    const question = q.value.trim();
+    if (!question || busy) return;
+    busy = true; go.disabled = true; q.value = "";
+    const turn = el("div", "turn"), a = el("p", "a wait", "Genie is working on it. This can take up to a minute.");
+    turn.append(el("p", "q", question), a); log.prepend(turn);
+    try {
+      const r = await fetch("/api/genie", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ question, conversation_id: conv }) });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error || "Genie didn't answer");
+      conv = d.conversation_id || conv; fresh.hidden = !conv;
+      a.className = "a" + (d.status === "COMPLETED" ? "" : " err");
+      a.textContent = d.text || (d.rows && d.rows.length ? "Here is what the query returned:" : "Genie returned no answer text.");
+      if (d.columns && d.columns.length) {
+        const wrap = el("div", "tbl"), t = el("table"), hr = el("tr");
+        for (const c of d.columns) hr.append(el("th", null, String(c)));
+        t.append(hr);
+        for (const row of d.rows || []) { const tr = el("tr"); for (const v of row) tr.append(el("td", null, v == null ? "" : String(v))); t.append(tr); }
+        wrap.append(t); turn.append(wrap);
+        if ((d.rows || []).length >= 50) turn.append(el("p", "meta", "Showing the first 50 rows."));
+      }
+      if (d.sql) {
+        const det = el("details"); det.append(el("summary", null, "Show SQL"));
+        if (d.sql_description) det.append(el("p", "meta", d.sql_description));
+        det.append(el("pre", null, d.sql)); turn.append(det);
+      }
+    } catch (err) { a.className = "a err"; a.textContent = `Not answered: ${err.message}`; }
+    busy = false; go.disabled = false; q.focus();
+  };
 }
 show(location.hash.slice(1) || "map");
 </script>

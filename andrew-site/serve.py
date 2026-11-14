@@ -4,6 +4,8 @@
 
 Decisions go to andrew-site/decisions.json. A rejection of a real (non-example) case is also added to the agents'
 case memory (data/case_memory.jsonl), so its reason is in front of the agents next time they look at that site.
+The Ask tab's questions go to the Sentinels Genie agent through sentinels/genie.py, when DATABRICKS_HOST,
+DATABRICKS_TOKEN and GENIE_SPACE_ID are set in the environment (never commit them).
 Local use only: binds to 127.0.0.1.
 """
 import json
@@ -16,6 +18,8 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE.parent))  # repo root, for sentinels.genie
+from sentinels import genie  # noqa: E402
 DECISIONS = HERE / "decisions.json"
 MEMORY = HERE.parent / "data" / "case_memory.jsonl"
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8000
@@ -76,6 +80,16 @@ def decide(body: dict) -> dict:
     return decisions
 
 
+def ask_genie(body: dict) -> dict:
+    question = text(body, "question", 500)
+    if not question:
+        raise ValueError("ask a question")
+    conv = text(body, "conversation_id", 100) or None
+    if conv and not re.fullmatch(r"[\w\-]+", conv):
+        raise ValueError("bad conversation id")
+    return genie.ask(question, conv)
+
+
 class Handler(SimpleHTTPRequestHandler):
     def _json(self, code: int, payload) -> None:
         data = json.dumps(payload).encode()
@@ -88,11 +102,16 @@ class Handler(SimpleHTTPRequestHandler):
     def do_GET(self):
         if self.path == "/api/decisions":
             return self._json(200, load())
+        if self.path == "/api/genie":
+            return self._json(200, {"configured": genie.configured()})
         return super().do_GET()
 
     def do_POST(self):
-        if self.path != "/api/decisions":
+        routes = {"/api/decisions": decide, "/api/genie": ask_genie}
+        if self.path not in routes:
             return self._json(404, {"error": "not found"})
+        if self.path == "/api/genie" and not genie.configured():
+            return self._json(503, {"error": "Genie isn't set up on this machine"})
         # Only this page may write: other sites in the same browser can't send JSON here without a CORS preflight,
         # and anything carrying a foreign Origin is refused.
         origin = self.headers.get("Origin")
@@ -104,9 +123,16 @@ class Handler(SimpleHTTPRequestHandler):
             length = int(self.headers.get("Content-Length", 0))
             if length > 200_000:
                 raise ValueError("request too large")
-            return self._json(200, decide(json.loads(self.rfile.read(length))))
+            body = json.loads(self.rfile.read(length))
+            if not isinstance(body, dict):
+                raise ValueError("send a JSON object")
+            return self._json(200, routes[self.path](body))
         except (ValueError, json.JSONDecodeError) as e:
             return self._json(400, {"error": str(e)})
+        except Exception as e:  # noqa: BLE001 - Genie / network failure: say so, keep serving
+            print(f"{self.path} error:", e, file=sys.stderr)
+            return self._json(502, {"error": "Genie didn't answer. Check the server window for details."
+                                    if self.path == "/api/genie" else "Couldn't save. Check the server window."})
 
 
 if __name__ == "__main__":
@@ -114,4 +140,5 @@ if __name__ == "__main__":
     if not (build / "index.html").exists():
         sys.exit("No page yet: run python andrew-site/build.py first.")
     print(f"Sentinels on http://localhost:{PORT}  (decisions saved to {DECISIONS})")
+    print("Ask tab:", "Genie connected" if genie.configured() else "off (set DATABRICKS_HOST, DATABRICKS_TOKEN, GENIE_SPACE_ID)")
     ThreadingHTTPServer(("127.0.0.1", PORT), partial(Handler, directory=str(build))).serve_forever()
