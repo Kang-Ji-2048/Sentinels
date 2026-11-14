@@ -147,12 +147,12 @@ cases first, so run 03 with a larger `top_n`.
 
 ## Models and APIs used
 
-- Anthropic Claude (investigator, drafter)
-- An open model served through Databricks Foundation Model APIs (skeptic), or an Adaption Labs hosted model (`skeptic_model = adaption:qwen3.5-397b`)
-- Adaption Labs AutoScientist (trains the spill-triage model from adjudicated cases)
-- Linkup Search API (evidence agent)
-- Databricks: Delta Lake, Unity Catalog volumes, Jobs, MLflow Tracing
-- Water company ArcGIS feeds, EA flood-monitoring API
+- **Anthropic Claude** (`claude-opus-5-5`): investigator, evidence agent, adjudicator, drafter, citation verifier. Structured outputs for every agent that returns JSON.
+- **OpenAI gpt-oss-120b**, served by Databricks through Unity AI Gateway (`system.ai.gpt-oss-120b`): the skeptic. Falls back to Claude Haiku if the gateway model is unavailable.
+- **Linkup**: `/search` (sourced answers, date windows) for the evidence agent, and `/fetch` both for full-page reads and, with a JSON schema, for grounded citation checks.
+- **Databricks**: Delta Lake medallion tables with MERGE, Unity Catalog (with table and column comments), Jobs, MLflow Tracing with feedback scores, AI/BI dashboard and a Genie agent.
+- **Adaption Labs** (built, not yet trained): optional hosted-model skeptic (`adaption:qwen3.5-397b`) and AutoScientist training of a triage model once enough cases are decided.
+- **Data**: 8 water companies' ArcGIS storm overflow feeds (Stream / National Storm Overflows Hub), Environment Agency flood-monitoring rainfall API.
 
 ## Limitations
 
