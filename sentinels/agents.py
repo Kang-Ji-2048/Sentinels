@@ -17,11 +17,18 @@ except ImportError:  # pragma: no cover
         return fn if fn else (lambda f: f)
 
 
+CASE_FIELDS = ["id", "company", "receivingwatercourse", "latitude", "longitude", "status",
+               "latesteventstart", "latesteventend", "duration_hours", "monitor_offline", "gauges",
+               "max_mm_0_24h_before", "max_mm_24_48h_before", "max_mm_during", "verdict"]
+
+
+def case_fields(spill: dict) -> dict:
+    """The spill data every agent sees (also the input of the Adaption triage model)."""
+    return {k: spill.get(k) for k in CASE_FIELDS}
+
+
 def _case_brief(spill: dict) -> str:
-    keep = ["id", "company", "receivingwatercourse", "latitude", "longitude", "status",
-            "latesteventstart", "latesteventend", "duration_hours", "monitor_offline", "gauges",
-            "max_mm_0_24h_before", "max_mm_24_48h_before", "max_mm_during", "verdict"]
-    return json.dumps({k: spill.get(k) for k in keep}, default=str, indent=1)
+    return json.dumps(case_fields(spill), default=str, indent=1)
 
 
 # ---------------------------------------------------------------- investigator (prosecution)

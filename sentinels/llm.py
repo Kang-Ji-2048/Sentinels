@@ -2,7 +2,8 @@
 
 The skeptic runs on a Databricks-served open model when DATABRICKS_HOST/DATABRICKS_TOKEN are set
 (Databricks Foundation Model APIs speak the OpenAI chat format). Otherwise it falls back to a
-smaller Claude model so the pipeline still runs anywhere.
+smaller Claude model so the pipeline still runs anywhere. Set the skeptic model to
+"adaption:<model id>" (e.g. adaption:qwen3.5-397b) to use an Adaption Labs hosted model instead.
 """
 from __future__ import annotations
 
@@ -15,7 +16,7 @@ CLAUDE_MODEL = os.environ.get("SENTINELS_CLAUDE_MODEL", "claude-opus-5-5")
 SKEPTIC_FALLBACK_MODEL = "claude-haiku-5-5"
 # Databricks foundation models are served through Unity Gateway as system.ai.<name>;
 # names differ by workspace (see the model-listing cell in notebooks/03_agents).
-SKEPTIC_DATABRICKS_MODEL = os.environ.get("SENTINELS_SKEPTIC_MODEL", "system.ai.databricks-gpt-5-5")
+SKEPTIC_DATABRICKS_MODEL = os.environ.get("SENTINELS_SKEPTIC_MODEL", "system.ai.gpt-oss-120b")
 
 _claude = None
 # On Databricks, set with gateway_client() below
@@ -69,15 +70,28 @@ def _name_variants(name: str) -> list[str]:
     return out
 
 
+def _parse_json(raw: str) -> dict:
+    raw = raw.strip()
+    return json.loads(raw[raw.find("{"): raw.rfind("}") + 1])  # tolerate code fences / prose around it
+
+
 def skeptic_json(system: str, user: str, schema: dict) -> tuple[dict, str]:
     """Returns (parsed JSON, model name used)."""
+    prompt = (f"{user}\n\nRespond with ONLY a JSON object matching this JSON schema, no prose:\n"
+              f"{json.dumps(schema)}")
+    if SKEPTIC_DATABRICKS_MODEL.startswith("adaption:"):  # Adaption Labs hosted model
+        from . import adaption
+
+        model = SKEPTIC_DATABRICKS_MODEL.removeprefix("adaption:")
+        try:
+            return _parse_json(adaption.respond(model, system, prompt)), SKEPTIC_DATABRICKS_MODEL
+        except Exception as e:  # noqa: BLE001
+            print(f"Adaption skeptic model unavailable ({e}); falling back to {SKEPTIC_FALLBACK_MODEL}")
     host, token = os.environ.get("DATABRICKS_HOST"), os.environ.get("DATABRICKS_TOKEN")
     client = SKEPTIC_CLIENT
     if client is None and host and token:
         client = gateway_client(host, token)
-    if client is not None:
-        prompt = (f"{user}\n\nRespond with ONLY a JSON object matching this JSON schema, no prose:\n"
-                  f"{json.dumps(schema)}")
+    if client is not None and not SKEPTIC_DATABRICKS_MODEL.startswith("adaption:"):
         last_err = None
         for model in _name_variants(SKEPTIC_DATABRICKS_MODEL):
             try:
@@ -87,9 +101,7 @@ def skeptic_json(system: str, user: str, schema: dict) -> tuple[dict, str]:
             except Exception as e:  # noqa: BLE001 - wrong name / not enabled: try the next form
                 last_err = e
                 continue
-            raw = r.choices[0].message.content.strip()
-            raw = raw[raw.find("{"): raw.rfind("}") + 1]  # tolerate code fences around the JSON
-            return json.loads(raw), model
+            return _parse_json(r.choices[0].message.content), model
         print(f"Databricks skeptic model unavailable ({last_err}); falling back to {SKEPTIC_FALLBACK_MODEL}")
     resp = claude().messages.create(
         model=SKEPTIC_FALLBACK_MODEL, max_tokens=4000, system=system,

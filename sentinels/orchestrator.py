@@ -45,5 +45,5 @@ def run_case(spill: dict, memory: CaseMemory, draft: bool = True) -> dict:
         "decided_at": datetime.now(timezone.utc),
     }
     memory.record(result)
-    return {**result, "case": case, "skeptic": skeptic, "evidence": evidence, "ruling": ruling,
+    return {**result, "spill": agents.case_fields(spill), "case": case, "skeptic": skeptic, "evidence": evidence, "ruling": ruling,
             "report": report}
