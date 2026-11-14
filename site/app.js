@@ -83,7 +83,7 @@ function setupMap(spills, caseSpill) {
         updateTriggers: { getColor: s, getWidth: s }, transitions: { getColor: T },
       }),
       new deck.ScatterplotLayer({
-        id: "gauges", data: gauges, getPosition: l => l.to, radiusUnits: "pixels",
+        id: "gauges", billboard: true, data: gauges, getPosition: l => l.to, radiusUnits: "pixels",
         getRadius: l => (s === 3 && l.isCase ? 5 : 2.2), stroked: true, lineWidthUnits: "pixels", getLineWidth: 1,
         getFillColor: l => [106, 166, 216, s === 0 ? 0 : (s === 3 && !l.isCase ? 30 : 210)],
         getLineColor: l => [15, 20, 27, s === 0 ? 0 : 200],
@@ -95,18 +95,18 @@ function setupMap(spills, caseSpill) {
         getFillColor: [106, 166, 216, 14], getLineColor: [208, 183, 132, 140], lineWidthUnits: "pixels", getLineWidth: 1,
       }),
       new deck.ScatterplotLayer({   // soft glow
-        id: "glow", data: spills, getPosition: d => [d.longitude, d.latitude], radiusUnits: "pixels",
+        id: "glow", billboard: true, data: spills, getPosition: d => [d.longitude, d.latitude], radiusUnits: "pixels",
         getRadius: d => size(d) * 2.1, getFillColor: d => [...colour(d), spillAlpha(d) * 0.16],
         updateTriggers: { getFillColor: s }, transitions: { getFillColor: T },
       }),
       new deck.ScatterplotLayer({   // pulse ring on dry-day spills
-        id: "pulse", data: s >= 2 ? dry : [], getPosition: d => [d.longitude, d.latitude], radiusUnits: "pixels",
+        id: "pulse", billboard: true, data: s >= 2 ? dry : [], getPosition: d => [d.longitude, d.latitude], radiusUnits: "pixels",
         getRadius: d => size(d), radiusScale: 1 + 1.6 * pulse, stroked: true, filled: false,
         lineWidthUnits: "pixels", getLineWidth: 1.2, getLineColor: d => [239, 91, 69, (s === 3 && d.id !== caseSpill.id ? 40 : 170) * (1 - pulse)],
         updateTriggers: { getLineColor: s },
       }),
       new deck.ScatterplotLayer({
-        id: "spills", data: spills, getPosition: d => [d.longitude, d.latitude], radiusUnits: "pixels",
+        id: "spills", billboard: true, data: spills, getPosition: d => [d.longitude, d.latitude], radiusUnits: "pixels",
         getRadius: d => size(d) * (s === 3 && d.id === caseSpill.id ? 1.4 : 1), pickable: true, autoHighlight: true,
         highlightColor: [255, 255, 255, 70], stroked: true, lineWidthUnits: "pixels", getLineWidth: 1,
         getFillColor: d => [...colour(d), spillAlpha(d)], getLineColor: d => [255, 255, 255, spillAlpha(d) * 0.35],
@@ -122,15 +122,23 @@ function setupMap(spills, caseSpill) {
   };
 
   const box = document.getElementById("deck");
-  const dg = new deck.DeckGL({
+  // MapLibre owns the camera and the canvas; deck.gl draws into the same WebGL context (interleaved),
+  // so the street map and the data are always rendered in the same frame and can't drift apart.
+  const v0 = views[0];
+  const map = new maplibregl.Map({
     container: "deck",
-    mapStyle: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
-    viewState: views[0],
-    controller: false,          // the camera is driven by scrolling
-    useDevicePixels: true,      // full retina resolution
+    style: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
+    center: [v0.longitude, v0.latitude], zoom: v0.zoom, pitch: v0.pitch, bearing: v0.bearing,
+    interactive: false,             // the camera is driven by scrolling
+    attributionControl: { compact: true },
+    pixelRatio: Math.min(devicePixelRatio || 1, 2),
+    fadeDuration: 0,
+  });
+  const overlay = new deck.MapboxOverlay({
+    interleaved: true,
     layers: layers(),
     onHover: ({ object, x, y }) => {
-      if (!object) { tip.hidden = true; return; }
+      if (!object || !object.company) { tip.hidden = true; return; }
       tip.hidden = false;
       tip.style.left = Math.min(x + 14, innerWidth - 280) + "px"; tip.style.top = (y + 14) + "px";
       tip.innerHTML = `<div class="t">${esc(title(object.receivingwatercourse) || object.id)}</div>
@@ -139,6 +147,7 @@ function setupMap(spills, caseSpill) {
         rain 24 h before: ${object.max_mm_0_24h_before ?? "n/a"} mm</div>`;
     },
   });
+  map.addControl(overlay);
 
   const fly = new deck.FlyToInterpolator({ curve: 1.3 });
   const stepEls = [...document.querySelectorAll(".step")];
@@ -173,12 +182,14 @@ function setupMap(spills, caseSpill) {
     if (!reduced) c.bearing += 3 * Math.sin(now / 7000);     // slow drift keeps the scene alive
     cam = c;
     pulse = reduced ? 0 : (now % 2400) / 2400;
-    const s = Math.round(shown);
+    // Hysteresis: only switch styling once clearly past the halfway point, so colours never flicker.
+    const s = step < 0 ? Math.round(shown) : (shown > step + 0.6 ? Math.round(shown) : shown < step - 0.6 ? Math.round(shown) : step);
     if (s !== step) {
       step = s;
       stepEls.forEach(x => x.classList.toggle("active", +x.dataset.step === s));
     }
-    dg.setProps({ viewState: { ...c, transitionDuration: 0 }, layers: layers() });
+    map.jumpTo({ center: [c.longitude, c.latitude], zoom: c.zoom, pitch: c.pitch, bearing: c.bearing });
+    overlay.setProps({ layers: layers() });
     if (running) requestAnimationFrame(frame);
   }
   new IntersectionObserver(([e]) => {
