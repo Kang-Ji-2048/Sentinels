@@ -33,6 +33,56 @@
   .nav .off { opacity: .55; cursor: default; }
   .nav .on { color: #fff; font-weight: 600; border-bottom: 4px solid var(--gold); padding-top: 4px; }
 
+  .top-right { display: flex; align-items: center; gap: 16px; }
+  .check { padding: 8px 14px; border-radius: 6px; background: var(--gold); color: var(--ink); font-weight: 600; text-decoration: none; white-space: nowrap; }
+  .check:hover { background: #f0d264; }
+  .check:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
+  .pc { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 24px 0 8px; }
+  .pc label { width: 100%; font-weight: 600; }
+  .pc input { width: 11em; padding: 10px 12px; border: 1px solid var(--ink); border-radius: 6px; background: #fff; font: inherit; text-transform: uppercase; }
+  .pc input:focus-visible, .pc button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .pc button { padding: 10px 18px; border: 0; border-radius: 6px; background: var(--navy); color: #fff; font-weight: 600; cursor: pointer; }
+  #pc-out { max-width: 720px; }
+  #pc-out h2 { margin: 28px 0 6px; font-size: 24px; line-height: 1.25; text-transform: none; letter-spacing: 0; }
+  .lede-big { margin: 0 0 12px; font-size: 18px; font-weight: 600; color: var(--crimson); }
+  .pc-page { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(380px, 520px) 1fr; background: var(--paper); }
+  .pc-page[hidden] { display: none; }
+  .pc-side { overflow-y: auto; padding: 28px 32px 40px; border-right: 1px solid var(--rule); }
+  .pc-side h1 { margin: 0; font: 700 34px/1.15 var(--serif); }
+  .pc-side .intro { margin: 8px 0 0; color: var(--muted); }
+  .pc-side .sub { margin: 0 0 8px; color: var(--muted); font-size: 14px; }
+  .pc-mapwrap { position: relative; min-height: 0; }
+  .pc-map { position: absolute; inset: 0; }
+  .pc-legend { position: absolute; z-index: 2; left: 12px; bottom: 12px; display: flex; flex-wrap: wrap; gap: 6px 16px; max-width: calc(100% - 24px);
+    padding: 8px 12px; font-size: 14px; color: var(--ink); background: rgba(255,255,255,.94); border-radius: 8px; box-shadow: 0 2px 10px rgba(18,53,91,.15); }
+  .lg-all { width: 10px !important; height: 10px !important; background: rgba(200,16,46,.55); border: 1px solid #fff; border-radius: 50%; box-shadow: 0 0 0 1px rgba(200,16,46,.4); }
+  .pc-item.on { border-color: var(--crimson); box-shadow: 0 0 0 1px var(--crimson); }
+  .pc-dot.on { transform: scale(1.35); box-shadow: 0 0 0 4px rgba(200,16,46,.3); }
+  .pc-full { display: inline-block; margin: 4px 0 0 50px; font-size: 13px; color: var(--navy); }
+  @media (max-width: 900px) {
+    .pc-page { display: flex; flex-direction: column; overflow-y: auto; }
+    .pc-mapwrap { order: -1; position: sticky; top: 0; z-index: 3; flex: none; height: 45vh; border-bottom: 1px solid var(--rule); }
+    .pc-side { overflow: visible; border-right: 0; padding: 20px 16px 32px; }
+    .pc-legend { font-size: 12px; gap: 4px 10px; padding: 6px 8px; }
+  }
+  .pc-legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .pc-legend i { display: inline-block; width: 14px; height: 14px; }
+  .lg-home { background: var(--navy); border-radius: 50% 50% 50% 0; transform: rotate(-45deg); }
+  .lg-area { border: 1.5px dashed var(--navy); border-radius: 50%; }
+  .lg-spill { background: var(--crimson); border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 0 1px var(--crimson); }
+  .lg-water { height: 4px !important; background: var(--crimson); border-radius: 2px; }
+  .pc-home { width: 22px; height: 22px; background: var(--navy); border: 2px solid #fff; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); box-shadow: 0 2px 6px rgba(0,0,0,.3); }
+  .pc-dot, .pc-num { display: grid; place-items: center; width: 26px; height: 26px; flex: none; border-radius: 50%; background: var(--crimson); color: #fff; font: 700 13px var(--sans); border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
+  .pc-list { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 8px; }
+  .pc-item { display: flex; gap: 12px; align-items: center; width: 100%; padding: 10px 12px; text-align: left; background: #fff; border: 1px solid var(--rule); border-radius: 8px; cursor: pointer; font: inherit; color: inherit; }
+  .pc-item:hover { border-color: var(--ink); }
+  .pc-item:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
+  .pc-item > span:last-child { display: grid; gap: 2px; } .pc-item > span:last-child span { color: var(--muted); font-size: 14px; }
+  .advice { margin: 20px 0 8px; padding: 18px 22px; background: #fff; border: 1px solid var(--rule); border-left: 5px solid var(--crimson); border-radius: 8px; }
+  .advice h2 { margin: 0 0 10px !important; font-size: 22px !important; }
+  .advice ul { margin: 0; padding-left: 20px; display: grid; gap: 8px; line-height: 1.5; }
+  .advice a { color: var(--navy); font-weight: 600; }
+
   .body { flex: 1; display: flex; min-height: 0; }
   .map { position: relative; flex: 1; min-width: 0; }
   #map { position: absolute; inset: 0; }
@@ -238,7 +288,7 @@
     <span class="logo">Sentinels</span>
     <nav class="nav"><a href="#map" data-view="map" class="on">Map</a><a href="#cases" data-view="cases">Cases</a><a href="#reports" data-view="reports">Reports</a></nav>
   </div>
-  <span class="updated" id="updated"></span>
+  <div class="top-right"><span class="updated" id="updated"></span><a class="check" href="#postcode">Check your postcode</a></div>
 </header>
 <main class="body">
   <div class="map">
@@ -294,6 +344,20 @@
     <div id="queue"></div>
   </div>
   <div class="detail" id="detail"></div>
+</main>
+<main class="pc-page" id="postcode-view" hidden>
+  <div class="pc-side">
+  <h1>Is there a dry spill near you?</h1>
+  <p class="intro">Enter a postcode in England to see sewage overflows within 5 km that spilled in the last 48 hours with no rain recorded nearby. These are candidates, not proof of pollution, and which way the water flows isn't known.</p>
+  <form class="pc" id="pc-form">
+    <label for="pc">Postcode</label>
+    <input id="pc" autocomplete="postal-code" required maxlength="8" placeholder="NN8 1AA">
+    <button>Check</button>
+  </form>
+  <p class="sub">Your postcode is sent to postcodes.io to find its location. It isn't saved.</p>
+  <div id="pc-out" aria-live="polite"></div>
+  </div>
+  <div class="pc-mapwrap" id="pc-mapwrap"><div class="pc-legend" id="pc-legend"></div></div>
 </main>
 <script>
 const RUN = /*DATA*/null;
@@ -360,10 +424,6 @@ function layers() {
   const m = 40075016.686 * Math.cos(map.getCenter().lat * Math.PI / 180) / (512 * 2 ** z)  // metres per pixel...
     * Math.min(2, 1 + Math.max(0, z - 6) * 0.25);                                          // ...grown a little when zoomed in
   const sel = selected && selected.id;
-  const area = new deck.ScatterplotLayer({
-    id: "area", data: selected ? [selected] : [], getPosition: s => [s.lon, s.lat], getRadius: AREA_M,
-    filled: true, stroked: true, getFillColor: [232, 197, 71, 70], getLineColor: [184, 146, 20, 255], lineWidthMinPixels: 2,
-  });
   const stack = v => new deck.ColumnLayer({
     id: v, data: sites.filter(s => kind(s) === v), diskResolution: 24, extruded: true,
     radius: VERDICT[v].px * m, getPosition: s => [s.lon, s.lat],
@@ -382,9 +442,9 @@ function layers() {
     filled: true, stroked: true, lineWidthUnits: "pixels", getLineWidth: 2,
     getFillColor: g => wet(g) ? [18, 53, 91, 255] : [243, 246, 241, 255], getLineColor: [18, 53, 91, 255],
   });
-  if (MAP2D) return dotLayers([area, links, gauges]);
+  if (MAP2D) return dotLayers([links, gauges]);
   const context = dryOnly ? [] : [stack("rain_explained"), stack("no_gauge")];
-  return [area, links, gauges, ...context, stack("dry_spill_candidate")];
+  return [links, gauges, ...context, stack("dry_spill_candidate")];
 }
 
 const ENGLAND = MAP2D ? [[-5.8, 49.9], [1.8, 55.85]] : [[-5.4, 50.0], [1.8, 55.2]];  // flat view needs all of England in frame
@@ -396,13 +456,21 @@ const map = new maplibregl.Map({
 });
 if (MAP2D) { map.dragRotate.disable(); map.touchZoomRotate.disableRotation(); }
 map.on("style.load", () => {
+  // Nearby water the spill could reach, filled in by showAffected(); drawn above the basemap, under deck.gl.
+  map.addSource("affected", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
+  map.addLayer({ id: "affected-fill", type: "fill", source: "affected", filter: ["==", ["geometry-type"], "Polygon"],
+    paint: { "fill-color": "#c8102e", "fill-opacity": ["*", 0.45, ["get", "w"]] } });
+  map.addLayer({ id: "affected-glow", type: "line", source: "affected", filter: ["==", ["geometry-type"], "LineString"],
+    layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#c8102e", "line-width": 9, "line-opacity": ["*", 0.25, ["get", "w"]] } });
+  map.addLayer({ id: "affected-line", type: "line", source: "affected", filter: ["==", ["geometry-type"], "LineString"],
+    layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#c8102e", "line-width": 3, "line-opacity": ["get", "w"] } });
   if (MAP2D) return;  // 2D keeps the showcase site's plain Positron basemap
   // Restyle Positron into the Figma palette: land, sea, coastline. Everything else is hidden.
   for (const l of map.getStyle().layers) {
     if (l.id === "background") map.setPaintProperty(l.id, "background-color", "#bfd6dd");  // sea, so unloaded tiles read as sea
     else if (l.id === "water") map.setPaintProperty(l.id, "fill-color", "#bfd6dd");
     else if (l.id === "waterway") map.setPaintProperty(l.id, "line-color", "#9fbcc6");
-    else map.setLayoutProperty(l.id, "visibility", "none");
+    else if (!l.id.startsWith("affected")) map.setLayoutProperty(l.id, "visibility", "none");
   }
   const water = map.getLayer("water");
   if (water) map.addLayer({ id: "land", type: "fill", source: water.source, "source-layer": "earth",
@@ -471,7 +539,7 @@ function renderCase() {
   const verdict = el("section");
   verdict.append(el("span", "tag" + (s.verdict === "dry_spill_candidate" ? " dry" : ""), v.name));
   const gauges = el("section");
-  gauges.append(el("span", "tag", "Rain gauges within 10 km"), el("div", "lede", "The gold ring on the map is this 10 km area. Dots are these gauges, filled navy if one recorded 0.25 mm or more in a day."));
+  gauges.append(el("span", "tag", "Rain gauges within 10 km"), el("div", "lede", "Dots on the map are these gauges, filled navy if one recorded 0.25 mm or more in a day."));
   if (s.gauges.length) {
     const ul = el("ul");
     for (const g of s.gauges) ul.append(el("li", null,
@@ -480,7 +548,12 @@ function renderCase() {
   } else gauges.append(el("p", "lede", "No Environment Agency gauge within 10 km, so rain can't be ruled in or out."));
   const agents = el("section");
   if (!s.case) agents.append(el("span", "tag", "Agents"), el("p", "lede", "No agent case for this site in this run yet."));
-  c.replaceChildren(head, verdict, gauges, ...(s.case ? agentSections(s.case, s) : [agents]), chatSection(s));
+  const water = el("section"), list = el("div"); list.id = "affected";
+  list.append(el("p", "lede", "Finding nearby water…"));
+  water.append(el("span", "tag", "Water that could be affected"),
+    el("div", "lede", "Shown in red on the map, out to a distance set by the estimated impact. Which way the water flows isn't known."), list);
+  c.replaceChildren(head, verdict, water, gauges, ...(s.case ? agentSections(s.case, s) : [agents]), chatSection(s));
+  if (impact && impact.siteId === s.id) renderAffected();
 }
 
 // "Ask about this spill": questions go to the team's Databricks Genie space via serve.py (sentinels/genie.py).
@@ -638,6 +711,107 @@ function showGauges() {
     return new maplibregl.Marker({ element: box, anchor: "top", offset: [0, 10] }).setLngLat([g.lon, g.lat]).addTo(map);
   });
 }
+// Rivers, streams and lakes near the selected spill, read from the basemap's vector tiles once they've loaded,
+// out to a reach set by an estimated impact score. Flow direction isn't known, so this is "could be affected".
+const AFFECT_KM = 5;  // the postcode check's radius
+const RECEIVING_KM = 20, SEA = new Set(["ocean", "sea", "bay", "strait", "reef", "dock"]);
+const BANDS = [[60, "high", 10], [30, "medium", 5], [0, "low", 2]];  // score threshold, label, reach in km
+let affectedNames = [], impact = null;
+function setAffected(features) {
+  const src = map.getSource("affected");
+  if (src) src.setData({ type: "FeatureCollection", features });
+}
+// Estimated impact, 0-100. Duration, still running, dryness (less dilution) and a small receiving water push it up;
+// the agents' confidence (or the detector's verdict when no agent has looked) scales it. No volume or flow data
+// exists, so it is a rough guide to how far to look, not a measurement.
+function impactScore(s, receivingKind) {
+  const parts = [];
+  const h = s.hours ?? 0;
+  const ph = Math.min(40, 40 * Math.log2(1 + h) / Math.log2(1 + 48));
+  parts.push([s.hours == null ? "duration unknown" : `${fmt(h)} h discharging`, ph]);
+  if (s.status === 1) parts.push(["still discharging", 10]);
+  const pd = s.rain48 == null ? 5 : 20 * Math.max(0, 1 - s.rain48 / 1);
+  parts.push([s.rain48 == null ? "no rain gauge" : `${fmt(s.rain48, 2)} mm rain in 48 h`, pd]);
+  const size = { stream: ["small stream", 20], ditch: ["small stream", 20], drain: ["small stream", 20], brook: ["small stream", 20],
+                 river: ["river", 10], canal: ["canal", 8], wide: ["lake or estuary", 5] }[receivingKind] || ["receiving water not found", 10];
+  parts.push(size);
+  const conf = s.case ? 0.5 + 0.5 * (s.case.breach_confidence ?? 0)
+    : { dry_spill_candidate: 0.8, no_gauge: 0.6, rain_explained: 0.4 }[s.verdict] ?? 0.6;
+  const score = Math.round(Math.min(100, parts.reduce((a, [, p]) => a + p, 0) * 100 / 90 * conf));
+  const [, band, reach] = BANDS.find(([t]) => score >= t);
+  return { siteId: s.id, hasCase: !!s.case, score, band, reach, conf, parts };
+}
+// Water features near a spill on map m (from its loaded vector tiles), then the subset within the impact reach.
+function waterAround(m, s) {
+  const waterLayer = m.getLayer("water");
+  if (!waterLayer) return null;
+  const norm = x => String(x || "").toLowerCase().replace(/\(.*?\)/g, "").replace(/[^a-z ]/g, " ").replace(/\s+/g, " ").trim();
+  const recv = norm(s.name);
+  const kx = Math.cos(s.lat * Math.PI / 180) * 111.32, ky = 110.57;
+  const nearest = g => {  // km from the spill to the closest vertex of a geometry
+    let best = Infinity;
+    const walk = c => { if (typeof c[0] === "number") best = Math.min(best, Math.hypot((c[0] - s.lon) * kx, (c[1] - s.lat) * ky)); else c.forEach(walk); };
+    walk(g.coordinates);
+    return best;
+  };
+  const found = [];
+  for (const f of m.querySourceFeatures(waterLayer.source, { sourceLayer: waterLayer.sourceLayer })) {
+    if (SEA.has(f.properties.kind)) continue;
+    const name = f.properties.name || f.properties["name:en"] || "", n = norm(name);
+    const receiving = recv.length > 3 && n.length > 3 && (n.includes(recv) || recv.includes(n));
+    const km = nearest(f.geometry);
+    if (km <= RECEIVING_KM) found.push({ f, name, km, receiving });
+  }
+  return found;
+}
+function pickWater(s, found) {
+  // The receiving watercourse's type sets the dilution part of the score; polygons are lakes, estuaries, wide rivers.
+  const recvHit = found.filter(x => x.receiving).sort((a, b) => a.km - b.km)[0];
+  const kind = !recvHit ? null : recvHit.f.geometry.type.includes("Polygon") ? "wide" : recvHit.f.properties.kind_detail || "river";
+  const imp = impactScore(s, kind), R = imp.reach, keep = [], names = new Map();
+  for (const { f, name, km, receiving } of found) {
+    if (km > (receiving ? 2 * R : R)) continue;  // the receiving water gets twice the reach: it takes the sewage first
+    keep.push({ type: "Feature", properties: { w: Math.max(0.25, 1 - km / (receiving ? 2 * R : R)) }, geometry: f.geometry });
+    if (name && (!names.has(name) || km < names.get(name).km)) names.set(name, { km, isReceiving: receiving });
+  }
+  return { impact: imp, keep, names: [...names.entries()].sort((a, b) => b[1].isReceiving - a[1].isReceiving || a[1].km - b[1].km) };
+}
+function showAffected(s) {
+  affectedNames = []; impact = null;
+  setAffected([]);
+  if (!s) return;
+  let tries = 0;
+  const run = () => {  // after the zoom-in: draw what's loaded now, then redraw while the rest of the tiles arrive
+    if (selected !== s) return;
+    const found = waterAround(map, s);
+    if (!found) return;
+    if (!map.areTilesLoaded() && tries++ < 8) setTimeout(run, 500);
+    const r = pickWater(s, found);
+    impact = r.impact; affectedNames = r.names;
+    setAffected(r.keep);
+    renderAffected();
+  };
+  map.once("moveend", () => setTimeout(run, 200));
+}
+function renderAffected() {
+  const box = document.getElementById("affected");
+  if (!box || !impact) return;
+  const tag = el("span", `ftag ${impact.band === "high" ? "red" : impact.band === "medium" ? "yellow" : "green"}`, `Estimated impact ${impact.score} · ${impact.band}`);
+  tag.title = "A rough guide from duration, whether it's still running, rain, the size of the receiving water and how sure we are it's real. No spill volume or river flow data exists.";
+  tag.tabIndex = 0;
+  const why = el("p", "lede", `${impact.parts.map(([label, p]) => `${label} +${Math.round(p)}`).join(" · ")} · × ${impact.conf.toFixed(2)} ${impact.hasCase ? "agents' confidence" : "detector verdict"}. Showing water within ${impact.reach} km (${2 * impact.reach} km along the receiving watercourse); red fades with distance.`);
+  const out = [el("div", "ftags", null), why];
+  out[0].append(tag);
+  if (!affectedNames.length) out.push(el("p", "lede", `No named rivers, streams or lakes within ${impact.reach} km. Any unnamed water nearby is still shown on the map.`));
+  else {
+    const ul = el("ul");
+    for (const [name, info] of affectedNames.slice(0, 8))
+      ul.append(el("li", null, `${name}${info.isReceiving ? " (receiving watercourse)" : ""} · ${info.km < 0.1 ? "at the outfall" : fmt(info.km) + " km"}`));
+    out.push(ul);
+  }
+  box.replaceChildren(...out);
+}
+
 function select(s) {
   selected = s === selected ? null : s;  // clicking the selected spill again clears it
   renderRows(); renderCase(); showGauges();
@@ -645,10 +819,12 @@ function select(s) {
   if (!selected) {
     resetBtn.hidden = true;
     if (dry[0]) showLabel(dry[0], false);
+    showAffected(null);
     return map.fitBounds(ENGLAND, { padding: ENGLAND_PAD, pitch: MAP2D ? 0 : 45, bearing: 0, duration: 1200 });
   }
   showLabel(s, true);
   map.flyTo({ center: [s.lon, s.lat], zoom: 10.3, pitch: MAP2D ? 0 : 55, bearing: 0, padding: { top: 60, bottom: 0, left: 380, right: 0 }, duration: 1600, essential: true });
+  showAffected(s);
   resetBtn.hidden = false;
 }
 renderRows(); renderCase();
@@ -656,16 +832,167 @@ if (dry[0]) showLabel(dry[0], false);
 
 // ---------- Cases tab ----------
 const pctN = x => Math.round(x * 100);
-const views = { map: document.querySelector("main.body"), cases: document.getElementById("cases-view"), reports: document.getElementById("reports-view") };
+const views = { map: document.querySelector("main.body"), cases: document.getElementById("cases-view"), reports: document.getElementById("reports-view"), postcode: document.getElementById("postcode-view") };
 function show(v) {
   if (!views[v]) v = "map";
   for (const [k, node] of Object.entries(views)) node.hidden = k !== v;
   document.querySelectorAll(".nav a").forEach(a => a.classList.toggle("on", a.dataset.view === v));
-  if (v === "map") map.resize(); else if (v === "cases") renderCases(); else renderReports();
+  if (v === "map") map.resize(); else if (v === "cases") renderCases(); else if (v === "reports") renderReports(); else if (v === "postcode") ensurePcMap();
   if (location.hash !== "#" + v) history.replaceState(null, "", "#" + v);
 }
 window.addEventListener("hashchange", () => show(location.hash.slice(1)));
 function openOnMap(s) { show("map"); if (selected !== s) select(s); }
+
+// ---------- Postcode check ----------
+// Dry-spill candidates within AFFECT_KM of a point, nearest first.
+function nearby(lat, lon) {
+  const kx = Math.cos(lat * Math.PI / 180) * 111.32, ky = 110.57;
+  return dry.map(s => ({ s, km: Math.hypot((s.lon - lon) * kx, (s.lat - lat) * ky) })).filter(x => x.km <= AFFECT_KM).sort((a, b) => a.km - b.km);
+}
+if (dry[0]) console.assert(nearby(dry[0].lat, dry[0].lon)[0].km === 0 && !nearby(dry[0].lat + 1, dry[0].lon).some(x => x.s === dry[0]), "nearby() distance check");
+document.getElementById("pc-form").onsubmit = async e => {
+  e.preventDefault();
+  const out = document.getElementById("pc-out"), say = t => out.replaceChildren(el("p", "sub", t));
+  say("Checking…");
+  let r;
+  try {
+    const res = await fetch("https://api.postcodes.io/postcodes/" + encodeURIComponent(document.getElementById("pc").value.trim()));
+    if (res.status === 404) return say("That postcode wasn't found. Check it and try again.");
+    if (!res.ok) throw new Error(res.status);
+    r = (await res.json()).result;
+  } catch { return say("The postcode lookup didn't answer. Check your connection and try again."); }
+  if (r.latitude == null) return say(`${r.postcode} has no map location, so it can't be checked.`);
+  const hits = nearby(r.latitude, r.longitude);
+  const asOf = `As of ${document.getElementById("updated").textContent.replace("Updated ", "") || "the latest run"}.`;
+  if (!hits.length) {
+    out.replaceChildren(el("h2", null, `No dry-weather sewage spills found within ${AFFECT_KM} km of ${r.postcode}`),
+      el("p", "sub", `${asOf} This only covers monitored overflows in England, and sewage can still be released after heavy rain, so it isn't a guarantee the water is clean.`),
+    );
+    pcLegend(false);
+    return drawPcMap(r, []);
+  }
+  const still = hits.filter(h => h.s.status === 1).length;
+  const head = el("h2", null, `${hits.length} sewage spill${hits.length > 1 ? "s" : ""} on a dry day within ${AFFECT_KM} km of ${r.postcode}`);
+  const lead = el("p", "lede-big", still
+    ? `${still} ${still === 1 ? "is" : "are"} still spilling now. Avoid the water marked in red.`
+    : "Avoid the water marked in red for the next couple of days.");
+  const rows = el("ol", "pc-list");
+  hits.forEach(({ s, km }, i) => {
+    const li = el("li"), b = el("button", "pc-item");
+    b.append(el("span", "pc-num", String(i + 1)));
+    const txt = el("span");
+    txt.append(el("b", null, title(s.name)), el("span", null,
+      `${fmt(km)} km away · ${s.company} · ${s.hours == null ? "length unknown" : `sewage released for ${fmt(s.hours)} hours`}${s.status === 1 ? " · still spilling" : ""}`));
+    b.append(txt);
+    b.onclick = () => focusPc(s, b);
+    b.title = "Show this spill on the map";
+    const full = el("a", "pc-full", "Details on the full map"); full.href = "#map";
+    full.onclick = e => { e.preventDefault(); openOnMap(s); };
+    li.append(b, full); rows.append(li);
+  });
+  pcLegend(true);
+  out.replaceChildren(head, lead, rows, adviceBox(hits),
+    el("p", "sub", `${asOf} These are possible dry-day spills found in the water companies' own monitoring data, not confirmed pollution. Which way the water flows isn't known.`));
+  drawPcMap(r, hits);
+};
+
+// A simple map for the postcode page: your postcode, the area checked, numbered spills and the water near them.
+// It sits beside the text (on phones, pinned above it) so it stays in view while reading the advice.
+const pcMapBox = el("div", "pc-map");
+pcMapBox.setAttribute("role", "img");
+pcMapBox.setAttribute("aria-label", "Map of your postcode, nearby sewage overflows that spilled on a dry day, and the water they could affect");
+document.getElementById("pc-mapwrap").prepend(pcMapBox);
+let pcMap = null, pcReady = false, pcPending = null, pcMarkers = [], pcDots = [];
+function pcLegend(any) {
+  const l = document.getElementById("pc-legend");
+  const item = (cls, text) => { const s = el("span"); s.append(el("i", cls), text); return s; };
+  const items = any === null ? [item("lg-all", "Dry-weather sewage spill, last 48 hours")]
+    : [item("lg-home", "Your postcode"), item("lg-area", `Area checked (${AFFECT_KM} km)`), ...(any ? [item("lg-spill", "Spill near you"), item("lg-water", "Water that could be affected")] : []), item("lg-all", "Other spills")];
+  l.replaceChildren(...items);
+}
+function ensurePcMap() {
+  if (pcMap) return pcMap.resize();
+  pcMap = new maplibregl.Map({ container: pcMapBox, style: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
+    bounds: [[-5.8, 49.9], [1.8, 55.85]], fitBoundsOptions: { padding: 30 }, pitch: 0, maxPitch: 0, dragRotate: false,
+    attributionControl: { compact: true } });
+  pcMap.touchZoomRotate.disableRotation();
+  pcMap.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+  pcLegend(null);
+  pcMap.on("load", () => {
+    const empty = { type: "FeatureCollection", features: [] };
+    pcMap.addSource("pc-all", { type: "geojson", data: { type: "FeatureCollection", features: dry.map(d => ({ type: "Feature", properties: {}, geometry: { type: "Point", coordinates: [d.lon, d.lat] } })) } });
+    pcMap.addSource("pc-area", { type: "geojson", data: empty });
+    pcMap.addSource("pc-water", { type: "geojson", data: empty });
+    pcMap.addLayer({ id: "pc-area-fill", type: "fill", source: "pc-area", paint: { "fill-color": "#12355b", "fill-opacity": 0.05 } });
+    pcMap.addLayer({ id: "pc-area-line", type: "line", source: "pc-area", paint: { "line-color": "#12355b", "line-width": 1.5, "line-dasharray": [3, 2] } });
+    pcMap.addLayer({ id: "pc-water-fill", type: "fill", source: "pc-water", filter: ["==", ["geometry-type"], "Polygon"],
+      paint: { "fill-color": "#c8102e", "fill-opacity": ["*", 0.45, ["get", "w"]] } });
+    pcMap.addLayer({ id: "pc-water-line", type: "line", source: "pc-water", filter: ["==", ["geometry-type"], "LineString"],
+      layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#c8102e", "line-width": 3.5, "line-opacity": ["get", "w"] } });
+    pcMap.addLayer({ id: "pc-all", type: "circle", source: "pc-all",
+      paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 5, 3, 11, 6], "circle-color": "#c8102e", "circle-opacity": 0.55,
+               "circle-stroke-color": "#fff", "circle-stroke-width": 1 } });
+    pcReady = true;
+    if (pcPending) paintPc(...pcPending);
+  });
+}
+function drawPcMap(r, hits) {
+  pcPending = [r, hits];
+  ensurePcMap();
+  if (pcReady) paintPc(r, hits);
+}
+function paintPc(r, hits) {
+  const kx = Math.cos(r.latitude * Math.PI / 180) * 111.32, ky = 110.57, ring = [];
+  for (let i = 0; i <= 64; i++) { const a = i / 64 * 2 * Math.PI; ring.push([r.longitude + AFFECT_KM * Math.cos(a) / kx, r.latitude + AFFECT_KM * Math.sin(a) / ky]); }
+  pcMap.getSource("pc-area").setData({ type: "FeatureCollection", features: [{ type: "Feature", properties: {}, geometry: { type: "Polygon", coordinates: [ring] } }] });
+  pcMap.getSource("pc-water").setData({ type: "FeatureCollection", features: [] });
+  pcMarkers.forEach(m => m.remove());
+  const home = el("div", "pc-home"); home.title = r.postcode;
+  pcMarkers = [new maplibregl.Marker({ element: home, anchor: "bottom" }).setLngLat([r.longitude, r.latitude]).addTo(pcMap)];
+  pcDots = hits.map(({ s }, i) => {
+    const d = el("div", "pc-dot", String(i + 1)); d.title = title(s.name);
+    const m = new maplibregl.Marker({ element: d }).setLngLat([s.lon, s.lat]).addTo(pcMap);
+    pcMarkers.push(m);
+    return { s, d };
+  });
+  const pts = [...ring, ...hits.map(h => [h.s.lon, h.s.lat])];
+  const lons = pts.map(q => q[0]), lats = pts.map(q => q[1]);
+  pcMap.fitBounds([[Math.min(...lons), Math.min(...lats)], [Math.max(...lons), Math.max(...lats)]], { padding: { top: 40, right: 50, bottom: 70, left: 40 }, duration: 900 });
+  let tries = 0;
+  const water = () => {  // red water around each spill, once this view's tiles have loaded
+    if (!pcMap.areTilesLoaded() && tries++ < 10) return setTimeout(water, 400);
+    const feats = hits.flatMap(({ s }) => { const f = waterAround(pcMap, s); return f ? pickWater(s, f).keep : []; });
+    pcMap.getSource("pc-water").setData({ type: "FeatureCollection", features: feats });
+  };
+  pcMap.once("moveend", () => setTimeout(water, 200));
+}
+function focusPc(s, btn) {  // list item -> fly the small map to that spill and mark both
+  document.querySelectorAll(".pc-item.on").forEach(b => b.classList.remove("on"));
+  btn.classList.add("on");
+  pcDots.forEach(({ s: x, d }) => d.classList.toggle("on", x === s));
+  pcMap.flyTo({ center: [s.lon, s.lat], zoom: Math.max(pcMap.getZoom(), 12.5), duration: 900 });
+}
+
+// Plain-language precautions for people living near a recent dry-day spill.
+function adviceBox(hits) {
+  const box = el("section", "advice");
+  const companies = [...new Set(hits.map(h => h.s.company))];
+  box.append(el("h2", null, "What to do"));
+  const ol = el("ul");
+  const tip = (b, t) => { const li = el("li"); li.append(el("b", null, b + " "), t); ol.append(li); };
+  tip("Stay out of the water marked in red,", "and keep children and dogs out, while it's spilling and for at least 2 days after it stops. Don't let dogs drink it. This matters most downstream of the overflow.");
+  tip("If you've already been in:", "shower, wash your hands before eating, and cover any cuts. Try not to swallow the water.");
+  tip("If you feel unwell in the next few days", "(stomach upset, diarrhoea, vomiting, or an ear, eye or skin infection), contact your GP or call NHS 111 and say you were in water that may have had sewage in it.");
+  tip("Don't collect shellfish or forage", "on the banks near the overflow.");
+  const rep = el("li");
+  const tel = el("a", null, "0800 80 70 60"); tel.href = "tel:08008070600";
+  rep.append(el("b", null, "Report what you see:"), " sewage, dead fish, a bad smell or discoloured water. Call the Environment Agency's 24-hour incident hotline on ", tel,
+    `, and tell ${companies.length === 1 ? companies[0] : "the water company (" + companies.join(", ") + ")"}.`);
+  ol.append(rep);
+  tip("Before you swim anywhere,", "check local bathing water information or a water-quality alert service, especially after rain.");
+  box.append(ol);
+  return box;
+}
 const siteLine = s => `${s.company} · ${s.id}`;
 const example = s => s.case && s.case.illustrative ? el("span", "chip", "Example") : null;
 
