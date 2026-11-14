@@ -69,6 +69,7 @@ function setupMap(spills, caseSpill) {
     .map(g => ({ from: [d.longitude, d.latitude], to: [g.lon, g.lat], dry: d.verdict === "dry_spill_candidate", isCase: d.id === caseSpill.id, g })));
   const gauges = [...new Map([...links].sort((a, b) => a.isCase - b.isCase).map(l => [l.g.station, l])).values()];  // case links win
   const caseLinks = links.filter(l => l.isCase);
+  const NO_DEPTH = { depthCompare: "always", depthWriteEnabled: false };   // flat overlay: never clipped by the ground
   const T = { duration: 900, easing: t => t * (2 - t) };
 
   const layers = () => {
@@ -78,42 +79,42 @@ function setupMap(spills, caseSpill) {
     const linkAlpha = l => s === 0 ? 0 : s === 1 ? 90 : s === 2 ? (l.dry ? 80 : 12) : (l.isCase ? 220 : 10);
     return [
       new deck.LineLayer({
-        id: "links", data: links, getSourcePosition: l => l.from, getTargetPosition: l => l.to,
+        id: "links", parameters: NO_DEPTH, data: links, getSourcePosition: l => l.from, getTargetPosition: l => l.to,
         getColor: l => [106, 166, 216, linkAlpha(l)], getWidth: l => (s === 3 && l.isCase ? 2 : 1), widthUnits: "pixels",
         updateTriggers: { getColor: s, getWidth: s }, transitions: { getColor: T },
       }),
       new deck.ScatterplotLayer({
-        id: "gauges", billboard: true, data: gauges, getPosition: l => l.to, radiusUnits: "pixels",
+        id: "gauges", parameters: NO_DEPTH, billboard: true, data: gauges, getPosition: l => l.to, radiusUnits: "pixels",
         getRadius: l => (s === 3 && l.isCase ? 5 : 2.2), stroked: true, lineWidthUnits: "pixels", getLineWidth: 1,
         getFillColor: l => [106, 166, 216, s === 0 ? 0 : (s === 3 && !l.isCase ? 30 : 210)],
         getLineColor: l => [15, 20, 27, s === 0 ? 0 : 200],
         updateTriggers: { getRadius: s, getFillColor: s, getLineColor: s }, transitions: { getFillColor: T, getRadius: T },
       }),
       new deck.ScatterplotLayer({   // 10 km search radius around the followed case
-        id: "radius", data: s === 3 ? [caseSpill] : [], getPosition: d => [d.longitude, d.latitude],
+        id: "radius", parameters: NO_DEPTH, data: s === 3 ? [caseSpill] : [], getPosition: d => [d.longitude, d.latitude],
         getRadius: 10000, radiusUnits: "meters", stroked: true, filled: true,
         getFillColor: [106, 166, 216, 14], getLineColor: [208, 183, 132, 140], lineWidthUnits: "pixels", getLineWidth: 1,
       }),
       new deck.ScatterplotLayer({   // soft glow
-        id: "glow", billboard: true, data: spills, getPosition: d => [d.longitude, d.latitude], radiusUnits: "pixels",
+        id: "glow", parameters: NO_DEPTH, billboard: true, data: spills, getPosition: d => [d.longitude, d.latitude], radiusUnits: "pixels",
         getRadius: d => size(d) * 2.1, getFillColor: d => [...colour(d), spillAlpha(d) * 0.16],
         updateTriggers: { getFillColor: s }, transitions: { getFillColor: T },
       }),
       new deck.ScatterplotLayer({   // pulse ring on dry-day spills
-        id: "pulse", billboard: true, data: s >= 2 ? dry : [], getPosition: d => [d.longitude, d.latitude], radiusUnits: "pixels",
+        id: "pulse", parameters: NO_DEPTH, billboard: true, data: s >= 2 ? dry : [], getPosition: d => [d.longitude, d.latitude], radiusUnits: "pixels",
         getRadius: d => size(d), radiusScale: 1 + 1.6 * pulse, stroked: true, filled: false,
         lineWidthUnits: "pixels", getLineWidth: 1.2, getLineColor: d => [239, 91, 69, (s === 3 && d.id !== caseSpill.id ? 40 : 170) * (1 - pulse)],
         updateTriggers: { getLineColor: s },
       }),
       new deck.ScatterplotLayer({
-        id: "spills", billboard: true, data: spills, getPosition: d => [d.longitude, d.latitude], radiusUnits: "pixels",
+        id: "spills", parameters: NO_DEPTH, billboard: true, data: spills, getPosition: d => [d.longitude, d.latitude], radiusUnits: "pixels",
         getRadius: d => size(d) * (s === 3 && d.id === caseSpill.id ? 1.4 : 1), pickable: true, autoHighlight: true,
         highlightColor: [255, 255, 255, 70], stroked: true, lineWidthUnits: "pixels", getLineWidth: 1,
         getFillColor: d => [...colour(d), spillAlpha(d)], getLineColor: d => [255, 255, 255, spillAlpha(d) * 0.35],
         updateTriggers: { getFillColor: s, getLineColor: s, getRadius: s }, transitions: { getFillColor: T, getRadius: T },
       }),
       new deck.TextLayer({
-        id: "labels", data: s === 3 ? caseLinks : [], getPosition: l => l.to,
+        id: "labels", parameters: NO_DEPTH, data: s === 3 ? caseLinks : [], getPosition: l => l.to,
         getText: l => `${l.g.km} km · ${Math.max(l.g.mm_0_24h_before, l.g.mm_24_48h_before)} mm`,
         getSize: 12, getColor: [174, 182, 194, 255], getPixelOffset: [0, -16], fontFamily: "JetBrains Mono, monospace",
         outlineWidth: 4, outlineColor: [15, 20, 27, 255], fontSettings: { sdf: true }, characterSet: "auto",
@@ -122,8 +123,8 @@ function setupMap(spills, caseSpill) {
   };
 
   const box = document.getElementById("deck");
-  // MapLibre owns the camera and the canvas; deck.gl draws into the same WebGL context (interleaved),
-  // so the street map and the data are always rendered in the same frame and can't drift apart.
+  // MapLibre owns the camera; the deck.gl overlay follows the map's own move events, so the street map
+  // and the data redraw together. (Not interleaved: that mode can't add layers until the style has loaded.)
   const v0 = views[0];
   const map = new maplibregl.Map({
     container: "deck",
@@ -135,7 +136,6 @@ function setupMap(spills, caseSpill) {
     fadeDuration: 0,
   });
   const overlay = new deck.MapboxOverlay({
-    interleaved: true,
     layers: layers(),
     onHover: ({ object, x, y }) => {
       if (!object || !object.company) { tip.hidden = true; return; }
@@ -174,6 +174,10 @@ function setupMap(spills, caseSpill) {
   // Smoothly chase the scroll target every frame (critically damped), so fast scrolls still glide.
   let target = 0, shown = 0, lastT = performance.now(), running = false;
   function frame(now) {
+    try { step_(now); } catch (e) { console.error(e); }   // never let one bad frame stop the animation
+    if (running) requestAnimationFrame(frame);
+  }
+  function step_(now) {
     const dt = Math.min(now - lastT, 64); lastT = now;
     target = progress();
     shown += (target - shown) * (1 - Math.exp(-dt / (reduced ? 1 : 140)));
@@ -190,7 +194,6 @@ function setupMap(spills, caseSpill) {
     }
     map.jumpTo({ center: [c.longitude, c.latitude], zoom: c.zoom, pitch: c.pitch, bearing: c.bearing });
     overlay.setProps({ layers: layers() });
-    if (running) requestAnimationFrame(frame);
   }
   new IntersectionObserver(([e]) => {
     if (e.isIntersecting && !running) { running = true; lastT = performance.now(); requestAnimationFrame(frame); }
