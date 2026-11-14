@@ -38,7 +38,21 @@ for s in sites:
 print(f"agent cases on the map: {sorted(cases.keys() & on_map) or 'none'}")
 if cases.keys() - on_map:
     print(f"skipped (site not in data/latest_run.json; rerun scripts/detect.py?): {sorted(cases.keys() - on_map)}")
-data = json.dumps({"run_at": run["run_at"], "sites": sites}).replace("</", "<\\/")  # can't close the <script>
+# Spill record across runs, for the Cases tab's repeat sites. The overflow feeds only give each site's latest
+# event, so every build adds this run's spills to andrew-site/history.json (one entry per site + event start).
+hist_path = here / "history.json"
+hist = json.loads(hist_path.read_text()) if hist_path.exists() else {"runs": [], "events": {}}
+if run["run_at"] not in hist["runs"]:
+    hist["runs"].append(run["run_at"])
+for a in run["assessed"]:
+    if a.get("latesteventstart"):
+        hist["events"][f'{a["id"]}|{a["latesteventstart"]}'] = {
+            "id": a["id"], "company": a["company"], "name": a.get("receivingwatercourse") or a["id"],
+            "start": str(a["latesteventstart"]), "hours": a.get("duration_hours"), "verdict": a["verdict"]}
+hist_path.write_text(json.dumps(hist, indent=1))
+history = {"runs": hist["runs"], "events": list(hist["events"].values())}
+print(f"spill record: {len(history['events'])} spills over {len(history['runs'])} runs")
+data = json.dumps({"run_at": run["run_at"], "sites": sites, "history": history}).replace("</", "<\\/")  # can't close the <script>
 
 template = (here / "app.html").read_text()
 assert "/*DATA*/null" in template

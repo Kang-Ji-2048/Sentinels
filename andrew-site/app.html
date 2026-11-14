@@ -27,7 +27,10 @@
   .brand { display: flex; align-items: center; gap: 36px; }
   .logo { font: 800 22px var(--serif); letter-spacing: -.04em; color: var(--navy); }
   .nav { display: flex; gap: 4px; }
-  .nav span { height: 56px; display: flex; align-items: center; padding: 0 16px; font-weight: 500; }
+  .nav > * { height: 56px; display: flex; align-items: center; padding: 0 16px; font-weight: 500; color: inherit; text-decoration: none; }
+  .nav a:hover { color: #fff; }
+  .nav a:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+  .nav .off { opacity: .55; cursor: default; }
   .nav .on { color: #fff; font-weight: 600; border-bottom: 4px solid var(--gold); padding-top: 4px; }
 
   .body { flex: 1; display: flex; min-height: 0; }
@@ -85,14 +88,76 @@
   .case details { margin-top: 8px; }
   .case summary { cursor: pointer; font-weight: 500; }
   .case a { color: var(--navy); overflow-wrap: anywhere; }
-  .case .example { display: grid; gap: 2px; margin-top: 14px; padding: 10px 12px; border: 2px dashed var(--crimson); background: #fbeaec; }
-  .case .example b { color: var(--crimson); text-transform: uppercase; letter-spacing: .9px; font-size: 13px; }
+  .case .example, .detail .example { display: grid; gap: 2px; margin-top: 14px; padding: 10px 12px; border: 2px dashed var(--crimson); background: #fbeaec; }
+  .case .example b, .detail .example b { color: var(--crimson); text-transform: uppercase; letter-spacing: .9px; font-size: 13px; }
   .case .example ~ section { opacity: .85; }
   .case .empty h2 { padding: 20px 0 10px; }
   .case .empty p { margin: 0; color: var(--muted); }
   .foot { padding: 16px 24px; color: var(--muted); border-top: 1px solid var(--rule); }
 
+  .body[hidden], .cases[hidden], .reports[hidden] { display: none; }
+  .cases { flex: 1; min-height: 0; overflow-y: auto; background: var(--paper); padding: 28px 36px 48px; }
+  .cases h1 { margin: 0; font: 700 40px var(--serif); }
+  .cases .intro { margin: 4px 0 0; color: var(--muted); max-width: 70ch; }
+  .cases h2 { margin: 32px 0 4px; font-size: 15px; font-weight: 600; letter-spacing: .9px; text-transform: uppercase; }
+  .cases .sub { margin: 0 0 12px; color: var(--muted); max-width: 60ch; }
+  .board { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(210px, 1fr); gap: 12px; overflow-x: auto; padding-bottom: 8px; }
+  .col { display: flex; flex-direction: column; gap: 8px; min-height: 140px; max-height: min(480px, 60vh); padding: 10px; background: #e9eee7; border-top: 3px solid var(--c, var(--ink)); }
+  .col .cards { display: flex; flex-direction: column; gap: 8px; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 2px; margin: -2px; }
+  .col h3 { margin: 0; display: flex; justify-content: space-between; font-size: 15px; font-weight: 600; }
+  .col h3 span, .col .none { color: var(--muted); font-weight: 400; }
+  .col .none { margin: 0; font-size: 14px; }
+  .card { display: grid; gap: 2px; padding: 8px 10px; text-align: left; background: #fff; border: 1px solid var(--rule); cursor: pointer; }
+  .card:hover, .pick:hover { border-color: var(--ink); }
+  .card:focus-visible, .pick:focus-visible { outline: 2px solid var(--navy); outline-offset: 1px; }
+  .card b, .pick b { font-weight: 600; }
+  .card .meta, .pick .meta { color: var(--muted); font-size: 14px; }
+  .chip { justify-self: start; padding: 0 5px; font-size: 12px; font-weight: 600; letter-spacing: .6px; text-transform: uppercase; color: var(--crimson); border: 1px dashed var(--crimson); }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 0 48px; }
+  .pick { display: grid; gap: 4px; width: 100%; padding: 12px 10px; text-align: left; background: none; border: 1px solid transparent; border-top-color: var(--rule); cursor: pointer; }
+  .track { position: relative; height: 22px; margin: 2px 6px; }
+  .track i { position: absolute; display: block; }
+  .track .rail { left: 0; right: 0; top: 10px; height: 2px; background: var(--rule); }
+  .track .tick { top: 4px; width: 1px; height: 14px; background: var(--muted); }
+  .track .move { top: 9px; height: 4px; background: var(--navy); }
+  .track .from, .track .to { top: 5px; width: 12px; height: 12px; border-radius: 50%; transform: translateX(-50%); border: 2px solid var(--navy); background: var(--paper); }
+  .track .to { border-color: var(--crimson); background: var(--crimson); }
+  .strip { display: flex; flex-wrap: wrap; gap: 4px; }
+  .strip span { padding: 1px 6px; font-size: 13px; background: #fbeaec; border: 1px solid rgba(200, 16, 46, .35); }
+  .reports { flex: 1; min-height: 0; display: grid; grid-template-columns: 380px 1fr; background: var(--paper); }
+  .queue { overflow-y: auto; padding: 28px 24px; border-right: 1px solid var(--ink); }
+  .queue h1, .detail h2 { margin: 0; font: 700 40px var(--serif); }
+  .detail h2 { font-size: 30px; }
+  .queue .intro { margin: 4px 0 16px; color: var(--muted); }
+  .api-off { margin: 0 0 16px; padding: 10px 12px; background: #fbf3d4; border: 1px solid var(--gold); }
+  .pill { justify-self: start; padding: 1px 8px; font-size: 13px; font-weight: 600; border-radius: 10px; background: var(--pc, var(--gold)); color: var(--pt, var(--ink)); }
+  .pill.approved { --pc: var(--navy); --pt: #fff; } .pill.sent { --pc: var(--ink); --pt: #fff; } .pill.rejected { --pc: var(--rule); }
+  .pick.on { background: #fff; border-color: var(--ink); }
+  .detail { overflow-y: auto; padding: 28px 36px 48px; }
+  .detail .meta { color: var(--muted); }
+  .detail .example { margin: 0 0 16px; }
+  .detail h3 { margin: 24px 0 8px; font-size: 15px; font-weight: 600; letter-spacing: .9px; text-transform: uppercase; }
+  .detail .cols { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 0 36px; }
+  .detail textarea { width: 100%; min-height: 340px; padding: 12px; font: 15px/1.5 var(--sans); color: var(--ink); background: #fff; border: 1px solid var(--rule); resize: vertical; }
+  .detail textarea[readonly] { background: #f7f9f6; }
+  .detail ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+  .detail a { color: var(--navy); overflow-wrap: anywhere; }
+  .decided { margin: 12px 0 0; padding: 10px 12px; background: #fff; border-left: 4px solid var(--pc, var(--gold)); }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--rule); }
+  .actions label { display: grid; gap: 4px; font-weight: 500; }
+  .actions input, .actions .reason { padding: 8px 10px; font: inherit; border: 1px solid var(--rule); background: #fff; }
+  .actions .reason { flex-basis: 100%; min-height: 70px; }
+  .btn { padding: 9px 16px; font-weight: 600; border: 1px solid var(--navy); background: var(--navy); color: #fff; cursor: pointer; }
+  .btn.ghost { background: none; color: var(--navy); }
+  .btn.danger { background: none; color: var(--crimson); border-color: var(--crimson); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .err { flex-basis: 100%; margin: 0; color: var(--crimson); font-weight: 500; }
+  .log { margin-top: 20px; color: var(--muted); font-size: 14px; }
   @media (max-width: 900px) {
+    .reports { grid-template-columns: 1fr; overflow-y: auto; } .queue { border-right: 0; border-bottom: 1px solid var(--ink); }
+    .queue, .detail { overflow: visible; padding: 20px 16px; } .detail .cols { grid-template-columns: 1fr; }
+    .cases { padding: 20px 16px 40px; } .two { grid-template-columns: 1fr; }
     .body { flex-direction: column; overflow-y: auto; }
     .map { flex: none; height: 70vh; }
     .side { width: 100%; border-left: 0; border-top: 1px solid var(--ink); overflow: visible; }
@@ -112,7 +177,7 @@
 <header class="top">
   <div class="brand">
     <span class="logo">Sentinels</span>
-    <nav class="nav"><span class="on">Map</span><span>Cases</span><span>Reports</span></nav>
+    <nav class="nav"><a href="#map" data-view="map" class="on">Map</a><a href="#cases" data-view="cases">Cases</a><a href="#reports" data-view="reports">Reports</a></nav>
   </div>
   <span class="updated" id="updated"></span>
 </header>
@@ -139,6 +204,33 @@
     <div class="case" id="case"></div>
     <p class="foot">A candidate, not proof. A person approves any report before it is sent.</p>
   </aside>
+</main>
+<main class="cases" id="cases-view" hidden>
+  <h1>Cases</h1>
+  <p class="intro">Every dry-spill candidate from the latest run, and where the agents and reviewers have got to with it. Click a case to open it: ones with a drafted report open on the Reports tab, the rest on the map.</p>
+  <h2>Status</h2>
+  <div class="board" id="board"></div>
+  <div class="two">
+    <section>
+      <h2>Confidence swing</h2>
+      <p class="sub">How far the web evidence moved each case. Hollow dot: the skeptic's view. Solid dot: the final call after the evidence check. Ticks mark 40% (needs review) and 65% (likely breach).</p>
+      <div id="swings"></div>
+    </section>
+    <section>
+      <h2>Repeat sites</h2>
+      <p class="sub" id="repeat-sub"></p>
+      <div id="repeats"></div>
+    </section>
+  </div>
+</main>
+<main class="reports" id="reports-view" hidden>
+  <div class="queue">
+    <h1>Reports</h1>
+    <p class="intro">Drafted evidence packs. Nothing reaches the Environment Agency until a person approves it here, downloads the pack and sends it.</p>
+    <p class="api-off" id="api-off" hidden>Read-only: decisions can't be saved. Start the page with <code>python andrew-site/serve.py</code> to approve or reject.</p>
+    <div id="queue"></div>
+  </div>
+  <div class="detail" id="detail"></div>
 </main>
 <script>
 const RUN = /*DATA*/null;
@@ -348,6 +440,245 @@ function select(s) {
 }
 renderRows(); renderCase();
 if (dry[0]) showLabel(dry[0], false);
+
+// ---------- Cases tab ----------
+const pctN = x => Math.round(x * 100);
+const views = { map: document.querySelector("main.body"), cases: document.getElementById("cases-view"), reports: document.getElementById("reports-view") };
+function show(v) {
+  if (!views[v]) v = "map";
+  for (const [k, node] of Object.entries(views)) node.hidden = k !== v;
+  document.querySelectorAll(".nav a").forEach(a => a.classList.toggle("on", a.dataset.view === v));
+  if (v === "map") map.resize(); else if (v === "cases") renderCases(); else renderReports();
+  if (location.hash !== "#" + v) history.replaceState(null, "", "#" + v);
+}
+window.addEventListener("hashchange", () => show(location.hash.slice(1)));
+function openOnMap(s) { show("map"); if (selected !== s) select(s); }
+const siteLine = s => `${s.company} · ${s.id}`;
+const example = s => s.case && s.case.illustrative ? el("span", "chip", "Example") : null;
+
+const STATUS = [
+  ["new", "New", "var(--crimson)", "No agent has looked at these yet."],
+  ["innocent", "Ruled innocent", "var(--muted)", "No cases ruled innocent yet."],
+  ["review", "Needs review", "var(--gold)", "No cases waiting for review."],
+  ["drafted", "Report drafted", "var(--navy)", "No evidence packs drafted yet."],
+  ["approved", "Approved", "var(--ink)", "Nothing approved yet. Approve drafts on the Reports tab."],
+  ["rejected", "Rejected", "var(--ink)", "Nothing rejected yet."],
+];
+function statusOf(s) {
+  if (!s.case) return s.verdict === "dry_spill_candidate" ? "new" : null;
+  const d = decisionOf(s).status;
+  if (d === "approved" || d === "sent") return "approved";
+  if (d === "rejected") return "rejected";
+  if (s.case.final_verdict === "likely_innocent") return "innocent";
+  return s.case.report ? "drafted" : "review";
+}
+function card(s, extra) {
+  const b = el("button", "card");
+  b.append(el("b", null, title(s.name)), el("span", "meta", `${siteLine(s)} · ${hrs(s)} h`));
+  if (extra) b.append(el("span", "meta", extra));
+  const ex = example(s); if (ex) b.append(ex);
+  b.onclick = () => s.case && s.case.report ? openInReports(s) : openOnMap(s);
+  return b;
+}
+function openInReports(s) { openReport = s; rejecting = false; errorText = ""; show("reports"); }
+function renderBoard() {
+  const groups = Object.fromEntries(STATUS.map(([k]) => [k, []]));
+  for (const s of dry.concat(sites.filter(s => s.case && !dry.includes(s)))) { const k = statusOf(s); if (k) groups[k].push(s); }
+  document.getElementById("board").replaceChildren(...STATUS.map(([k, name, colour, none]) => {
+    const col = el("div", "col"); col.style.setProperty("--c", colour);
+    const h = el("h3", null, name); h.append(el("span", null, String(groups[k].length)));
+    const list = el("div", "cards");
+    if (!groups[k].length) list.append(el("p", "none", none));
+    for (const s of groups[k]) list.append(card(s, s.case ? `${s.case.final_verdict.replace(/_/g, " ")}, ${pctN(s.case.breach_confidence)}% confident` : null));
+    col.append(h, list);
+    return col;
+  }));
+}
+function renderSwings() {
+  const cased = sites.filter(s => s.case && typeof s.case.skeptic_confidence === "number" && typeof s.case.breach_confidence === "number")
+    .sort((a, b) => Math.abs(b.case.breach_confidence - b.case.skeptic_confidence) - Math.abs(a.case.breach_confidence - a.case.skeptic_confidence));
+  const box = document.getElementById("swings");
+  if (!cased.length) return box.replaceChildren(el("p", "sub", "No agent cases yet. Run scripts/agents.py to investigate the top candidates."));
+  box.replaceChildren(...cased.map(s => {
+    const from = s.case.skeptic_confidence, to = s.case.breach_confidence, d = pctN(to) - pctN(from);
+    const row = el("button", "pick");
+    const head = el("span"); head.append(el("b", null, title(s.name)), " ", el("span", "meta", siteLine(s)));
+    const track = el("div", "track");
+    const at = (cls, x, w) => { const i = el("i", cls); i.style.left = `${x * 100}%`; if (w != null) i.style.width = `${w * 100}%`; return i; };
+    track.append(at("rail", 0), at("tick", .4), at("tick", .65), at("move", Math.min(from, to), Math.abs(to - from)), at("from", from), at("to", to));
+    const said = s.case.evidence
+      ? `Skeptic ${pctN(from)}% → final ${pctN(to)}%: ${d > 0 ? "+" : ""}${d} points after the evidence check`
+      : `Skeptic ${pctN(from)}%: dismissed before any web search`;
+    row.append(head, track, el("span", "meta", said));
+    const ex = example(s); if (ex) row.append(ex);
+    row.onclick = () => openOnMap(s);
+    return row;
+  }));
+}
+function renderRepeats() {
+  const H = RUN.history || { runs: [], events: [] };
+  const day = t => { const d = new Date(String(t).replace(" ", "T")); return isNaN(d) ? String(t) : d.toLocaleDateString("en-GB", { day: "numeric", month: "short" }); };
+  const by = {};
+  for (const e of H.events) if (e.verdict === "dry_spill_candidate") (by[e.id] = by[e.id] || []).push(e);
+  const reps = Object.values(by).filter(es => es.length >= 2)
+    .sort((a, b) => b.length - a.length || String(b.at(-1).start).localeCompare(String(a.at(-1).start)));
+  const since = H.runs.length ? day(H.runs.slice().sort()[0]) : "this run";
+  document.getElementById("repeat-sub").textContent =
+    `Overflows with more than one dry-spill candidate, counted across ${H.runs.length} detector run${H.runs.length === 1 ? "" : "s"} since ${since}. Each spill counts once, however many runs saw it. Several candidates is a pattern worth a look, not proof of a breach.`;
+  const box = document.getElementById("repeats");
+  if (!reps.length) return box.replaceChildren(el("p", "sub", "No overflow has had more than one dry-spill candidate yet. This list fills up as the detector keeps running: every build adds that run's spills to the record."));
+  box.replaceChildren(...reps.map(es => {
+    es.sort((a, b) => String(a.start).localeCompare(String(b.start)));
+    const last = es.at(-1), live = sites.find(s => s.id === last.id);
+    const row = el(live ? "button" : "div", "pick");
+    const head = el("span"); head.append(el("b", null, title(last.name)), " ", el("span", "meta", `${last.company} · ${last.id}`));
+    const strip = el("div", "strip");
+    for (const e of es.slice(-8)) strip.append(el("span", null, `${day(e.start)} · ${e.hours == null ? "?" : fmt(e.hours)} h`));
+    row.append(head, el("span", "meta", `${es.length} dry-spill candidates`), strip);
+    if (live) row.onclick = () => openOnMap(live);
+    return row;
+  }));
+}
+function renderCases() { renderBoard(); renderSwings(); renderRepeats(); }
+
+// ---------- Reports tab ----------
+// Decisions live in andrew-site/decisions.json, read and written through andrew-site/serve.py.
+let decisions = {}, api = false, openReport = null, rejecting = false, saving = false, errorText = "";
+const caseKey = c => `${c.site_id}|${c.event_start}`;
+const decisionOf = s => (s.case && decisions[caseKey(s.case)]) || { status: "draft", log: [] };
+const when2 = t => { const d = new Date(t); return isNaN(d) ? String(t) : d.toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); };
+const STATE = { draft: "Draft", approved: "Approved", sent: "Sent", rejected: "Rejected" };
+const reportSites = () => sites.filter(s => s.case && s.case.report);
+const store = { get: k => { try { return localStorage.getItem(k) || ""; } catch { return ""; } },
+                set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };  // reviewer name: per-browser convenience only
+
+fetch("/api/decisions").then(r => r.ok ? r.json() : Promise.reject()).then(d => { decisions = d; api = true; })
+  .catch(() => {}).finally(() => { if (!views.cases.hidden) renderCases(); if (!views.reports.hidden) renderReports(); });
+
+function renderReports() {
+  document.getElementById("api-off").hidden = api;
+  const order = { draft: 0, approved: 1, sent: 2, rejected: 3 };
+  const list = reportSites().sort((a, b) => order[decisionOf(a).status] - order[decisionOf(b).status] || b.case.breach_confidence - a.case.breach_confidence);
+  if (!openReport || !list.includes(openReport)) openReport = list[0] || null;
+  const q = document.getElementById("queue");
+  if (!list.length) q.replaceChildren(el("p", "sub", "No drafted evidence packs yet. The agents draft one when a case is rated needs review or likely breach: run scripts/agents.py."));
+  else q.replaceChildren(...list.map(s => {
+    const d = decisionOf(s), b = el("button", "pick" + (s === openReport ? " on" : ""));
+    const head = el("span"); head.append(el("b", null, title(s.name)), " ", el("span", "meta", siteLine(s)));
+    b.append(head, el("span", "meta", `${s.case.final_verdict.replace(/_/g, " ")}, ${pctN(s.case.breach_confidence)}% confident`), el("span", "pill " + d.status, STATE[d.status]));
+    const ex = example(s); if (ex) b.append(ex);
+    b.setAttribute("aria-pressed", s === openReport);
+    b.onclick = () => { openReport = s; rejecting = false; errorText = ""; renderReports(); };
+    return b;
+  }));
+  renderDetail();
+}
+
+function renderDetail() {
+  const box = document.getElementById("detail"), s = openReport;
+  if (!s) return box.replaceChildren(el("p", "sub", "Select a draft to review it."));
+  const c = s.case, d = decisionOf(s), out = [];
+  if (c.illustrative) {
+    const b = el("div", "example");
+    b.append(el("b", null, "Example report"), el("span", null, "Made up to show the review flow. No agent has run on this site. Its downloaded pack is marked as an example and must not be sent."));
+    out.push(b);
+  }
+  out.push(el("h2", null, title(s.name)), el("div", "meta", `${siteLine(s)} · discharging ${hrs(s)} h · ${c.final_verdict.replace(/_/g, " ")}, ${pctN(c.breach_confidence)}% confident`));
+  const said = { approved: `Approved by ${d.approved_by}, ${when2(d.approved_at)}.`,
+                 sent: `Sent by ${d.sent_by}, ${when2(d.sent_at)}${d.sent_note ? `: ${d.sent_note}` : ""}. Approved by ${d.approved_by}.`,
+                 rejected: `Rejected by ${d.rejected_by}, ${when2(d.rejected_at)}: ${d.reason}` }[d.status];
+  if (said) { const p = el("p", "decided", said); p.style.setProperty("--pc", { approved: "var(--navy)", sent: "var(--ink)", rejected: "var(--muted)" }[d.status]); out.push(p); }
+
+  const cols = el("div", "cols"), left = el("div"), right = el("div");
+  const ta = el("textarea"); ta.value = d.report || c.report; ta.readOnly = d.status !== "draft" || !api;
+  ta.setAttribute("aria-label", "Draft report");
+  left.append(el("h3", null, d.status === "draft" ? "Draft report (you can edit it)" : "Report"), ta);
+  right.append(el("h3", null, "Rain gauges within 10 km"));
+  const gl = el("ul");
+  for (const g of s.gauges) {
+    const li = el("li", null, `${g.station}, ${fmt(g.km)} km: ${fmt(g.mm_0_24h_before, 2)} mm in the 24 h before, ${fmt(g.mm_24_48h_before, 2)} mm in the 24 h before that `);
+    const a = el("a", null, "EA data"); a.href = `https://environment.data.gov.uk/flood-monitoring/id/stations/${encodeURIComponent(g.station)}`; a.target = "_blank"; a.rel = "noopener noreferrer";
+    li.append(a); gl.append(li);
+  }
+  right.append(s.gauges.length ? gl : el("p", "meta", "No gauge within 10 km."));
+  const bullets = (h, items) => { if (!items || !items.length) return; right.append(el("h3", null, h)); const ul = el("ul"); for (const i of items) ul.append(el("li", null, i)); right.append(ul); };
+  bullets("Objections still standing", c.ruling && c.ruling.objections_standing);
+  bullets("Objections refuted", c.ruling && c.ruling.objections_refuted);
+  const srcs = (c.evidence && c.evidence.searches || []).flatMap(q => q.sources || []);
+  if (srcs.length) {
+    right.append(el("h3", null, "Sources"));
+    const ul = el("ul");
+    for (const src of srcs) { const li = el("li"); if (/^https?:\/\//.test(src.url || "")) { const a = el("a", null, src.name || src.url); a.href = src.url; a.target = "_blank"; a.rel = "noopener noreferrer"; li.append(a); } else li.textContent = src.name || ""; ul.append(li); }
+    right.append(ul);
+  }
+  cols.append(left, right); out.push(cols);
+
+  const act = el("div", "actions");
+  const btn = (text, cls, fn, disabled) => { const b = el("button", "btn " + cls, text); b.onclick = fn; b.disabled = !!disabled || saving; return b; };
+  if (!api && d.status === "draft") act.append(el("p", "meta", "Start the page with python andrew-site/serve.py to approve or reject."));
+  if (api) {
+    const name = el("input"); name.value = store.get("sentinels-reviewer"); name.placeholder = "Your name"; name.autocomplete = "name";
+    name.oninput = () => store.set("sentinels-reviewer", name.value.trim());
+    const nameLabel = el("label", null, "Reviewer"); nameLabel.append(name); act.append(nameLabel);
+    const send = (status, note = "") => post(s, status, name.value.trim(), note, ta.value);
+    if (d.status === "draft" && !rejecting) act.append(btn("Approve", "", () => send("approved")), btn("Reject…", "danger", () => { rejecting = true; renderDetail(); }));
+    if (d.status === "draft" && rejecting) {
+      const why = el("textarea", "reason"); why.placeholder = "Why reject it? e.g. this outfall is tidal. The agents see this reason next time they look at this site.";
+      why.setAttribute("aria-label", "Reason for rejecting");
+      act.append(why, btn("Confirm reject", "danger", () => send("rejected", why.value.trim())), btn("Cancel", "ghost", () => { rejecting = false; renderDetail(); }));
+    }
+    if (d.status === "approved") {
+      const to = el("input"); to.placeholder = "e.g. EA South West, incident line";
+      const toLabel = el("label", null, "Sent to (optional)"); toLabel.append(to);
+      act.append(toLabel, btn("Mark as sent", "ghost", () => send("sent", to.value.trim())));
+    }
+    if (d.status !== "draft") act.append(btn(`Undo ${d.status === "sent" ? "sent" : d.status === "approved" ? "approval" : "rejection"}`, "ghost", () => send("draft", "undone")));
+  }
+  if (d.status === "approved" || d.status === "sent") act.prepend(btn(c.illustrative ? "Download example pack" : "Download evidence pack", "", () => downloadPack(s, d)));
+  if (errorText) { const e = el("p", "err", errorText); e.setAttribute("role", "alert"); act.append(e); }
+  out.push(act);
+  if (d.log.length) out.push(el("div", "log", "History: " + d.log.map(l => `${STATE[l.status]} by ${l.by}, ${when2(l.at)}`).join(" · ")));
+  box.replaceChildren(...out);
+}
+
+async function post(s, status, reviewer, note, report) {
+  if (!reviewer) { errorText = "Add your name first, so the record shows who decided."; return renderDetail(); }
+  if (status === "rejected" && !note) { errorText = "Give a reason for rejecting."; return renderDetail(); }
+  saving = true; errorText = ""; renderDetail();
+  try {
+    const r = await fetch("/api/decisions", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ key: caseKey(s.case), status, reviewer, note, report, site_id: s.case.site_id,
+                             event_start: s.case.event_start, company: s.company, illustrative: !!s.case.illustrative }) });
+    const body = await r.json();
+    if (!r.ok) throw new Error(body.error || "Couldn't save");
+    decisions = body; rejecting = false;
+  } catch (e) { errorText = `Not saved: ${e.message}`; }
+  saving = false; renderReports();
+}
+
+function downloadPack(s, d) {
+  const c = s.case, L = [];
+  if (c.illustrative) L.push("> **EXAMPLE, NOT A REAL EVIDENCE PACK.** The agent text in this pack was made up to show the format. Do not send it.", "");
+  L.push("# Evidence pack: possible dry-day sewage spill", "", `**${title(s.name)}** overflow, ${s.company} (${s.id})`, "",
+    `Reviewed and approved by ${d.approved_by} on ${when2(d.approved_at)}. Prepared with Sentinels.`, "",
+    "## Report", "", d.report || c.report, "",
+    "## The spill", "", `- Spill started: ${c.event_start}`,
+    `- Discharging: ${s.hours == null ? "unknown (monitor offline)" : fmt(s.hours) + " hours"} at the time of the detector run (${when2(RUN.run_at.replace(" ", "T"))})`, "",
+    "## Rain gauges within 10 km", "", "| Gauge | Distance | Rain, 24 h before | Rain, 24 to 48 h before | Data |", "|---|---|---|---|---|",
+    ...s.gauges.map(g => `| ${g.station} | ${fmt(g.km)} km | ${fmt(g.mm_0_24h_before, 2)} mm | ${fmt(g.mm_24_48h_before, 2)} mm | https://environment.data.gov.uk/flood-monitoring/id/stations/${encodeURIComponent(g.station)} |`),
+    "", "Under 0.25 mm in a 24-hour window counts as a dry day.", "",
+    "## Agents' assessment", "", `Final verdict: ${c.final_verdict.replace(/_/g, " ")}, ${pctN(c.breach_confidence)}% confidence that this is a genuine dry-day spill (the skeptic alone said ${pctN(c.skeptic_confidence)}%).`, "");
+  const items = (h, xs) => { if (xs && xs.length) L.push(`${h}:`, "", ...xs.map(x => `- ${x}`), ""); };
+  items("Objections still standing", c.ruling && c.ruling.objections_standing);
+  items("Objections refuted", c.ruling && c.ruling.objections_refuted);
+  const srcs = (c.evidence && c.evidence.searches || []).flatMap(q => q.sources || []);
+  if (srcs.length) L.push("## Sources", "", ...srcs.map(x => x.url ? `- [${x.name || x.url}](${x.url})` : `- ${x.name}`), "");
+  L.push("---", "", "This is a report of a possible breach for investigation, not proof. Spill data is self-reported by the water company and rain gauges are sparse.");
+  const a = el("a"); a.href = URL.createObjectURL(new Blob([L.join("\n")], { type: "text/markdown" }));
+  a.download = `sentinels-${c.illustrative ? "EXAMPLE-" : ""}evidence-pack-${s.id}.md`;
+  document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+show(location.hash.slice(1) || "map");
 </script>
 </body>
 </html>
