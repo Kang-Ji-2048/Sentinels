@@ -271,6 +271,39 @@
     body.dash .side { flex: none; max-width: none; min-width: 0; } body.dash .mhead { flex-direction: column; } body.dash .mmeta { flex-direction: column; gap: 4px; } body.dash .askbox { bottom: 92px; }
   }
 
+
+  /* Dashboard interactions: shortlist pins, compact case card, Ask Genie in the right column */
+  body.dash .pin { display: flex; align-items: center; gap: 6px; padding: 4px 9px 4px 6px; font: 600 14px var(--sans); color: var(--crimson);
+                   background: #fff; border: 1.5px solid var(--navy); border-radius: 8px; box-shadow: 0 4px 12px rgba(18, 53, 91, .2); cursor: pointer;
+                   transition: transform .18s ease, background .18s ease, color .18s ease; position: relative; }
+  body.dash .pin::after { content: ""; position: absolute; left: 50%; bottom: -6px; width: 9px; height: 9px; background: inherit; border: inherit;
+                          border-top: 0; border-left: 0; transform: translateX(-50%) rotate(45deg); }
+  body.dash .pin .pn { padding-right: 6px; border-right: 1px solid #c9d3dd; color: var(--muted); font-weight: 500; font-size: 12px; }
+  body.dash .pin-wrap { padding-bottom: 6px; z-index: 2; } /* above the deck.gl canvas */
+  body.dash .pin-wrap:has(.pin:hover), body.dash .pin-wrap:has(.hot), body.dash .pin-wrap:has(.on) { z-index: 4; }
+  body.dash .pin:hover, body.dash .pin.hot { transform: translateY(-3px) scale(1.06); z-index: 5; }
+  body.dash .pin.on { background: var(--navy); color: #fff; transform: translateY(-3px) scale(1.1); }
+  body.dash .pin.on .pn { color: #c9d6e3; border-right-color: #45607d; }
+  body.dash .pin:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  body.dash .row .big { transition: transform .15s ease; } body.dash .row:hover .big { transform: translateX(-3px); }
+  body.dash .cmeta { display: grid; gap: 2px; color: var(--muted); font-size: 14px; }
+  body.dash .cverdict { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin: 14px 0 0; font-size: 14px; }
+  body.dash .vchip { padding: 3px 10px; border-radius: 999px; font-size: 13px; font-weight: 600; text-transform: capitalize; background: #e6ebf0; color: var(--ink); }
+  body.dash .vchip.likely_breach { background: #fbe3e7; color: var(--crimson); }
+  body.dash .vchip.needs_review { background: #fbf1cc; color: #7a5d00; }
+  body.dash .vchip.likely_innocent { background: #e2ecf5; color: var(--navy); }
+  body.dash .cact { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 6px; }
+  body.dash .cact .btn { border-radius: 10px; padding: 11px 16px; }
+  body.dash .cact .go { flex: 1; display: flex; justify-content: space-between; gap: 12px; }
+  body.dash .cmore { margin: 8px 0 12px; } body.dash .cmore summary { cursor: pointer; font-weight: 500; color: var(--navy); padding: 8px 0; }
+  body.dash .side .case { animation: rise .35s ease; }
+  @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { body.dash .side .case { animation: none; } body.dash .pin { transition: none; } }
+  body.dash .side > * { flex-shrink: 0; }  /* the card scrolls; nothing inside it gets squashed */
+  body.dash .side .askbox { position: static; width: auto; max-height: none; margin-top: 16px; box-shadow: none; border: 1px solid #dde4ea; border-radius: 12px; }
+  body.dash .side .askbox .ask-toggle { border-radius: 11px; }
+  body.dash .side .askbox:not(.closed) .ask-toggle { border-radius: 11px 11px 0 0; }
+  body.dash .side #ask-log { max-height: 320px; }
 </style>
 </head>
 <body>
@@ -463,6 +496,16 @@ function layers() {
     filled: true, stroked: true, lineWidthUnits: "pixels", getLineWidth: 2,
     getFillColor: g => wet(g) ? [18, 53, 91, 255] : [243, 246, 241, 255], getLineColor: [18, 53, 91, 255],
   });
+  if (DASH) {  // dashboard: faint fill plus a dashed 10 km ring instead of the gold disc
+    const ring = selected ? [Array.from({ length: 97 }, (_, i) => {
+      const a = i / 96 * 2 * Math.PI, dLat = AREA_M / 111320 * Math.sin(a);
+      return [selected.lon + AREA_M / (111320 * Math.cos(selected.lat * Math.PI / 180)) * Math.cos(a), selected.lat + dLat];
+    })] : [];
+    const disc = area.clone({ stroked: false, getFillColor: [18, 53, 91, 22] });
+    const dashed = new deck.PathLayer({ id: "ring", data: ring, getPath: d => d, getColor: [18, 53, 91, 200], getWidth: 2, widthUnits: "pixels",
+      getDashArray: [5, 4], dashJustified: true, extensions: [new deck.PathStyleExtension({ dash: true })] });
+    return dotLayers([disc, dashed, links, gauges]);
+  }
   if (MAP2D) return dotLayers([area, links, gauges]);
   const context = dryOnly ? [] : [stack("rain_explained"), stack("no_gauge")];
   return [area, links, gauges, ...context, stack("dry_spill_candidate")];
@@ -527,12 +570,14 @@ function showLabel(s, selected) {
 function renderRows() {
   const rows = document.getElementById("rows");
   if (!DASH) return renderRowsClassic(rows);
-  rows.replaceChildren(...dry.slice(0, selected ? 4 : 6).map((s, i) => {
+  rows.replaceChildren(...dry.slice(0, PINNED).map((s, i) => {
     const b = el("button", "row" + (s === selected ? " sel" : ""));
     const site = el("span", "site"), big = el("span", "big", hrs(s));
     site.append(el("b", null, title(s.name)), el("span", null, `${s.company} · ${fmt(s.rain48, 2)} mm rain nearby`));
     big.append(el("small", null, "h"));
     b.append(el("span", "no", i + 1), site, big);
+    b.onmouseenter = b.onfocus = () => pins.get(s.id)?.classList.add("hot");
+    b.onmouseleave = b.onblur = () => pins.get(s.id)?.classList.remove("hot");
     b.setAttribute("aria-pressed", s === selected);
     b.onclick = () => select(s);
     return b;
@@ -558,6 +603,7 @@ function renderCase() {
     box.append(el("h2", null, DASH ? "Pick a spill" : "Case"), el("p", null, DASH ? "Select a spill on the map or in the list above to read its case: the rain gauges checked and what the agents concluded." : "Select a spill on the map or a row above to read the case."));
     return c.replaceChildren(box);
   }
+  if (DASH) return renderCaseDash(c, selected);
   const s = selected, v = VERDICT[s.verdict] || VERDICT.no_gauge;
   let head = el("section");
   if (!DASH) head.append(el("h3", null, title(s.name)), el("div", "lede", `${s.company} · ${s.id} · discharging ${s.hours == null ? "for an unknown time (monitor offline)" : fmt(s.hours) + " h"}`));
@@ -579,6 +625,36 @@ function renderCase() {
   const agents = el("section");
   if (!s.case) agents.append(el("span", "tag", "Agents"), el("p", "lede", "No agent case for this site in this run yet."));
   c.replaceChildren(head, verdict, gauges, ...(s.case ? agentSections(s.case, s) : [agents]));
+}
+// Dashboard case card: the headline facts and one action up front; the gauge list and agents' conversation fold away.
+function renderCaseDash(c, s) {
+  const k = s.case, rank = dry.indexOf(s) + 1, pc = x => Math.round(x * 100);
+  const head = el("div", "chead"), info = el("div"), score = el("div", "score");
+  info.append(el("p", "eyebrow", rank ? `Dry spill · #${rank} longest` : (VERDICT[s.verdict] || VERDICT.no_gauge).name), el("h3", null, title(s.name)));
+  score.append(el("b", null, hrs(s)), el("span", null, s.hours == null ? "monitor offline" : "hours discharging"));
+  head.append(info, score);
+  const wettest = s.gauges.length ? Math.max(...s.gauges.map(g => Math.max(g.mm_0_24h_before ?? 0, g.mm_24_48h_before ?? 0))) : null;
+  const meta = el("div", "cmeta");
+  meta.append(el("span", null, `${s.company} · ${s.id}`),
+    el("span", null, s.gauges.length ? `${s.gauges.length} rain gauge${s.gauges.length === 1 ? "" : "s"} within 10 km · wettest day ${fmt(wettest, 2)} mm` : "No rain gauge within 10 km"));
+  const verdict = el("div", "cverdict");
+  if (k) {
+    const chip = el("span", "vchip " + k.final_verdict, k.final_verdict.replace(/_/g, " "));
+    verdict.append(chip, el("span", null, `${pc(k.breach_confidence)}% confident after the evidence check` + (k.skeptic ? ` (skeptic alone: ${pc(k.skeptic.breach_confidence)}%)` : "")));
+  } else verdict.append(el("span", "vchip none", "not reviewed"), el("span", null, s.verdict === "dry_spill_candidate" ? "No agent has looked at this spill yet." : "Rain nearby explains this spill."));
+  const act = el("div", "cact");
+  if (k && k.report) {
+    const go = el("button", "btn go"); go.append(el("span", null, "Review the evidence pack"), el("span", null, "→"));
+    go.onclick = () => { openReport = s; location.hash = "reports"; };
+    act.append(go);
+  }
+  const back = el("button", "btn ghost", "Show all of England"); back.onclick = () => select(null); act.append(back);
+  const more = el("details", "cmore"); more.append(el("summary", null, k ? "Read the gauges and the agents' conversation" : "Read the gauge readings"));
+  const gl = el("section"); gl.append(el("span", "tag", "Rain gauges within 10 km"));
+  if (s.gauges.length) { const ul = el("ul"); for (const g of s.gauges) ul.append(el("li", null, `${g.station}, ${fmt(g.km)} km: ${fmt(g.mm_0_24h_before, 2)} mm in the 24 h before, ${fmt(g.mm_24_48h_before, 2)} mm in the 24 h before that`)); gl.append(ul); }
+  else gl.append(el("p", "lede", "No Environment Agency gauge within 10 km, so rain can't be ruled in or out."));
+  more.append(gl, ...(k ? agentSections(k, s) : []));
+  c.replaceChildren(head, meta, verdict, act, more);
 }
 // The agent conversation, in the order it happened. All text is model or web output: textContent only.
 function agentSections(k, s) {
@@ -637,15 +713,35 @@ function select(s) {
   overlay.setProps({ layers: layers() });
   if (!selected) {
     resetBtn.hidden = true;
-    if (dry[0]) showLabel(dry[0], false);
-    return map.fitBounds(ENGLAND, { padding: ENGLAND_PAD, pitch: MAP2D ? 0 : 45, bearing: 0, duration: 1200 });
+    if (DASH) { siteMarker.remove(); markPins(); }
+    else if (dry[0]) showLabel(dry[0], false);
+    return map.fitBounds(ENGLAND, { padding: ENGLAND_PAD, pitch: MAP2D ? 0 : 45, bearing: 0, duration: DASH && !REDUCED ? 1800 : 1200 });
+  }
+  if (DASH) {  // a slow arc out and back in, so you see where in England the spill is
+    markPins();
+    if (pins.has(s.id)) siteMarker.remove(); else showLabel(s, true);
+    map.flyTo({ center: [s.lon, s.lat], zoom: 10, bearing: 0, curve: 1.7, duration: REDUCED ? 0 : 2600,
+                padding: { top: 60, bottom: 90, left: 40, right: 40 }, essential: true });
+    return resetBtn.hidden = false;
   }
   showLabel(s, true);
   map.flyTo({ center: [s.lon, s.lat], zoom: 10.3, pitch: MAP2D ? 0 : 55, bearing: 0, padding: { top: 60, bottom: 0, left: 300, right: 0 }, duration: 1600, essential: true });
   resetBtn.hidden = false;
 }
+// Dashboard: numbered pins for the shortlist, matching the list on the right. Click one to fly to it.
+const pins = new Map();
+const PINNED = 6;
+function markPins() { for (const [id, p] of pins) p.classList.toggle("on", !!selected && selected.id === id); }
+if (DASH) dry.slice(0, PINNED).forEach((s, i) => {
+  const p = el("button", "pin"); p.append(el("span", "pn", i + 1), el("b", null, hrs(s)));
+  p.title = `${title(s.name)}, ${hrs(s)} h`; p.setAttribute("aria-label", `${i + 1}: ${title(s.name)}, ${hrs(s)} hours`);
+  p.onclick = e => { e.stopPropagation(); select(s); };
+  pins.set(s.id, p);
+  const wrap = el("div", "pin-wrap"); wrap.append(p);  // the marker positions the wrapper; the button can animate freely
+  new maplibregl.Marker({ element: wrap, anchor: "bottom", offset: [0, -8] }).setLngLat([s.lon, s.lat]).addTo(map);
+});
 renderRows(); renderCase();
-if (dry[0]) showLabel(dry[0], false);
+if (!DASH && dry[0]) showLabel(dry[0], false);
 
 // ---------- Cases tab ----------
 const pctN = x => Math.round(x * 100);
@@ -900,6 +996,7 @@ function downloadPack(s, d) {
   fetch("/api/genie").then(r => r.ok ? r.json() : Promise.reject())
     .then(d => setOff(d.configured ? "" : "Genie isn't set up on this machine. Set DATABRICKS_HOST, DATABRICKS_TOKEN and GENIE_SPACE_ID, then restart python andrew-site/serve.py."))
     .catch(() => setOff("Needs the local server: start the page with python andrew-site/serve.py."));
+  if (DASH) document.querySelector(".side").insertBefore(document.getElementById("askbox"), document.querySelector(".side .foot"));
   const box = document.getElementById("askbox"), tog = document.getElementById("ask-toggle"), chipBox = document.getElementById("ask-chips");
   tog.onclick = () => { const open = box.classList.toggle("closed") === false; tog.setAttribute("aria-expanded", open);
                         document.getElementById("ask-chev").textContent = open ? "▾" : "▴"; if (open && !q.disabled) q.focus(); };
