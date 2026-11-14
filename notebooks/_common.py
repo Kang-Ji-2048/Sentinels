@@ -4,6 +4,9 @@ import os, sys
 repo_root = os.path.dirname(os.getcwd())  # notebooks/ lives one level below the repo root
 if repo_root not in sys.path:
     sys.path.insert(0, repo_root)
+# Drop cached sentinels modules so a re-run after a Git pull always uses the latest code
+for _m in [m for m in sys.modules if m == "sentinels" or m.startswith("sentinels.")]:
+    del sys.modules[_m]
 
 CATALOG, SCHEMA = "workspace", "sentinels"
 T = lambda name: f"{CATALOG}.{SCHEMA}.{name}"
