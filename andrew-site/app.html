@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sentinels</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Old+Standard+TT:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="https://unpkg.com/deck.gl@9.0.38/dist.min.js"></script>
+<style>
+  /* Tokens from the Figma file "Sentinels - App" */
+  :root {
+    --navy: #12355b; --crimson: #c8102e; --ink: #14202b; --muted: #3d5566;
+    --paper: #f3f6f1; --rule: #c5cec6; --sea: #bfd6dd; --land: #e3e9df; --gold: #e8c547;
+    --rain: rgba(18, 53, 91, .5);
+    --sans: "Archivo", system-ui, sans-serif; --serif: "Old Standard TT", Georgia, serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body { display: flex; flex-direction: column; background: var(--sea); color: var(--ink); font: 15px/1.4 var(--sans); }
+  button { font: inherit; color: inherit; }
+
+  .top { flex: none; height: 56px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; background: var(--navy); color: var(--sea); }
+  .brand { display: flex; align-items: center; gap: 36px; }
+  .logo { font: 700 22px var(--serif); color: #fff; }
+  .nav { display: flex; gap: 4px; }
+  .nav span { height: 56px; display: flex; align-items: center; padding: 0 16px; font-weight: 500; }
+  .nav .on { color: #fff; font-weight: 600; border-bottom: 4px solid var(--gold); padding-top: 4px; }
+
+  .body { flex: 1; display: flex; min-height: 0; }
+  .map { position: relative; flex: 1; min-width: 0; }
+  #map { position: absolute; inset: 0; }
+
+  .count { position: absolute; top: 20px; left: 24px; width: 274px; padding: 8px 12px 12px; background: rgba(243, 246, 241, .92); z-index: 2; pointer-events: none; }
+  .count .n { font: 700 96px/92px var(--serif); color: var(--crimson); }
+  .count h1 { margin: 0; font-size: 22px; font-weight: 600; }
+  .count p { margin: 0; color: var(--muted); line-height: 21px; }
+  .key { margin-top: 20px; padding-top: 12px; border-top: 1px solid var(--ink); display: grid; gap: 8px; }
+  .key div { display: flex; gap: 10px; align-items: center; }
+  .sw { width: 12px; height: 16px; flex: none; border-radius: 6px / 3px; background: var(--c); }
+  .sw.dry { --c: rgba(200, 16, 46, .75); }
+  .sw.rain { --c: rgba(18, 53, 91, .43); width: 8px; margin: 0 2px; }
+  .sw.none { --c: rgba(110, 120, 125, .51); width: 8px; margin: 0 2px; }
+
+  .reset { position: absolute; z-index: 3; left: 24px; bottom: 24px; padding: 8px 14px; background: var(--navy); color: #fff; border: 0; font-weight: 600; cursor: pointer; }
+  .reset:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .reset[hidden] { display: none; }
+  .toggle { pointer-events: auto; display: flex; gap: 8px; align-items: center; margin-top: 4px; font-weight: 500; cursor: pointer; }
+  .toggle input { width: 16px; height: 16px; margin: 0; accent-color: var(--crimson); cursor: pointer; }
+  .gauge-label { font: 13px/1.3 var(--sans); padding: 2px 6px; background: rgba(243, 246, 241, .94); border: 1px solid var(--navy); color: var(--ink); white-space: nowrap; pointer-events: none; }
+  .gauge-label b { font-weight: 600; }
+  .sea-label { font: italic 22px var(--serif); letter-spacing: 1.76px; color: var(--navy); pointer-events: none; white-space: nowrap; }
+  .sea-label.river { font-size: 15px; letter-spacing: 0; }
+  .site-label { display: flex; gap: 8px; padding: 5px 10px; background: rgba(227, 233, 223, .9); white-space: nowrap; pointer-events: none; }
+  .site-label.sel { background: var(--gold); border: 1px solid var(--ink); }
+  .site-label b { font-weight: 600; }
+
+  .side { flex: none; width: 440px; display: flex; flex-direction: column; background: var(--paper); border-left: 1px solid var(--ink); overflow-y: auto; }
+  .side h2 { margin: 0; padding: 20px 24px 10px; font-size: 15px; font-weight: 600; letter-spacing: .9px; text-transform: uppercase; }
+  .row { display: flex; gap: 8px; align-items: center; width: 100%; padding: 9px 24px; border: 0; border-top: 1px solid var(--rule); background: none; text-align: left; cursor: pointer; }
+  .row.head { border-top-color: var(--ink); color: var(--muted); font-weight: 500; cursor: default; }
+  .row:not(.head):hover { background: rgba(232, 197, 71, .25); }
+  .row.sel, .row.sel:hover { background: var(--gold); }
+  .row:focus-visible { outline: 2px solid var(--navy); outline-offset: -2px; }
+  .row .site { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+  .row .site b { font-weight: 600; }
+  .row .site span, .row.sel .site span { color: var(--muted); }
+  .row .h { width: 60px; text-align: right; }
+  .row .r { width: 84px; text-align: right; }
+  .rows { border-bottom: 1px solid var(--ink); }
+
+  .case { padding: 0 24px; flex: 1; }
+  .case h3 { margin: 0; font-size: 22px; font-weight: 600; }
+  .case .lede { color: var(--muted); }
+  .case section { padding: 14px 0; border-top: 1px solid var(--rule); }
+  .case section:first-child { border-top: 0; padding-top: 20px; }
+  .case .tag { font-weight: 600; color: var(--navy); }
+  .case .tag.dry { color: var(--crimson); }
+  .case ul { margin: 6px 0 0; padding: 0; list-style: none; display: grid; gap: 4px; }
+  .case p { margin: 6px 0 0; }
+  .case pre { margin: 6px 0 0; font: inherit; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .case details { margin-top: 8px; }
+  .case summary { cursor: pointer; font-weight: 500; }
+  .case a { color: var(--navy); overflow-wrap: anywhere; }
+  .case .example { display: grid; gap: 2px; margin-top: 14px; padding: 10px 12px; border: 2px dashed var(--crimson); background: #fbeaec; }
+  .case .example b { color: var(--crimson); text-transform: uppercase; letter-spacing: .9px; font-size: 13px; }
+  .case .example ~ section { opacity: .85; }
+  .case .empty h2 { padding: 20px 0 10px; }
+  .case .empty p { margin: 0; color: var(--muted); }
+  .foot { padding: 16px 24px; color: var(--muted); border-top: 1px solid var(--rule); }
+
+  @media (max-width: 900px) {
+    .body { flex-direction: column; overflow-y: auto; }
+    .map { flex: none; height: 70vh; }
+    .side { width: 100%; border-left: 0; border-top: 1px solid var(--ink); overflow: visible; }
+    .count { left: 16px; top: 16px; }
+    .count .n { font-size: 64px; line-height: 64px; }
+    .top { padding: 0 16px; } .brand { gap: 16px; } .updated { display: none; }
+  }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <span class="logo">Sentinels</span>
+    <nav class="nav"><span class="on">Map</span><span>Cases</span><span>Reports</span></nav>
+  </div>
+  <span class="updated" id="updated"></span>
+</header>
+<main class="body">
+  <div class="map">
+    <button class="reset" id="reset" hidden>Show all of England</button>
+    <div id="map" role="img" aria-label="3D map of England: one column per spilling overflow, height is hours discharging"></div>
+    <div class="count">
+      <div class="n" id="n"></div>
+      <h1>dry spills in 48 hours</h1>
+      <p id="of"></p>
+      <div class="key">
+        <div><span class="sw dry"></span>Dry spill candidate</div>
+        <div><span class="sw rain"></span>Rain explained</div>
+        <div><span class="sw none"></span>No gauge within 10 km</div>
+        <p>Column height is hours discharging.</p>
+        <label class="toggle"><input type="checkbox" id="dryOnly"> Dry spills only</label>
+      </div>
+    </div>
+  </div>
+  <aside class="side">
+    <h2>Longest dry spills</h2>
+    <div class="rows" id="rows"></div>
+    <div class="case" id="case"></div>
+    <p class="foot">A candidate, not proof. A person approves any report before it is sent.</p>
+  </aside>
+</main>
+<script>
+const RUN = /*DATA*/null;
+const sites = RUN.sites;
+const VERDICT = {
+  dry_spill_candidate: { name: "Dry spill candidate", fill: [200, 16, 46, 190], px: 6 },
+  rain_explained: { name: "Rain explained", fill: [18, 53, 91, 110], px: 4 },
+  no_gauge: { name: "No gauge within 10 km", fill: [110, 120, 125, 130], px: 4 },
+};
+const GOLD = [232, 197, 71, 235];
+const PX_PER_HOUR = 2;         // column height; sized in screen pixels so columns stay readable at any zoom
+const AREA_M = 10000;          // the detector checks rain gauges within 10 km
+const DRY_MM = 0.25;           // detector threshold: under this in a 24 h window is a dry day
+const wet = g => g.mm_0_24h_before >= DRY_MM || g.mm_24_48h_before >= DRY_MM;
+let dryOnly = false;
+
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+const title = s => s === s.toUpperCase() ? s.toLowerCase().replace(/\b\w/g, c => c.toUpperCase()) : s;
+const fmt = (x, d = 1) => x == null ? "n/a" : x.toFixed(d);
+const hrs = s => s.hours == null ? "?" : fmt(s.hours);  // null = monitor offline, duration unknown
+const dry = sites.filter(s => s.verdict === "dry_spill_candidate").sort((a, b) => (b.hours ?? -1) - (a.hours ?? -1));
+
+document.getElementById("n").textContent = dry.length;
+document.getElementById("of").textContent = `of ${sites.length} spills started. No meaningful rain at any gauge within 10 km.`;
+const when = new Date(RUN.run_at.replace(" ", "T"));
+document.getElementById("updated").textContent = isNaN(when) ? "" :
+  `Updated ${when.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}, ${when.toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`;
+
+// One semi-transparent cylinder per site; height is hours discharging.
+const kind = s => VERDICT[s.verdict] ? s.verdict : "no_gauge";
+let selected = null;
+
+function layers() {
+  const z = map.getZoom();
+  const m = 40075016.686 * Math.cos(map.getCenter().lat * Math.PI / 180) / (512 * 2 ** z)  // metres per pixel...
+    * Math.min(2, 1 + Math.max(0, z - 6) * 0.25);                                          // ...grown a little when zoomed in
+  const sel = selected && selected.id;
+  const area = new deck.ScatterplotLayer({
+    id: "area", data: selected ? [selected] : [], getPosition: s => [s.lon, s.lat], getRadius: AREA_M,
+    filled: true, stroked: true, getFillColor: [232, 197, 71, 70], getLineColor: [184, 146, 20, 255], lineWidthMinPixels: 2,
+  });
+  const stack = v => new deck.ColumnLayer({
+    id: v, data: sites.filter(s => kind(s) === v), diskResolution: 24, extruded: true,
+    radius: VERDICT[v].px * m, getPosition: s => [s.lon, s.lat],
+    getElevation: s => Math.max(s.hours, 0.5) * PX_PER_HOUR * m,
+    getFillColor: s => s.id === sel ? GOLD : VERDICT[v].fill,
+    pickable: true, autoHighlight: true, highlightColor: GOLD,
+    updateTriggers: { getElevation: m, getFillColor: sel },
+  });
+  const gs = selected ? selected.gauges.filter(g => g.lat != null) : [];  // older runs have no gauge positions
+  const links = new deck.LineLayer({
+    id: "links", data: gs, getSourcePosition: () => [selected.lon, selected.lat], getTargetPosition: g => [g.lon, g.lat],
+    getColor: [18, 53, 91, 200], getWidth: 1.5,
+  });
+  const gauges = new deck.ScatterplotLayer({
+    id: "gauges", data: gs, getPosition: g => [g.lon, g.lat], radiusUnits: "pixels", getRadius: 6,
+    filled: true, stroked: true, lineWidthUnits: "pixels", getLineWidth: 2,
+    getFillColor: g => wet(g) ? [18, 53, 91, 255] : [243, 246, 241, 255], getLineColor: [18, 53, 91, 255],
+  });
+  const context = dryOnly ? [] : [stack("rain_explained"), stack("no_gauge")];
+  return [area, links, gauges, ...context, stack("dry_spill_candidate")];
+}
+
+const ENGLAND = [[-5.4, 50.0], [1.8, 55.2]], ENGLAND_PAD = { top: 0, bottom: 0, left: 240, right: 0 };
+const map = new maplibregl.Map({
+  container: "map", style: "https://basemaps.cartocdn.com/gl/positron-nolabels-gl-style/style.json",
+  bounds: ENGLAND, fitBoundsOptions: { padding: ENGLAND_PAD },
+  pitch: 45, maxPitch: 70, attributionControl: { compact: true },
+});
+map.on("style.load", () => {
+  // Restyle Positron into the Figma palette: land, sea, coastline. Everything else is hidden.
+  for (const l of map.getStyle().layers) {
+    if (l.id === "background") map.setPaintProperty(l.id, "background-color", "#bfd6dd");  // sea, so unloaded tiles read as sea
+    else if (l.id === "water") map.setPaintProperty(l.id, "fill-color", "#bfd6dd");
+    else if (l.id === "waterway") map.setPaintProperty(l.id, "line-color", "#9fbcc6");
+    else map.setLayoutProperty(l.id, "visibility", "none");
+  }
+  const water = map.getLayer("water");
+  if (water) map.addLayer({ id: "land", type: "fill", source: water.source, "source-layer": "earth",
+    paint: { "fill-color": "#e3e9df" } }, "water");
+  if (water) map.addLayer({ id: "coast", type: "line", source: water.source, "source-layer": water.sourceLayer,
+    filter: ["all", water.filter, ["in", ["get", "kind"], ["literal", ["ocean", "sea", "bay", "strait"]]]],  // coast only, no lakes
+    paint: { "line-color": "#14202b", "line-width": 0.8 } });
+});
+
+const overlay = new deck.MapboxOverlay({
+  layers: layers(),
+  onClick: info => info.object && select(info.object),
+  getTooltip: ({ object }) => object && { text: `${title(object.name)}  ${hrs(object)} h`,
+    style: { background: "rgba(227,233,223,.95)", color: "#14202b", font: "600 15px Archivo, sans-serif", padding: "5px 10px", borderRadius: 0 } },
+});
+map.addControl(overlay);
+map.on("zoom", () => overlay.setProps({ layers: layers() }));
+const resetBtn = document.getElementById("reset");
+document.getElementById("dryOnly").onchange = e => { dryOnly = e.target.checked; overlay.setProps({ layers: layers() }); };
+resetBtn.onclick = () => select(null);
+map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "bottom-right");
+
+const label = (text, lngLat, cls = "sea-label") => new maplibregl.Marker({ element: el("div", cls, text), anchor: "center" }).setLngLat(lngLat).addTo(map);
+label("North Sea", [2.6, 54.6]); label("Irish Sea", [-4.9, 53.75]); label("English Channel", [-1.6, 50.25]);
+label("R. Thames", [-0.9, 51.62], "sea-label river"); label("R. Trent", [-0.85, 53.25], "sea-label river"); label("R. Severn", [-2.45, 52.25], "sea-label river");
+
+// Site label: the longest dry spill by default, the selected site once one is picked.
+const siteEl = el("div", "site-label");
+const siteMarker = new maplibregl.Marker({ element: siteEl, anchor: "bottom-left", offset: [12, -8] });
+function showLabel(s, selected) {
+  siteEl.replaceChildren(el("b", null, title(s.name)), el("span", null, `${hrs(s)} h`));
+  siteEl.classList.toggle("sel", selected);
+  siteMarker.setLngLat([s.lon, s.lat]).addTo(map);
+}
+
+function renderRows() {
+  const rows = document.getElementById("rows");
+  const head = el("div", "row head");
+  head.append(el("span", "site", "Site"), el("span", "h", "Hours"), el("span", "r", "Rain, mm"));
+  rows.replaceChildren(head, ...dry.slice(0, selected ? 4 : 7).map(s => {
+    const b = el("button", "row" + (s === selected ? " sel" : ""));
+    const site = el("span", "site");
+    site.append(el("b", null, title(s.name)), el("span", null, `${s.company} · ${s.id}`));
+    b.append(site, el("span", "h", hrs(s)), el("span", "r", fmt(s.rain48, 2)));
+    b.setAttribute("aria-pressed", s === selected);
+    b.onclick = () => select(s);
+    return b;
+  }));
+}
+function renderCase() {
+  const c = document.getElementById("case");
+  if (!selected) {
+    const box = el("div", "empty");
+    box.append(el("h2", null, "Case"), el("p", null, "Select a stack on the map or a row above to read the case."));
+    return c.replaceChildren(box);
+  }
+  const s = selected, v = VERDICT[s.verdict] || VERDICT.no_gauge;
+  const head = el("section");
+  head.append(el("h3", null, title(s.name)), el("div", "lede", `${s.company} · ${s.id} · discharging ${s.hours == null ? "for an unknown time (monitor offline)" : fmt(s.hours) + " h"}`));
+  const verdict = el("section");
+  verdict.append(el("span", "tag" + (s.verdict === "dry_spill_candidate" ? " dry" : ""), v.name));
+  const gauges = el("section");
+  gauges.append(el("span", "tag", "Rain gauges within 10 km"), el("div", "lede", "The gold ring on the map is this 10 km area. Dots are these gauges, filled navy if one recorded 0.25 mm or more in a day."));
+  if (s.gauges.length) {
+    const ul = el("ul");
+    for (const g of s.gauges) ul.append(el("li", null,
+      `${g.station}, ${fmt(g.km)} km: ${fmt(g.mm_0_24h_before, 2)} mm in the 24 h before, ${fmt(g.mm_24_48h_before, 2)} mm in the 24 h before that`));
+    gauges.append(ul);
+  } else gauges.append(el("p", "lede", "No Environment Agency gauge within 10 km, so rain can't be ruled in or out."));
+  const agents = el("section");
+  if (!s.case) agents.append(el("span", "tag", "Agents"), el("p", "lede", "No agent case for this site in this run yet."));
+  c.replaceChildren(head, verdict, gauges, ...(s.case ? agentSections(s.case) : [agents]));
+}
+// The agent conversation, in the order it happened. All text is model or web output: textContent only.
+function agentSections(k) {
+  const pct = x => x == null ? "n/a" : Math.round(x * 100) + "%";
+  const turn = (who, ...body) => { const sec = el("section"); sec.append(el("span", "tag", who), ...body.filter(Boolean)); return sec; };
+  const para = t => t ? el("p", null, t) : null;
+  const list = (items, text = x => x) => { if (!items || !items.length) return null; const ul = el("ul"); for (const i of items) ul.append(el("li", null, text(i))); return ul; };
+  const out = [];
+  if (k.illustrative) {  // made-up placeholder case (andrew-site/demo_*.json), never a real agent run
+    const b = el("div", "example");
+    b.append(el("b", null, "Example conversation"), el("span", null, "Made up to show how a case will look. No agent has run on this site, and none of the text below is real."));
+    out.push(b);
+  }
+  out.push(turn(`Agents' verdict: ${k.final_verdict.replace(/_/g, " ")}, ${pct(k.breach_confidence)} confident`));
+  out.at(-1).firstChild.classList.toggle("dry", k.final_verdict === "likely_breach");
+  if (k.case) out.push(turn(`Investigator · severity ${k.case.severity}`, para(k.case.summary), list(k.case.breach_indicators)));
+  if (k.skeptic) out.push(turn(`Skeptic · ${k.skeptic.model || "model unknown"} · ${pct(k.skeptic.breach_confidence)} genuine`,
+    para(k.skeptic.strongest_objection), list(k.skeptic.innocent_explanations, x => `${x.explanation} (${x.plausibility} plausibility)`)));
+  if (k.evidence) {
+    const searches = (k.evidence.searches || []).map(q => {
+      const d = el("details"); d.append(el("summary", null, q.query), para(q.answer));
+      const ul = el("ul");
+      for (const src of q.sources || []) {
+        const li = el("li");
+        if (/^https?:\/\//.test(src.url || "")) { const a = el("a", null, src.name || src.url); a.href = src.url; a.target = "_blank"; a.rel = "noopener noreferrer"; li.append(a); }
+        else li.textContent = src.name || "";
+        ul.append(li);
+      }
+      d.append(ul); return d;
+    });
+    out.push(turn(`Evidence agent · ${searches.length} web searches`, el("pre", null, k.evidence.report), ...searches));
+  } else out.push(turn("Evidence agent", para("Not run: the skeptic dismissed the case before any web search.")));
+  if (k.ruling) out.push(turn(`Adjudicator · ${pct(k.ruling.final_confidence)} genuine`, para(k.ruling.reasoning),
+    list(k.ruling.objections_refuted, x => `Refuted: ${x}`), list(k.ruling.objections_standing, x => `Still standing: ${x}`)));
+  if (k.report) { const d = el("details"); d.append(el("summary", null, "Read the draft"), el("pre", null, k.report)); out.push(turn("Drafted evidence pack", d)); }
+  return out;
+}
+let gaugeMarkers = [];
+function showGauges() {
+  gaugeMarkers.forEach(m => m.remove());
+  gaugeMarkers = (selected ? selected.gauges : []).filter(g => g.lat != null).map(g => {
+    const box = el("div", "gauge-label");
+    box.append(el("b", null, `${fmt(g.mm_0_24h_before + g.mm_24_48h_before, 2)} mm`), ` in 48 h · ${g.station}`);
+    return new maplibregl.Marker({ element: box, anchor: "top", offset: [0, 10] }).setLngLat([g.lon, g.lat]).addTo(map);
+  });
+}
+function select(s) {
+  selected = s === selected ? null : s;  // clicking the selected spill again clears it
+  renderRows(); renderCase(); showGauges();
+  overlay.setProps({ layers: layers() });
+  if (!selected) {
+    resetBtn.hidden = true;
+    if (dry[0]) showLabel(dry[0], false);
+    return map.fitBounds(ENGLAND, { padding: ENGLAND_PAD, pitch: 45, bearing: 0, duration: 1200 });
+  }
+  showLabel(s, true);
+  map.flyTo({ center: [s.lon, s.lat], zoom: 10.3, pitch: 55, bearing: 0, padding: { top: 60, bottom: 0, left: 300, right: 0 }, duration: 1600, essential: true });
+  resetBtn.hidden = false;
+}
+renderRows(); renderCase();
+if (dry[0]) showLabel(dry[0], false);
+</script>
+</body>
+</html>
