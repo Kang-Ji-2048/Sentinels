@@ -215,9 +215,9 @@
   body:not(.dash) .dash-only, body.dash .classic-only { display: none !important; }
   body:not(.dash) .mcard { display: contents; }
   body.dash { background: #eef2f5; }
-  body.dash .body { gap: 20px; padding: 20px; }
+  body.dash .body { gap: 16px; padding: 16px; }
   body.dash .mcard, body.dash .side { background: #fff; border: 1px solid #dde4ea; border-radius: 16px; box-shadow: 0 1px 2px rgba(18, 53, 91, .04); }
-  body.dash .mcard { flex: 1.45 1 0; min-width: 0; display: flex; flex-direction: column; padding: 22px 22px 14px; }
+  body.dash .mcard { flex: 1.3 1 0; min-width: 0; display: flex; flex-direction: column; padding: 18px 18px 18px; }
   body.dash .mhead { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
   body.dash .eyebrow { margin: 0 0 6px; font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--navy); }
   body.dash .mtitle { margin: 0; font: 600 26px/1.15 var(--serif); letter-spacing: -.02em; color: var(--ink); }
@@ -228,10 +228,11 @@
   body.dash .hero-n { display: flex; align-items: center; gap: 10px; flex: none; }
   body.dash .hero-n b { font: 800 56px/0.9 var(--serif); letter-spacing: -.05em; color: var(--crimson); }
   body.dash .hero-n span { font-size: 14px; line-height: 1.25; color: var(--muted); font-weight: 500; }
-  body.dash .mmeta { display: flex; justify-content: space-between; gap: 12px; margin: 16px 0 12px; color: var(--muted); font-size: 14px; }
+  body.dash .msub { margin: 6px 0 14px; color: var(--muted); font-size: 14px; }
   body.dash .ic { display: inline-flex; align-items: center; gap: 8px; }
   body.dash .ic svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; }
-  body.dash .mctrl { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; font-size: 14px; }
+  body.dash .mctrl { position: absolute; z-index: 2; top: 14px; left: 14px; display: flex; align-items: center; gap: 14px; padding: 8px 12px;
+                     background: rgba(255, 255, 255, .95); border-radius: 10px; box-shadow: 0 4px 16px rgba(18, 53, 91, .12); font-size: 14px; }
   body.dash .mctrl .toggle { margin: 0; color: var(--muted); }
   body.dash .inrange { color: var(--muted); }
   body.dash .badge { display: inline-block; min-width: 26px; padding: 1px 7px; border-radius: 6px; background: #eef2f5; color: var(--navy); font-size: 13px; font-weight: 600; text-align: center; }
@@ -242,9 +243,8 @@
   body.dash .mcard .key .size { color: var(--muted); }
   body.dash .mcard .sw { display: inline-block; }
   body.dash .mcard .reset { left: auto; right: 14px; top: 14px; bottom: auto; border-radius: 10px; }
-  body.dash .mfoot { margin: 10px 2px 0; color: var(--muted); font-size: 13px; }
 
-  body.dash .side { flex: 1 1 0; width: auto; min-width: 340px; max-width: 520px; border-left: 1px solid #dde4ea; padding: 18px 20px 4px; }
+  body.dash .side { flex: 1 1 0; width: auto; min-width: 340px; max-width: 580px; border-left: 1px solid #dde4ea; padding: 18px 20px 4px; }
   body.dash .shead { display: flex; align-items: center; justify-content: space-between; padding: 4px 4px 14px; }
   body.dash .side .shead h2 { padding: 0; font-size: 20px; font-weight: 500; letter-spacing: -.01em; text-transform: none; color: var(--navy); }
   body.dash .rows { border: 1px solid #dde4ea; border-radius: 12px; overflow: hidden; }
@@ -270,7 +270,7 @@
   body.dash .side .foot { border-top: 0; padding: 14px 4px; font-size: 13px; }
   @media (max-width: 900px) {
     body.dash .body { padding: 12px; gap: 12px; } body.dash .mcard { flex: none; padding: 16px 14px 12px; } body.dash .mcard .map { flex: none; height: 62vh; }
-    body.dash .side { flex: none; max-width: none; min-width: 0; } body.dash .mhead { flex-direction: column; } body.dash .mmeta { flex-direction: column; gap: 4px; }
+    body.dash .side { flex: none; max-width: none; min-width: 0; } body.dash .mhead { flex-direction: column; }
   }
 
 
@@ -295,7 +295,7 @@
   body.dash .vchip.needs_review { background: #fbf1cc; color: #7a5d00; }
   body.dash .vchip.likely_innocent { background: #e2ecf5; color: var(--navy); }
   body.dash .cact { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 6px; }
-  body.dash .cact .btn { border-radius: 10px; padding: 11px 16px; }
+  body.dash .cact .btn { display: inline-flex; gap: 10px; border-radius: 10px; padding: 11px 16px; }
   body.dash .cact .go { flex: 1; display: flex; justify-content: space-between; gap: 12px; }
   body.dash .cmore { margin: 8px 0 12px; } body.dash .cmore summary { cursor: pointer; font-weight: 500; color: var(--navy); padding: 8px 0; }
   body.dash .side .case { animation: rise .35s ease; }
@@ -326,23 +326,20 @@
       <div>
         <p class="eyebrow">Sewage spill watch · England</p>
         <h1 class="mtitle">The spills rain can't explain.</h1>
+        <p class="msub">Every storm overflow in England, 9 water companies · <span id="runat"></span></p>
       </div>
       <div class="hero-n"><b id="n3"></b><span>dry spills<br>in 48 hours</span></div>
     </div>
-    <div class="mmeta dash-only">
-      <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>Every storm overflow in England, 9 water companies</span>
-      <span id="runat"></span>
-    </div>
-    <div class="mctrl dash-only">
-      <label class="toggle"><input type="checkbox" class="dry-only"> Dry spills only <span class="badge" id="n2"></span></label>
-      <span class="inrange" id="of2"></span>
-    </div>
     <div class="map">
+      <div class="mctrl dash-only">
+        <label class="toggle"><input type="checkbox" class="dry-only"> Dry spills only <span class="badge" id="n2"></span></label>
+        <span class="inrange" id="of2"></span>
+      </div>
       <button class="reset" id="reset" hidden>Show all of England</button>
       <div id="map" role="img" aria-label="Map of England: one mark per spilling overflow, sized by hours discharging"></div>
       <div class="key dash-only">
         <span><i class="sw dry"></i>Dry spill</span><span><i class="sw rain"></i>Rain explained</span><span><i class="sw none"></i>No gauge</span>
-        <span class="size">Dot size is hours discharging.</span>
+        <span class="size" title="Dry spill: every rain gauge within 10 km saw under 0.25 mm in each of the two days before it began.">Dot size is hours discharging · dry = under 0.25 mm at every gauge within 10 km</span>
       </div>
       <div class="count classic-only">
         <div class="n" id="n"></div>
@@ -371,7 +368,6 @@
       </div>
     </section>
     </div>
-    <p class="mfoot dash-only">Dry spill: no gauge within 10 km saw 0.25 mm of rain in either of the two days before it began. Select a spill to read its case.</p>
   </section>
   <aside class="side">
     <div class="shead"><h2>Longest dry spills</h2><span class="badge dash-only" id="rows-n"></span></div>
@@ -522,8 +518,8 @@ function layers() {
   return [area, links, gauges, ...context, stack("dry_spill_candidate")];
 }
 
-const ENGLAND = MAP2D ? [[-5.8, 49.9], [1.8, 55.85]] : [[-5.4, 50.0], [1.8, 55.2]];  // flat view needs all of England in frame
-const ENGLAND_PAD = DASH ? { top: 20, bottom: 50, left: 20, right: 20 } : MAP2D ? { top: 20, bottom: 20, left: 260, right: 20 } : { top: 0, bottom: 0, left: 240, right: 0 };
+const ENGLAND = DASH ? [[-5.75, 49.95], [1.77, 55.81]] : MAP2D ? [[-5.8, 49.9], [1.8, 55.85]] : [[-5.4, 50.0], [1.8, 55.2]];  // flat view needs all of England in frame
+const ENGLAND_PAD = DASH ? { top: 8, bottom: 40, left: 8, right: 8 } : MAP2D ? { top: 20, bottom: 20, left: 260, right: 20 } : { top: 0, bottom: 0, left: 240, right: 0 };
 const map = new maplibregl.Map({
   container: "map", style: "https://basemaps.cartocdn.com/gl/positron-nolabels-gl-style/style.json",
   bounds: ENGLAND, fitBoundsOptions: { padding: ENGLAND_PAD },
@@ -609,6 +605,7 @@ function renderRowsClassic(rows) {
 }
 function renderCase() {
   const c = document.getElementById("case");
+  if (DASH && !selected && dry[0]) return renderCaseDash(c, dry[0], true);  // preview the longest dry spill until one is picked
   if (!selected) {
     const box = el("div", "empty");
     box.append(el("h2", null, DASH ? "Pick a spill" : "Case"), el("p", null, DASH ? "Select a spill on the map or in the list above to read its case: the rain gauges checked and what the agents concluded." : "Select a spill on the map or a row above to read the case."));
@@ -638,10 +635,10 @@ function renderCase() {
   c.replaceChildren(head, verdict, gauges, ...(s.case ? agentSections(s.case, s) : [agents]));
 }
 // Dashboard case card: the headline facts and one action up front; the gauge list and agents' conversation fold away.
-function renderCaseDash(c, s) {
+function renderCaseDash(c, s, preview = false) {
   const k = s.case, rank = dry.indexOf(s) + 1, pc = x => Math.round(x * 100);
   const head = el("div", "chead"), info = el("div"), score = el("div", "score");
-  info.append(el("p", "eyebrow", rank ? `Dry spill · #${rank} longest` : (VERDICT[s.verdict] || VERDICT.no_gauge).name), el("h3", null, title(s.name)));
+  info.append(el("p", "eyebrow", preview ? "Longest dry spill right now" : rank ? `Dry spill · #${rank} longest` : (VERDICT[s.verdict] || VERDICT.no_gauge).name), el("h3", null, title(s.name)));
   score.append(el("b", null, hrs(s)), el("span", null, s.hours == null ? "monitor offline" : "hours discharging"));
   head.append(info, score);
   const wettest = s.gauges.length ? Math.max(...s.gauges.map(g => Math.max(g.mm_0_24h_before ?? 0, g.mm_24_48h_before ?? 0))) : null;
@@ -659,7 +656,8 @@ function renderCaseDash(c, s) {
     go.onclick = () => { openReport = s; location.hash = "reports"; };
     act.append(go);
   }
-  const back = el("button", "btn ghost", "Show all of England"); back.onclick = () => select(null); act.append(back);
+  if (preview) { const fly = el("button", "btn " + (k && k.report ? "ghost" : "go")); fly.append(el("span", null, "Fly to it"), el("span", null, "→")); fly.onclick = () => select(s); act.append(fly); }
+  else { const back = el("button", "btn ghost", "Show all of England"); back.onclick = () => select(null); act.append(back); }
   const more = el("details", "cmore"); more.append(el("summary", null, k ? "Read the gauges and the agents' conversation" : "Read the gauge readings"));
   const gl = el("section"); gl.append(el("span", "tag", "Rain gauges within 10 km"));
   if (s.gauges.length) { const ul = el("ul"); for (const g of s.gauges) ul.append(el("li", null, `${g.station}, ${fmt(g.km)} km: ${fmt(g.mm_0_24h_before, 2)} mm in the 24 h before, ${fmt(g.mm_24_48h_before, 2)} mm in the 24 h before that`)); gl.append(ul); }
