@@ -263,8 +263,7 @@ def verify_citations(report_md: str, max_checks: int = 10) -> dict:
             "precision": round(verified / len(checks), 2) if checks else None, "checks": checks}
 
 
-@trace(name="linkup_verify", span_type="TOOL")
-def _traced_check(url, claim):
+def _traced_check(url, claim):  # not traced: runs in worker threads, where spans would become separate traces
     return linkup_fetch(url, schema=SUPPORT_SCHEMA,
                         instructions=f"Does this page support this claim? Claim: {claim}").get("data") or {}
 
