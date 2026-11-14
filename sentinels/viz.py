@@ -9,7 +9,7 @@ COLOURS = {"dry_spill_candidate": [220, 50, 47, 230],   # red: possible breach
 
 
 def spill_map(assessed: list[dict]) -> pdk.Deck:
-    pts = [{"lon": a["longitude"], "lat": a["latitude"], "hours": max(a.get("duration_hours") or 0, 0.3),
+    pts = [{"lon": a["longitude"], "lat": a["latitude"], "hours": max(a.get("duration_hours") or 0, 0.3),  # unknown (monitor offline) -> stub
             "colour": COLOURS.get(a["verdict"], [200, 200, 200, 150]),
             "label": f"{a['company']} {a['id']}<br/>{a.get('receivingwatercourse')}<br/>"
                      f"{a['verdict'].replace('_', ' ')}: {a.get('duration_hours')} h discharging<br/>"

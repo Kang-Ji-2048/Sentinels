@@ -7,6 +7,10 @@
 
 # COMMAND ----------
 
+# MAGIC %pip install -q pydeck
+
+# COMMAND ----------
+
 # MAGIC %run ./_common
 
 # COMMAND ----------
@@ -44,12 +48,10 @@ stations = py_records(spark.table(T("bronze_rain_stations")).toPandas())
 gauges_for = {s["id"]: detect.nearest_gauges(s, stations, cfg) for s in spills}
 needed = sorted({g["station"] for gs in gauges_for.values() for g in gs})
 since = now - timedelta(hours=cfg.lookback_hours + 48)
-readings = {}
-for st in needed:
-    try:
-        readings[st] = feeds.fetch_rain_readings(st, since)
-    except Exception as e:
-        print("gauge failed", st, e)
+gauge_errors = {}
+readings = detect.fetch_readings(needed, since, gauge_errors)  # parallel: ~1 min instead of ~10
+if gauge_errors:
+    print("gauge errors:", gauge_errors)
 flat = [r for rs in readings.values() for r in rs]
 if flat:
     spark.createDataFrame(pd.DataFrame(flat)).write.mode("overwrite").saveAsTable(T("silver_rain_readings"))
@@ -60,7 +62,7 @@ print(f"{len(needed)} gauges, {len(flat)} readings")
 # Gold: verdict per spill
 assessed = [detect.assess(s, gauges_for[s["id"]], readings, cfg) for s in spills]
 gold = pd.DataFrame([{**{k: a.get(k) for k in ["id", "company", "receivingwatercourse", "latitude", "longitude",
-                                               "latesteventstart", "latesteventend", "duration_hours", "verdict",
+                                               "latesteventstart", "latesteventend", "duration_hours", "monitor_offline", "verdict",
                                                "max_mm_0_24h_before", "max_mm_24_48h_before", "max_mm_during"]},
                       "gauges_json": json.dumps(a["gauges"]), "assessed_at": now} for a in assessed])
 spark.createDataFrame(gold).write.mode("overwrite").option("overwriteSchema", "true").saveAsTable(T("gold_spill_assessments"))
@@ -71,6 +73,5 @@ display(spark.sql(f"""SELECT company, id, receivingwatercourse, latesteventstart
 # COMMAND ----------
 
 # 3D map: column height = hours discharging, red = dry-spill candidate, blue = rain nearby, grey = no gauge
-# (needs pydeck: %pip install pydeck if it isn't on the runtime)
 from sentinels.viz import spill_map
 displayHTML(spill_map(assessed).to_html(as_string=True))

@@ -19,9 +19,9 @@ out.write_text(json.dumps(result, default=str, indent=1))
 print(f"{result['overflows']} overflows, {result['recent_spills']} spills started in the last 48h")
 print(Counter(a["verdict"] for a in result["assessed"]))
 cands = sorted((a for a in result["assessed"] if a["verdict"] == "dry_spill_candidate"),
-               key=lambda a: -a["duration_hours"])
+               key=lambda a: -(a["duration_hours"] or -1))
 for a in cands[:10]:
-    print(f"{a['duration_hours']:>6}h  {a['company']:<20} {a['id']:<12} {a['receivingwatercourse']}")
+    print(f"{a['duration_hours'] if a['duration_hours'] is not None else '?':>6}h  {a['company']:<20} {a['id']:<12} {a['receivingwatercourse']}")
 if result["errors"]:
     print("errors:", result["errors"])
 print("saved", out)

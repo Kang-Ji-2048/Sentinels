@@ -8,8 +8,10 @@ status, and the Environment Agency publishes live rainfall. Nobody joins them up
 minutes. In the 48 hours before our first run, 157 spills started, and 71 began with no meaningful rain at any
 gauge within 10 km. Show the 3D map: red columns are dry spills, and their height is hours discharging.
 
-**One case, end to end (3 min).** Helliwell Syke, Yorkshire Water (YWS00897), as of 14 Nov:
-1. *Data:* discharging for 44.5 hours. Three EA gauges within 10 km recorded 0 to 0.12 mm in the 48 hours before.
+**One case, end to end (3 min).** Carnon River, South West Water (SBB00211), as of 14 Nov:
+1. *Data:* discharging for about 21 hours and still going. Three EA gauges within 7 km recorded 0 to 0.2 mm in the
+   48 hours before it started. (We first ranked Helliwell Syke higher, but its monitor was offline, so the
+   detector now treats offline durations as unknown. Worth telling judges: it shows the data limits are handled.)
 2. *Investigator (Claude):* builds the case, checks memory for this site's past spills and the company's record.
 3. *Skeptic (Llama, served on Databricks):* argues the other side, for example sensor fault, ungauged rain or
    pump failure, and gives a confidence score. A different model family means it doesn't just agree with Claude.

@@ -24,10 +24,11 @@ from sentinels.memory import CaseMemory  # noqa: E402
 top_n = int(sys.argv[1]) if len(sys.argv) > 1 else 1
 run = json.loads((root / "data" / "latest_run.json").read_text())
 cands = sorted((a for a in run["assessed"] if a["verdict"] == "dry_spill_candidate"),
-               key=lambda a: -a["duration_hours"])[:top_n]
+               key=lambda a: -(a["duration_hours"] or -1))[:top_n]
 memory = CaseMemory()
 out_dir = root / "data" / "reports"
 out_dir.mkdir(parents=True, exist_ok=True)
+example = None
 for spill in cands:
     for k in ("latesteventstart", "latesteventend"):
         if spill.get(k):
@@ -42,3 +43,8 @@ for spill in cands:
     if r["report"]:
         (out_dir / f"{spill['id']}.md").write_text(r["report"])
         print(f"  evidence pack: {out_dir / (spill['id'] + '.md')}")
+    if r["report"] and (example is None or r["breach_confidence"] > example["breach_confidence"]):
+        example = r
+if example:  # one complete case for the showcase site
+    (root / "data" / "example_case.json").write_text(json.dumps(example, default=str, indent=1))
+    print("wrote data/example_case.json")
