@@ -471,7 +471,7 @@
   body.dash .vchip.likely_breach { background: #fbe3e7; color: var(--crimson); }
   body.dash .vchip.needs_review { background: #fbf1cc; color: #7a5d00; }
   body.dash .vchip.likely_innocent { background: #e2ecf5; color: var(--navy); }
-  body.dash .vchip.sev { background: #fff; border: 1px solid var(--rule); padding: 2px 9px; }
+  body.dash .vchip.sev { background: #fff; border: 1px solid var(--rule); padding: 2px 9px; border-radius: 3px; }
   body.dash .cgist { margin: 10px 0 0; font-size: 13px; line-height: 1.5; color: var(--muted); }
   body.dash .cgist b { color: var(--ink); font-weight: 600; }
   body.dash .cact { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 6px; }
@@ -513,7 +513,6 @@
     <div class="map">
       <div class="mctrl dash-only">
         <label class="toggle"><input type="checkbox" class="dry-only"> Dry spills only <span class="badge" id="n2"></span></label>
-        <label class="toggle"><input type="checkbox" id="flat2d"> 2D map</label>
         <span class="inrange" id="of2"></span>
       </div>
       <form class="pcbox dash-only" id="pc-form" autocomplete="on">
@@ -614,8 +613,7 @@ let wideMap = false, panelClosed = false;  // bigger map: the right column becom
 try { wideMap = localStorage.getItem("sentinels-wide") === "on"; } catch {}
 const panelOver = () => wideMap && !panelClosed && innerWidth > 900;         // the panel is covering the map's right side
 const panelPad = () => panelOver() ? 500 : 40;                               // keep a selected spill clear of it
-let flat2d = false;  // "2D map" toggle: selecting a spill keeps the map flat and north-up, with dots instead of domes
-try { flat2d = localStorage.getItem("sentinels-2d") === "on"; } catch {}
+const flat2d = false;  // Andrew's "2D map" option (flat, dots instead of domes); its checkbox was removed (Kang 15 Nov: keep the 2D-to-3D tilt)
 const MAP2D = /*MAP2D*/false;
 const DASH = /*DASH*/false;    // build.py writes dashboard.html with this set: the card layout, flat map  // build.py writes 2d.html with this set: the showcase site's flat dot map
 const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -845,22 +843,6 @@ function syncPanel() {
   document.getElementById("panel-open").onclick = () => { panelClosed = false; syncPanel(); refit(600); };
   document.addEventListener("keydown", e => { if (e.key === "Escape" && wideMap && !(e.target instanceof Element && e.target.closest("input, textarea"))) set(false); });
   if (wideMap) apply(0, true); else syncPanel();
-}
-{
-  const box = document.getElementById("flat2d");
-  const apply = () => {  // flat: no tilting or rotating by hand either
-    for (const h of [map.dragRotate, map.touchZoomRotate]) flat2d ? (h.disableRotation ? h.disableRotation() : h.disable()) : (h.enableRotation ? h.enableRotation() : h.enable());
-    if (flat2d) map.touchPitch.disable(); else map.touchPitch.enable();
-  };
-  box.checked = flat2d; apply();
-  box.onchange = () => {
-    flat2d = box.checked; apply();
-    try { localStorage.setItem("sentinels-2d", flat2d ? "on" : "off"); } catch {}
-    selectedAt = performance.now() - 700;  // domes rise (or drop) straight away
-    if (selected) map.easeTo({ pitch: flat2d ? 0 : 62, bearing: flat2d ? 0 : -24, padding: { top: flat2d ? 80 : 200, bottom: 20, left: 40, right: panelPad() }, duration: REDUCED ? 0 : 900 });
-    else if (flat2d) map.easeTo({ pitch: 0, bearing: 0, duration: REDUCED ? 0 : 600 });
-    overlay.setProps({ layers: layers() });
-  };
 }
 resetBtn.onclick = () => select(null);
 map.addControl(new maplibregl.NavigationControl({ visualizePitch: !MAP2D || DASH, showCompass: !MAP2D || DASH }), "bottom-right");
