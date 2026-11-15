@@ -25,8 +25,21 @@ sites = [{"id": a["id"], "company": a["company"], "name": a.get("receivingwaterc
           "lat": a["latitude"], "lon": a["longitude"], "verdict": a["verdict"],
           "hours": a.get("duration_hours"),  # None = monitor offline
           "rain48": rain48(a), "gauges": a.get("gauges") or [],
-          "status": a.get("status")}  # feed status: 1 discharging now, 0 stopped, -1 monitor offline
+          # feed status: 1 discharging now, 0 stopped, -1 monitor offline (older runs have no Status, so derive it)
+          "status": a.get("status") if a.get("status") is not None else
+                    -1 if a.get("monitor_offline") else 1 if not a.get("latesteventend") else 0}
          for a in run["assessed"] if a.get("longitude") is not None and a.get("latitude") is not None]
+# Gauge positions: runs made before detect.py saved them have none, so fill them in by station id from a newer
+# local run (data/latest_run.json) when there is one. Without positions the page still works, minus the gauge dots.
+newer = root / "data" / "latest_run.json"
+if newer.exists() and newer != run_file:
+    where = {g["station"]: (g["lat"], g["lon"]) for a in json.loads(newer.read_text(encoding="utf-8"))["assessed"]
+             for g in a.get("gauges") or [] if g.get("lat") is not None}
+    for s in sites:
+        s["gauges"] = [g if g.get("lat") is not None or g["station"] not in where
+                       else {**g, "lat": where[g["station"]][0], "lon": where[g["station"]][1]} for g in s["gauges"]]
+all_g = [g for s in sites for g in s["gauges"]]
+print(f"gauges with a map position: {sum(g.get('lat') is not None for g in all_g)} of {len(all_g)}")
 cases = {}
 for f in sorted([*(root / "data" / "reports").glob("*.json"), *(f for f in (root / "data").glob("example_*.json") if f.name != "example_run.json"),
                  *here.glob("demo_*.json")],  # demo_* = made-up placeholder cases, flagged "illustrative"
@@ -60,8 +73,9 @@ template = (here / "app.html").read_text(encoding="utf-8")
 assert "/*DATA*/null" in template
 out = here / "build" / "index.html"
 out.parent.mkdir(exist_ok=True)
-out.write_text(template.replace("/*DATA*/null", data), encoding="utf-8")  # 3D columns
+# The Map tab is the dashboard layout: flat dot map that tilts into 3D when a spill is selected.
+# (The template still holds the older full-bleed 3D/2D map behind MAP2D=false / DASH=false; it is no longer built.)
+out.write_text(template.replace("/*DATA*/null", data).replace("/*MAP2D*/false", "true").replace("/*DASH*/false", "true"), encoding="utf-8")
 print("wrote", out)
-flat = out.with_name("2d.html")  # same page with the showcase site's flat 2D dot map
-flat.write_text(template.replace("/*DATA*/null", data).replace("/*MAP2D*/false", "true"), encoding="utf-8")
-print("wrote", flat)
+for old_page in ("2d.html", "dashboard.html"):  # pages from before the merge
+    out.with_name(old_page).unlink(missing_ok=True)
