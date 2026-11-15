@@ -421,6 +421,47 @@
   body.dash .tour.on { background: var(--navy); color: #fff; }
   body.dash .tour:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
   body.dash .mcard .reset { top: 56px; }
+  /* Bigger map: the title shrinks to one line and the right column becomes a panel over the map's right edge,
+     shown only for a selected spill or a postcode result. Buttons on the map's right side move clear of it. */
+  body.dash .mcard { --shift: 0px; }
+  body.dash .tour { right: calc(58px + var(--shift)); }
+  body.dash .mcard .reset { right: calc(14px + var(--shift)); }
+  body.dash .widebtn { position: absolute; z-index: 3; right: calc(14px + var(--shift)); top: 14px; display: grid; place-items: center; width: 36px; height: 36px; padding: 0;
+                       border: 0; border-radius: 10px; background: #fff; color: var(--navy); cursor: pointer; box-shadow: 0 4px 16px rgba(18, 53, 91, .14); }
+  body.dash .widebtn svg { width: 18px; height: 18px; }
+  body.dash .widebtn .i-in, body.dash.wide .widebtn .i-out { display: none; }
+  body.dash.wide .widebtn .i-in { display: block; }
+  body.dash.wide .widebtn { background: var(--navy); color: #fff; }
+  body.dash .widebtn:focus-visible, body.dash .pclose:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  body.dash .mcard .panel-open { top: 98px; }
+  body.dash .pclose { display: none; }
+  @media (max-width: 900px) { body.dash .widebtn { display: none; } body.dash .tour { right: 14px; } }
+  @media (min-width: 901px) {
+    /* Deep dive: no title block, the map to the edges, and one panel over its right side holding the full list of dry
+       spills (scrollable) with the selected spill's case underneath. */
+    body.dash.wide .body { position: relative; padding: 8px; }
+    body.dash.wide .mcard { padding: 8px; border-radius: 14px; }
+    body.dash.wide .mhead { display: none; }
+    body.dash.wide .side { position: absolute; z-index: 4; top: 24px; right: 24px; bottom: 24px; width: 440px; min-width: 0; max-width: none; flex: none;
+                           display: flex; flex-direction: column; overflow: hidden; padding: 14px 16px 54px;  /* room for the Ask Genie button */
+                           box-shadow: 0 16px 40px rgba(18, 53, 91, .22); visibility: hidden; transform: translateX(24px); opacity: 0;
+                           transition: transform .3s cubic-bezier(.22, 1, .36, 1), opacity .2s, visibility 0s .3s; }
+    body.dash.wide.has-panel .side { visibility: visible; transform: none; opacity: 1; transition: transform .3s cubic-bezier(.22, 1, .36, 1), opacity .2s; }
+    body.dash.wide .side .shead { padding-right: 40px; }
+    body.dash.wide .side .rows { flex: 1 1 0; min-height: 138px; overflow-y: auto; overscroll-behavior: contain; scrollbar-color: #c9d3dc transparent; }
+    body.dash.wide .side .case { flex: 0 1 auto; max-height: 58%; overflow-y: auto; overscroll-behavior: contain; margin-top: 12px; padding: 16px 18px 6px; animation: none; }
+    body.dash.wide .side .case.preview { display: none; }  /* nothing selected: the list gets the whole panel */
+    body.dash.wide .side .near { flex: 1 1 0; min-height: 0; overflow-y: auto; }
+    body.dash.wide .side .foot { padding: 8px 4px; font-size: 12px; }
+    body.dash.wide .pclose { display: grid; place-items: center; position: absolute; top: 10px; right: 10px; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 8px;
+                             background: none; color: var(--muted); cursor: pointer; }
+    body.dash.wide .pclose:hover { background: #eef2f5; color: var(--ink); }
+    body.dash.wide .pclose svg { width: 18px; height: 18px; }
+    body.dash.wide.has-panel .mcard { --shift: 448px; }
+    body.dash.wide.has-panel .mcard .maplibregl-ctrl-bottom-right { right: var(--shift); }
+    body.dash.wide.has-panel .mcard .key { max-width: calc(100% - 80px - var(--shift)); }
+  }
+  @media (prefers-reduced-motion: reduce) { body.dash.wide .side, body.dash.wide.has-panel .side { transition: none; } }
   body.dash .gauge-label { padding: 4px 9px; background: #fff; border: 1px solid #dde4ea; border-radius: 8px; box-shadow: 0 4px 12px rgba(18, 53, 91, .14); font-size: 12px; color: var(--muted); }
   body.dash .gauge-label b { color: var(--ink); font-size: 13px; }
   body.dash .gauge-label.wet b { color: var(--navy); }
@@ -467,7 +508,7 @@
         <h1 class="mtitle">The spills rain can't explain.</h1>
         <p class="msub">Every storm overflow in England, 9 water companies · <span id="runat"></span></p>
       </div>
-      <div class="hero-n"><b id="n3"></b><span>dry spills<br>in 48 hours</span></div>
+      <div class="hero-n"><b id="n3"></b><span>dry spills <br>in 48 hours</span></div>
     </div>
     <div class="map">
       <div class="mctrl dash-only">
@@ -481,6 +522,11 @@
       </form>
       <button class="reset" id="reset" hidden>Show all of England</button>
       <button class="tour dash-only" id="tour">▶ Play tour</button>
+      <button class="widebtn dash-only" id="wide" aria-pressed="false" aria-label="Deep dive: bigger map and the full list" title="Deep dive: bigger map and the full list">
+        <svg class="i-out" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></svg>
+        <svg class="i-in" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 11h-6V5M5 13h6v6M13 11l7-7M11 13l-7 7"/></svg>
+      </button>
+      <button class="reset panel-open dash-only" id="panel-open" hidden>Show the list</button>
       <div id="map" role="img" aria-label="Map of England: one mark per spilling overflow, sized by hours discharging"></div>
       <div class="key dash-only">
         <span><i class="sw dry"></i>Dry spill</span><span><i class="sw rain"></i>Rain explained</span><span><i class="sw none"></i>No gauge</span>
@@ -516,6 +562,9 @@
     </div>
   </section>
   <aside class="side">
+    <button class="pclose" id="panel-close" aria-label="Close this panel" title="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
     <div class="shead"><h2>Longest dry spills</h2><span class="badge dash-only" id="rows-n"></span></div>
     <div class="rows" id="rows"></div>
     <div class="case" id="case"></div>
@@ -561,6 +610,10 @@ const AREA_M = 10000;          // the detector checks rain gauges within 10 km
 const DRY_MM = 0.25;           // detector threshold: under this in a 24 h window is a dry day
 const wet = g => g.mm_0_24h_before >= DRY_MM || g.mm_24_48h_before >= DRY_MM;
 let dryOnly = false;
+let wideMap = false, panelClosed = false;  // bigger map: the right column becomes a panel over the map (see the wide block)
+try { wideMap = localStorage.getItem("sentinels-wide") === "on"; } catch {}
+const panelOver = () => wideMap && !panelClosed && innerWidth > 900;         // the panel is covering the map's right side
+const panelPad = () => panelOver() ? 500 : 40;                               // keep a selected spill clear of it
 let flat2d = false;  // "2D map" toggle: selecting a spill keeps the map flat and north-up, with dots instead of domes
 try { flat2d = localStorage.getItem("sentinels-2d") === "on"; } catch {}
 const MAP2D = /*MAP2D*/false;
@@ -701,7 +754,7 @@ function layers() {
         background: true, getBackgroundColor: [255, 255, 255, 240], getBorderColor: s => [...(VERDICT_RGB[s.case.final_verdict] || [20, 32, 43]), 120],
         getBorderWidth: 1, backgroundPadding: [6, 3], getTextAnchor: "middle", getAlignmentBaseline: "bottom", characterSet: "auto",
         parameters: { depthCompare: "always" }, updateTriggers: { getPosition: [rise, m, sel] } }),
-      new deck.TextLayer({ id: "sel-label", data: rise > 0.05 || flat2d ? [selected] : [], getPixelOffset: [0, flat2d ? -52 : 0], getPosition: s => [s.lon, s.lat, domeR(s) * rise + 8 * m],
+      new deck.TextLayer({ id: "sel-label", data: rise > 0.05 || flat2d ? [selected] : [], getPixelOffset: [0, flat2d ? -88 : 0], getPosition: s => [s.lon, s.lat, domeR(s) * rise + 8 * m],
         getText: s => s.case ? `${hrs(s)} h  ·  ${verdictLine(s.case)}` : `${hrs(s)} h`, characterSet: "auto", getSize: 17, getColor: [255, 255, 255, 255], fontFamily: "Inter Tight, system-ui, sans-serif", fontWeight: 700,
         background: true, getBackgroundColor: [18, 53, 91, 235], backgroundPadding: [8, 4], getTextAnchor: "middle", getAlignmentBaseline: "bottom",
         parameters: { depthCompare: "always" }, updateTriggers: { getPosition: [rise, m] } }),
@@ -715,6 +768,7 @@ function layers() {
 }
 
 const ENGLAND = DASH ? [[-5.75, 49.95], [1.77, 55.81]] : MAP2D ? [[-5.8, 49.9], [1.8, 55.85]] : [[-5.4, 50.0], [1.8, 55.2]];  // flat view needs all of England in frame
+const englandPad = () => panelOver() ? { ...ENGLAND_PAD, right: 472 } : ENGLAND_PAD;  // keep England clear of the deep-dive panel
 const ENGLAND_PAD = DASH ? { top: 8, bottom: 40, left: 8, right: 8 } : MAP2D ? { top: 20, bottom: 20, left: 260, right: 20 } : { top: 0, bottom: 0, left: 240, right: 0 };
 const map = new maplibregl.Map({
   container: "map", style: "https://basemaps.cartocdn.com/gl/positron-nolabels-gl-style/style.json",
@@ -764,6 +818,34 @@ map.addControl(overlay);
 map.on("zoom", () => overlay.setProps({ layers: layers() }));
 const resetBtn = document.getElementById("reset");
 document.querySelectorAll(".dry-only").forEach(c => c.onchange = e => { dryOnly = e.target.checked; overlay.setProps({ layers: layers() }); });
+// Deep dive (the expand button): the title block goes, the map fills the page and the right column becomes a panel over
+// the map with the full list of dry spills and the selected case. The panel can be closed for the whole map and reopened.
+function syncPanel() {
+  document.body.classList.toggle("has-panel", wideMap && !panelClosed);
+  document.getElementById("panel-open").hidden = !(wideMap && panelClosed);
+}
+{
+  const btn = document.getElementById("wide");
+  const refit = dur => {  // nothing selected: keep all of England in the part of the map the panel doesn't cover
+    if (!selected && !document.querySelector(".side").classList.contains("pcmode"))
+      map.fitBounds(ENGLAND, { padding: englandPad(), pitch: 0, bearing: 0, duration: REDUCED ? 0 : dur });
+  };
+  const apply = (dur, first) => {
+    document.body.classList.toggle("wide", wideMap);
+    btn.setAttribute("aria-pressed", wideMap);
+    btn.title = wideMap ? "Back to the overview" : "Deep dive: bigger map and the full list"; btn.setAttribute("aria-label", btn.title);
+    syncPanel();
+    if (!first) renderRows();  // at load the page's own first render does this, after everything it needs exists
+    map.resize();  // the map's box just changed size
+    refit(dur);
+  };
+  const set = on => { wideMap = on; panelClosed = false; try { localStorage.setItem("sentinels-wide", on ? "on" : "off"); } catch {} apply(600); };
+  btn.onclick = () => set(!wideMap);
+  document.getElementById("panel-close").onclick = () => { panelClosed = true; syncPanel(); refit(600); };
+  document.getElementById("panel-open").onclick = () => { panelClosed = false; syncPanel(); refit(600); };
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && wideMap && !(e.target instanceof Element && e.target.closest("input, textarea"))) set(false); });
+  if (wideMap) apply(0, true); else syncPanel();
+}
 {
   const box = document.getElementById("flat2d");
   const apply = () => {  // flat: no tilting or rotating by hand either
@@ -775,7 +857,7 @@ document.querySelectorAll(".dry-only").forEach(c => c.onchange = e => { dryOnly 
     flat2d = box.checked; apply();
     try { localStorage.setItem("sentinels-2d", flat2d ? "on" : "off"); } catch {}
     selectedAt = performance.now() - 700;  // domes rise (or drop) straight away
-    if (selected) map.easeTo({ pitch: flat2d ? 0 : 62, bearing: flat2d ? 0 : -24, padding: { top: flat2d ? 80 : 200, bottom: 20, left: 40, right: 40 }, duration: REDUCED ? 0 : 900 });
+    if (selected) map.easeTo({ pitch: flat2d ? 0 : 62, bearing: flat2d ? 0 : -24, padding: { top: flat2d ? 80 : 200, bottom: 20, left: 40, right: panelPad() }, duration: REDUCED ? 0 : 900 });
     else if (flat2d) map.easeTo({ pitch: 0, bearing: 0, duration: REDUCED ? 0 : 600 });
     overlay.setProps({ layers: layers() });
   };
@@ -804,7 +886,7 @@ function showLabel(s, selected) {
 function renderRows() {
   const rows = document.getElementById("rows");
   if (!DASH) return renderRowsClassic(rows);
-  rows.replaceChildren(...dry.slice(0, PINNED).map((s, i) => {
+  rows.replaceChildren(...dry.slice(0, wideMap ? dry.length : PINNED).map((s, i) => {  // deep dive: every dry spill
     const b = el("button", "row" + (s === selected ? " sel" : ""));
     const site = el("span", "site"), big = el("span", "big", hrs(s));
     const nm = el("b", null, title(s.name));
@@ -865,6 +947,7 @@ function renderCase() {
 }
 // Dashboard case card: the headline facts and one action up front; the gauge list and agents' conversation fold away.
 function renderCaseDash(c, s, preview = false) {
+  c.classList.toggle("preview", preview);
   const k = s.case, rank = dry.indexOf(s) + 1, pc = x => Math.round(x * 100);
   const head = el("div", "chead"), info = el("div"), score = el("div", "score");
   info.append(el("p", "eyebrow", preview ? "Longest dry spill right now" : rank ? `Dry spill · #${rank} longest` : (VERDICT[s.verdict] || VERDICT.no_gauge).name), el("h3", null, title(s.name)));
@@ -978,18 +1061,24 @@ function select(s, fromPc = false) {
     history.replaceState(null, "", selected ? `#map/${encodeURIComponent(selected.id)}` : "#map");
   renderRows(); renderCase(); showGauges();
   if (genieSpill) genieSpill(selected);
+  if (selected) panelClosed = false;
+  syncPanel();
+  if (wideMap && selected) {  // deep dive: bring the selected row to the middle of the list (after the case card has taken its space)
+    const rows = document.getElementById("rows"), r = rows.querySelector(".sel");
+    if (r) rows.scrollTop = r.offsetTop - rows.offsetTop - (rows.clientHeight - r.offsetHeight) / 2;
+  }
   overlay.setProps({ layers: layers() });
   if (!selected) {
     resetBtn.hidden = true;
     if (DASH) { siteMarker.remove(); markPins(); }
     else if (dry[0]) showLabel(dry[0], false);
-    return map.fitBounds(ENGLAND, { padding: ENGLAND_PAD, pitch: MAP2D ? 0 : 45, bearing: 0, duration: DASH && !REDUCED ? 1800 : 1200 });
+    return map.fitBounds(ENGLAND, { padding: englandPad(), pitch: MAP2D ? 0 : 45, bearing: 0, duration: DASH && !REDUCED ? 1800 : 1200 });
   }
   if (DASH) {  // a slow arc out and back in, so you see where in England the spill is
     markPins();
     if (pins.has(s.id)) siteMarker.remove(); else showLabel(s, true);
     map.flyTo({ center: [s.lon, s.lat], zoom: 9.4, pitch: flat2d ? 0 : 62, bearing: flat2d ? 0 : -24, curve: 1.7, duration: REDUCED ? 0 : 2600,
-                padding: { top: flat2d ? 80 : 200, bottom: 20, left: 40, right: 40 }, essential: true });  // spill sits low so its column has headroom
+                padding: { top: flat2d ? 80 : 200, bottom: 20, left: 40, right: panelPad() }, essential: true });  // spill sits low so its column has headroom
     return resetBtn.hidden = false;
   }
   showLabel(s, true);
@@ -1078,7 +1167,7 @@ const nearbyDry = (lat, lon) => { const kx = Math.cos(lat * Math.PI / 180) * 111
   return dry.map(s => ({ s, km: Math.hypot((s.lon - lon) * kx, (s.lat - lat) * ky) })).filter(x => x.km <= AFFECT_KM).sort((a, b) => a.km - b.km); };
 if (dry[0]) console.assert(nearbyDry(dry[0].lat, dry[0].lon)[0].km === 0 && !nearbyDry(dry[0].lat + 1, dry[0].lon).some(x => x.s === dry[0]), "nearbyDry() distance check");
 const howLong = s => s.hours == null ? "length unknown" : s.hours < 0.1 ? (s.status === 1 ? "just started" : "a few minutes") : `${fmt(s.hours)} hours`;
-const side = on => document.querySelector(".side").classList.toggle("pcmode", on);  // the postcode results replace the list + case card
+const side = on => { document.querySelector(".side").classList.toggle("pcmode", on); if (on) panelClosed = false; syncPanel(); };  // the postcode results replace the list + case card
 function endPc() {
   pcState = null; pcMarkers.forEach(m => m.remove()); pcMarkers = []; setAffected([]);
   document.getElementById("near").hidden = true; side(false);

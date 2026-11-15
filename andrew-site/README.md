@@ -18,6 +18,9 @@ python andrew-site/serve.py                       # open http://localhost:8000
   rain-explained, grey = no gauge within 10 km; dot size = hours discharging), with numbered pins on the six
   longest dry spills. "Dry spills only" hides the rest. "2D map" keeps the map flat and north-up when a spill
   is selected (dots instead of 3D domes); the browser remembers the choice.
+- **Deep dive** (the arrows button, top right of the map): the title block goes, the map fills the page, and the
+  right column becomes a panel over the map with the full list of dry spills (scrollable) and the selected
+  spill's case underneath. The panel can be closed and reopened; the button again or Esc returns to the overview.
 - **Selecting a spill** (a dot, a pin or a list row) flies the map in and tilts it into 3D: spills stand up as
   columns (height = hours discharging, selected one gold), a dashed ring marks the 10 km rain-check area and
   the gauges inside it show their readings. "Show all of England" flies back out flat.
