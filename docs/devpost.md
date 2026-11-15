@@ -37,8 +37,8 @@ discharging for 16 hours with 0.0 mm of rain at a gauge only 0.8 km away. The sk
 tides and groundwater. The evidence agent found an independent copy of the monitor data confirming one continuous
 16.6-hour discharge, and a local forecast describing those days as dry and frosty. The adjudicator refuted the
 sensor-fault and missed-rain objections, kept the unverified ones standing, and settled on 0.80: likely breach.
-The citation verifier confirmed 7 of 10 cited claims and flagged the other 3 for the human reviewer. Across 8 cases
-that run produced 4 likely breaches, 2 needing review and 2 likely innocent.
+The citation verifier confirmed 7 of 10 cited claims and flagged the other 3 for the human reviewer. Across the 8 cases
+decided so far there are 4 likely breaches, 2 needing review and 2 likely innocent.
 
 Results land in Delta tables. A Genie agent and an AI/BI dashboard let anyone ask "which water company has the
 most dry spills right now?" in plain English, and a 3D map shows every dry spill with the agents' conversation.
