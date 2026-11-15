@@ -240,6 +240,26 @@
   .detail details.srcs { margin-top: 14px; font-size: 13px; }
   .detail details.srcs summary { cursor: pointer; color: var(--navy); font-weight: 600; }
   .detail details.srcs ul { margin-top: 6px; }
+  /* Reports brief (Kang 09:22: shorter, plainer). Ruled key/value rows; full pack folded below. */
+  .brief { display: grid; grid-template-columns: 110px minmax(0, 1fr); margin: 18px 0 0; border-top: 1px solid var(--ink); font-size: 14.5px; line-height: 1.5; }
+  .brief dt, .brief dd { margin: 0; padding: 9px 0; border-bottom: 1px solid var(--rule); }
+  .brief dt { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; padding-top: 12px; }
+  .brief dd ul { list-style: none; padding: 0; display: block; }
+  .brief dd li { padding: 1px 0; }
+  .brief dd li::before { content: "–"; color: var(--muted); margin-right: 8px; }
+  .brief .vchip { margin-right: 4px; }
+  .detail details.fold > summary { cursor: pointer; color: var(--navy); font-weight: 600; list-style: none; }
+  .detail details.fold > summary::-webkit-details-marker { display: none; }
+  .detail details.fold > summary::before { content: "+"; display: inline-block; width: 16px; font-weight: 700; }
+  .detail details.fold[open] > summary::before { content: "−"; }
+  .brief details.fold .rlist { margin-top: 8px; }
+  .detail details.pack { margin-top: 18px; }
+  .detail details.pack > summary { padding: 10px 0; }
+  .detail details.pack .wc { color: var(--muted); font-weight: 400; }
+  .detail details.pack[open] > summary { margin-bottom: 12px; }
+  .detail details.pack > .tlink { float: right; margin-top: -40px; }
+  .srcline { display: block !important; margin-top: 10px; font-size: 12.5px; line-height: 1.6; }
+  @media (max-width: 600px) { .brief { grid-template-columns: 1fr; } .brief dt { padding-bottom: 0; border-bottom: 0; } }
   .log { margin-top: 20px; color: var(--muted); font-size: 14px; }
   @media (max-width: 900px) {
     .reports { grid-template-columns: 1fr; overflow-y: auto; } .queue { border-right: 0; border-bottom: 1px solid var(--ink); }
@@ -1581,67 +1601,69 @@ function renderDetail() {
     out.push(b);
   }
   const mline = el("div", "meta");
-  mline.append(el("span", "vchip " + c.final_verdict, VERDICT_NAME[c.final_verdict] || c.final_verdict.replace(/_/g, " ")),
-    el("span", null, `${pctN(c.breach_confidence)}% likely a breach (skeptic alone ${pctN(c.skeptic_confidence)}%)`), el("span", null, `${siteLine(s)} · discharging ${hrs(s)} h`));
+  mline.append(el("span", null, siteLine(s)));  // verdict and hours are in the brief below
   out.push(el("h2", null, title(s.name)), mline);
   const said = { approved: `Approved by ${d.approved_by}, ${when2(d.approved_at)}.`,
                  sent: `Sent by ${d.sent_by}, ${when2(d.sent_at)}${d.sent_note ? `: ${d.sent_note}` : ""}. Approved by ${d.approved_by}.`,
                  rejected: `Rejected by ${d.rejected_by}, ${when2(d.rejected_at)}: ${d.reason}` }[d.status];
   if (said) { const p = el("p", "decided", said); p.style.setProperty("--pc", { approved: "var(--navy)", sent: "var(--ink)", rejected: "var(--muted)" }[d.status]); out.push(p); }
 
-  const cols = el("div", "cols"), left = el("div"), right = el("div");
-  const ta = el("textarea", "edit"); ta.value = d.report || c.report; ta.readOnly = d.status !== "draft" || !api;
-  ta.setAttribute("aria-label", "Draft report"); ta.hidden = true;
-  const doc = mdDoc(ta.value), dh = el("div", "dochead");
-  dh.append(el("h3", null, d.status === "draft" ? "Draft evidence pack" : "Evidence pack"));
-  if (!ta.readOnly) {
-    const eb = el("button", "tlink", "Edit text");
-    eb.onclick = () => { const on = ta.hidden; ta.hidden = !on; doc.hidden = on; eb.textContent = on ? "Done editing" : "Edit text"; if (!on) doc.replaceChildren(...mdDoc(ta.value).childNodes); };
-    dh.append(eb);
-  }
-  left.append(dh, doc, ta);
-
-  const head = h => right.append(el("h3", null, h));
-  head("Rain gauges within 10 km");
+  // Kang 09:22: the full agent pack (~2,000 words) was too long to read here. Lead with a short brief built only from
+  // the run's own fields (no new wording attributed to the agents), and fold the agents' full text underneath.
+  const link = (text, url) => { const a = el("a", null, text); a.href = url; a.target = "_blank"; a.rel = "noopener noreferrer"; return a; };
+  const host = u => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return u; } };
+  const label = x => { const k = x.indexOf(": "); return k > 0 ? x.slice(0, k) : x; };
+  const brief = el("dl", "brief"), row = (k, ...v) => { const dd = el("dd"); dd.append(...v); brief.append(el("dt", null, k), dd); };
+  const sp = c.spill || {}, open = !sp.latesteventend;
+  row("Spill", `Into ${title(c.watercourse || s.watercourse || "")} from ${when2(String(c.event_start).replace(" ", "T"))}. `,
+    s.hours == null ? "Duration unknown, monitor offline." : `${fmt(s.hours)} h ${open ? "so far, no end recorded" : "in total"}.`);
   if (s.gauges.length) {
-    const gt = el("table", "gtab"), hr = el("tr");
-    ["Gauge", "Distance", "0–24 h before", "24–48 h before"].forEach(x => hr.append(el("th", null, x))); gt.append(hr);
-    for (const g of s.gauges) {
-      const tr = el("tr"), st = el("td"), a = el("a", null, g.station);
-      a.href = `https://environment.data.gov.uk/flood-monitoring/id/stations/${encodeURIComponent(g.station)}`; a.target = "_blank"; a.rel = "noopener noreferrer"; st.append(a);
-      tr.append(st, el("td", null, `${fmt(g.km)} km`), el("td", null, `${fmt(g.mm_0_24h_before, 2)} mm`), el("td", null, `${fmt(g.mm_24_48h_before, 2)} mm`)); gt.append(tr);
-    }
-    right.append(gt);
-  } else right.append(el("p", "meta", "No gauge within 10 km."));
+    const most = Math.max(...s.gauges.flatMap(g => [g.mm_0_24h_before || 0, g.mm_24_48h_before || 0]));
+    const gl = el("span", "gl");
+    s.gauges.forEach((g, i) => gl.append(i ? ", " : "", link(g.station, `https://environment.data.gov.uk/flood-monitoring/id/stations/${encodeURIComponent(g.station)}`), ` at ${fmt(g.km)} km`));
+    row("Rain", `${fmt(most, 1)} mm at most in the two days before, on ${s.gauges.length === 1 ? "the only gauge" : s.gauges.length === 2 ? "both gauges" : `all ${s.gauges.length} gauges`} within 10 km (`, gl, "). A dry day is under 0.25 mm.");
+  } else row("Rain", "No rain gauge within 10 km.");
+  const vd = el("span", "vchip " + c.final_verdict, VERDICT_NAME[c.final_verdict] || c.final_verdict.replace(/_/g, " "));
+  row("Verdict", vd, ` ${pctN(c.breach_confidence)}% likely a breach. The skeptic said ${pctN(c.skeptic_confidence)}%.`);
+  const names = xs => { const ul = el("ul"); xs.forEach(x => ul.append(el("li", null, label(x)))); return ul; };
+  const st = c.ruling && c.ruling.objections_standing || [], rf = c.ruling && c.ruling.objections_refuted || [];
+  if (st.length) row("Still open", names(st));
+  if (rf.length) row("Ruled out", names(rf));
   const checks = c.citations && c.citations.checks || [];
   if (checks.length) {
-    head(`Citations checked: ${c.citations.verified} of ${c.citations.checked} verified`);
-    const ul = el("ul", "rlist");
+    const det = el("details", "fold"), ul = el("ul", "rlist");
+    det.append(el("summary", null, `${c.citations.verified} of ${c.citations.checked} quotes found on the cited pages`));
     for (const k of checks) {
       const li = el("li", "cite"), ok = k.status === "verified";
       li.append(el("span", ok ? "ok" : "no", ok ? "✓" : "✗"), el("span", null, k.claim));
       if (k.quote) li.append(el("q", null, k.quote));
-      if (/^https?:\/\//.test(k.url || "")) { const a = el("a", null, (() => { try { return new URL(k.url).hostname.replace(/^www\./, ""); } catch { return k.url; } })()); a.href = k.url; a.target = "_blank"; a.rel = "noopener noreferrer"; li.append(a); }
+      if (/^https?:\/\//.test(k.url || "")) li.append(link(host(k.url), k.url));
       if (!ok) li.append(el("span", "meta", `Not verified (${String(k.status || "unknown").replace(/_/g, " ")})`));
       ul.append(li);
     }
-    right.append(ul);
+    det.append(ul); row("Sources", det);
   }
-  const bullets = (h, items) => {
-    if (!items || !items.length) return; head(h); const ul = el("ul", "rlist");
-    for (const i of items) { const li = el("li"), k = i.indexOf(": "); if (k > 0 && k < 90) li.append(el("b", null, i.slice(0, k) + ". "), i.slice(k + 2)); else li.textContent = i; ul.append(li); }
-    right.append(ul);
-  };
-  bullets("Objections still standing", c.ruling && c.ruling.objections_standing);
-  bullets("Objections refuted", c.ruling && c.ruling.objections_refuted);
+  out.push(brief);
+
+  const ta = el("textarea", "edit"); ta.value = d.report || c.report; ta.readOnly = d.status !== "draft" || !api;
+  ta.setAttribute("aria-label", "Draft report"); ta.hidden = true;
+  const doc = mdDoc(ta.value), full = el("details", "fold pack"), sum = el("summary");
+  const words = String(ta.value).split(/\s+/).filter(Boolean).length;
+  sum.append(`${d.status === "draft" ? "Draft evidence pack" : "Evidence pack"}, as the agents wrote it`, el("span", "wc", ` · about ${(Math.round(words / 100) * 100 || words).toLocaleString("en-GB")} words`));
+  full.append(sum);
+  if (!ta.readOnly) {
+    const eb = el("button", "tlink", "Edit text");
+    eb.onclick = () => { const on = ta.hidden; ta.hidden = !on; doc.hidden = on; eb.textContent = on ? "Done editing" : "Edit text"; if (!on) doc.replaceChildren(...mdDoc(ta.value).childNodes); };
+    full.append(eb);
+  }
   const srcs = (c.evidence && c.evidence.searches || []).flatMap(q => q.sources || []);
+  full.append(doc, ta);
   if (srcs.length) {
-    const det = el("details", "srcs"), ul = el("ul");
-    det.append(el("summary", null, `All ${srcs.length} pages the researcher read`));
-    for (const src of srcs) { const li = el("li"); if (/^https?:\/\//.test(src.url || "")) { const a = el("a", null, src.name || src.url); a.href = src.url; a.target = "_blank"; a.rel = "noopener noreferrer"; li.append(a); } else li.textContent = src.name || ""; ul.append(li); }
-    det.append(ul); right.append(det);
+    const p = el("p", "meta srcline", `The researcher read ${srcs.length} pages: `);
+    srcs.forEach((src, i) => p.append(i ? ", " : "", /^https?:\/\//.test(src.url || "") ? link(src.name || host(src.url), src.url) : (src.name || "")));
+    full.append(p);
   }
-  cols.append(left, right); out.push(cols);
+  out.push(full);
 
   const act = el("div", "actions");
   const btn = (text, cls, fn, disabled) => { const b = el("button", "btn " + cls, text); b.onclick = fn; b.disabled = !!disabled || saving; return b; };
