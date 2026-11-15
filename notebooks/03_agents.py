@@ -1,6 +1,6 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC # Sentinels 03: agents
+# MAGIC # Sentinel 03: agents
 # MAGIC Runs the top dry-spill candidates through the agent team, traced in MLflow:
 # MAGIC investigator (Claude) -> skeptic (Databricks-served open model) -> evidence agent (Claude + Linkup) -> drafter (Claude).
 # MAGIC Results and memory go to Delta tables.

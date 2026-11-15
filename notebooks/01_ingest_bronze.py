@@ -1,6 +1,6 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC # Sentinels 01: ingest (bronze)
+# MAGIC # Sentinel 01: ingest (bronze)
 # MAGIC Snapshots every English storm overflow from 8 water-company ArcGIS feeds, plus every EA rain gauge.
 # MAGIC Schedule this as a Job every 15 minutes: each run appends a snapshot, so bronze becomes a history
 # MAGIC of overflow status that the feeds themselves don't keep.

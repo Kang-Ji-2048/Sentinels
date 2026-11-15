@@ -1,6 +1,6 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC # Sentinels 04: train a spill-triage model with Adaption
+# MAGIC # Sentinel 04: train a spill-triage model with Adaption
 # MAGIC Every case the agent team decides (notebook 03) becomes a training row in `gold_training_examples`:
 # MAGIC the prompt is only the spill + rainfall data, the completion is the team's final verdict and reasoning.
 # MAGIC Adaption's AutoScientist instruction-tunes a small model on those rows, so new candidates can be

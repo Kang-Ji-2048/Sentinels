@@ -1,6 +1,6 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC # Sentinels 05: insights layer for the AI/BI dashboard and Genie
+# MAGIC # Sentinel 05: insights layer for the AI/BI dashboard and Genie
 # MAGIC Adds Unity Catalog comments (Genie reads them to understand the data) and three views that the
 # MAGIC dashboard and Genie space sit on. Run after 02 and 03. It is cheap: SQL only, no API calls.
 # MAGIC
