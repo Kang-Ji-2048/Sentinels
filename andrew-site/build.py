@@ -39,6 +39,14 @@ if newer.exists() and newer != run_file:
     for s in sites:
         s["gauges"] = [g if g.get("lat") is not None or g["station"] not in where
                        else {**g, "lat": where[g["station"]][0], "lon": where[g["station"]][1]} for g in s["gauges"]]
+# Then from gauge_coords.json: every EA rainfall station's position (flood-monitoring /id/stations?parameter=rainfall,
+# fetched 15 Nov 2026), so the Databricks runs, which store no gauge positions, still get their gauge dots.
+coords = here / "gauge_coords.json"
+if coords.exists():
+    where = json.loads(coords.read_text(encoding="utf-8"))
+    for s in sites:
+        s["gauges"] = [g if g.get("lat") is not None or g["station"] not in where
+                       else {**g, "lat": where[g["station"]][0], "lon": where[g["station"]][1]} for g in s["gauges"]]
 all_g = [g for s in sites for g in s["gauges"]]
 print(f"gauges with a map position: {sum(g.get('lat') is not None for g in all_g)} of {len(all_g)}")
 cases = {}

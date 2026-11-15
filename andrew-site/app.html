@@ -685,7 +685,7 @@
   <ol class="pipe" id="pipe"></ol>
   <div class="hgrid">
     <section><h2>By water company</h2><div id="h-co"></div></section>
-    <section><h2>When the spills started</h2><div id="h-time"></div></section>
+    <section><h2>When the dry spills started</h2><div id="h-time"></div></section>
     <section><h2>Checked by our AI agents</h2><div id="h-cases"></div></section>
   </div>
 </main>
@@ -1625,16 +1625,16 @@ function renderHome() {
   const co = {};
   for (const s of sites) { const c = co[s.company] ||= { dry: 0, other: 0 }; s.verdict === "dry_spill_candidate" ? c.dry++ : c.other++; }
   const rows = Object.entries(co).sort((a, b) => b[1].dry - a[1].dry || b[1].other - a[1].other);
-  const most = Math.max(...rows.map(([, c]) => c.dry + c.other));
+  const most = Math.max(1, ...rows.map(([, c]) => c.dry));  // bars show dry spills only: in a wet run the rest would dwarf them
   const tbl = el("div", "bars");
   for (const [name, c] of rows) {
     const r = el("div", "bar"), track = el("span", "cotrack");
-    const d = el("i", "d"), o = el("i", "o"); d.style.width = `${100 * c.dry / most}%`; o.style.width = `${100 * c.other / most}%`;
-    track.append(d, o);
-    r.append(el("span", "n", name.replace(/ Water$| Utilities$/, "")), track, el("span", "v", `${c.dry} / ${c.dry + c.other}`));
+    const d = el("i", "d"); d.style.width = `${100 * c.dry / most}%`;
+    track.append(d);
+    r.append(el("span", "n", name.replace(/ Water$| Utilities$/, "")), track, el("span", "v", `${c.dry} of ${c.dry + c.other}`));
     r.title = `${name}: ${c.dry} dry of ${c.dry + c.other} spills`; tbl.append(r);
   }
-  const key = el("p", "key"); key.append(el("i", "d"), "dry spill ", el("i", "o"), "rained nearby, or no gauge to tell");
+  const key = el("p", "key", "Dry spills, out of all spills that company reported in the run.");
   document.getElementById("h-co").replaceChildren(tbl, key);
   // When the spills started: 3-hour bins over the 48 h before the run
   const end = new Date(RUN.run_at.replace(" ", "T")), BIN = 3, N = 16, bins = Array.from({ length: N }, () => ({ dry: 0, other: 0 }));
@@ -1645,13 +1645,13 @@ function renderHome() {
     if (k < 0) { older++; continue; } if (k >= N) continue;
     s.verdict === "dry_spill_candidate" ? bins[k].dry++ : bins[k].other++;
   }
-  const top = Math.max(1, ...bins.map(b => b.dry + b.other)), chart = el("div", "cols");
+  const top = Math.max(1, ...bins.map(b => b.dry)), chart = el("div", "cols");  // dry only, same reason as above
   bins.forEach((b, i) => {
     const col = el("div", "col"), o = el("i", "o"), d = el("i", "d");
-    o.style.height = `${100 * b.other / top}%`; d.style.height = `${100 * b.dry / top}%`;
+    d.style.height = `${100 * b.dry / top}%`;
     const t0 = new Date(end - (N - i) * BIN * 36e5);
-    col.title = `${t0.toLocaleString("en-GB", { weekday: "short", hour: "2-digit", minute: "2-digit" })}: ${b.dry} dry, ${b.other} other`;
-    col.append(o, d); chart.append(col);
+    col.title = `${t0.toLocaleString("en-GB", { weekday: "short", hour: "2-digit", minute: "2-digit" })}: ${b.dry} dry spill${b.dry === 1 ? "" : "s"} started`;
+    col.append(d); chart.append(col);
   });
   const ax = el("div", "axis"); ax.append(el("span", null, "2 days ago"), el("span", null, "1 day ago"), el("span", null, when2(RUN.run_at.replace(" ", "T"))));
   const box = [chart, ax];
@@ -1660,7 +1660,8 @@ function renderHome() {
   // Agent cases, most likely breach first
   const hc = document.getElementById("h-cases");
   if (!cased.length) return hc.replaceChildren(el("p", "key", "Our AI agents haven't checked any spills yet."));
-  hc.replaceChildren(...cased.sort((a, b) => b.case.breach_confidence - a.case.breach_confidence).map(s => {
+  const all = el("a", "tlink", `All ${cased.length} cases →`); all.href = "#cases";
+  hc.replaceChildren(...cased.sort((a, b) => b.case.breach_confidence - a.case.breach_confidence).slice(0, 5).map(s => {
     const c = s.case, b = el("button", "hcase");
     const top = el("span", "t"); top.append(el("b", null, title(s.name)), el("span", "vchip " + c.final_verdict, VERDICT_NAME[c.final_verdict] || c.final_verdict.replace(/_/g, " ")));
     const sw = el("span", "m");
@@ -1671,6 +1672,7 @@ function renderHome() {
     b.onclick = () => c.report ? openInReports(s) : openOnMap(s);
     return b;
   }));
+  if (cased.length > 5) { const p = el("p", "key"); p.append(all); hc.append(p); }
 }
 // ---------- Reports tab ----------
 // Decisions live in andrew-site/decisions.json, read and written through andrew-site/serve.py.
