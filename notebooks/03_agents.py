@@ -110,7 +110,10 @@ results = []
 for r in py_records(cands):
     spill = {**r, "gauges": json.loads(r["gauges_json"])}
     print("Investigating", spill["company"], spill["id"], spill["receivingwatercourse"])
-    results.append(orchestrator.run_case(spill, memory))
+    try:
+        results.append(orchestrator.run_case(spill, memory))
+    except Exception as e:  # one bad case must not lose the whole run
+        print(f"  skipped {spill['id']}: {type(e).__name__}: {e}")
 
 # COMMAND ----------
 
