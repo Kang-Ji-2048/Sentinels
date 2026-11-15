@@ -290,13 +290,15 @@
   .brief dt { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; padding-top: 12px; }
   .brief dd ul { list-style: none; padding: 0; display: block; }
   .brief dd li { padding: 1px 0; }
-  .brief dd li::before { content: "–"; color: var(--muted); margin-right: 8px; }
+  .brief dd li:not(.cite)::before { content: "–"; color: var(--muted); margin-right: 8px; }
   .brief .vchip { margin-right: 4px; }
   .detail details.fold > summary { cursor: pointer; color: var(--navy); font-weight: 600; list-style: none; }
   .detail details.fold > summary::-webkit-details-marker { display: none; }
   .detail details.fold > summary::before { content: "+"; display: inline-block; width: 16px; font-weight: 700; }
   .detail details.fold[open] > summary::before { content: "−"; }
   .brief details.fold .rlist { margin-top: 8px; }
+  .brief .cite { padding: 8px 0; }
+  .cite > .meta { grid-column: 2; font-size: 12.5px; }
   .detail details.pack { margin-top: 18px; }
   .detail details.pack > summary { padding: 10px 0; }
   .detail details.pack .wc { color: var(--muted); font-weight: 400; }
