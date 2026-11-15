@@ -5,12 +5,19 @@ Nothing outside this folder is changed.
 
 ## Run it
 
+The page is a React app (Vite + Tailwind + shadcn/ui) in `andrew-site/web/`. `app.html`, `build/` and
+`public/index.html` are the old single-file page, kept only for reference.
+
 ```
 pip install -r requirements.txt
 python scripts/detect.py                          # live data -> data/latest_run.json
-python andrew-site/build.py                       # -> andrew-site/build/index.html
-python andrew-site/serve.py                       # open http://localhost:8000
+python andrew-site/build.py                       # -> andrew-site/web/public/data/run.json
+cd andrew-site/web && npm install && npm run build && cd ../..   # -> andrew-site/web/dist (only after code changes)
+python andrew-site/serve.py 8765                  # open http://localhost:8765 (8000 if that port is free)
 ```
+
+While editing the page: run `python andrew-site/serve.py` (port 8000) and `npm run dev` in `andrew-site/web`; the dev
+server proxies `/api` to port 8000. Theme tokens (Inter, navy / carmine / amber palette) are in `web/src/index.css`.
 
 ## What's on the page
 

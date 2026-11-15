@@ -1,6 +1,10 @@
-"""Serve Andrew's Sentinels page and save report decisions (approve / reject / sent) to a file.
+"""Serve Andrew's Sentinels dashboard and save report decisions (approve / reject / sent) to a file.
 
-    python andrew-site/serve.py          -> http://localhost:8000
+    python andrew-site/build.py                   (data: web/public/data/run.json)
+    (cd andrew-site/web && npm run build)         (page: web/dist, only after code changes)
+    python andrew-site/serve.py                   -> http://localhost:8000
+
+data/run.json is always served from web/public/data, so rerunning build.py refreshes the page without an npm build.
 
 Decisions go to andrew-site/decisions.json. A rejection of a real (non-example) case is also added to the agents'
 case memory (data/case_memory.jsonl), so its reason is in front of the agents next time they look at that site.
@@ -18,18 +22,20 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 DECISIONS = HERE / "decisions.json"
 MEMORY = HERE.parent / "data" / "case_memory.jsonl"
+DIST = HERE / "web" / "dist"
+RUN_JSON = HERE / "web" / "public" / "data" / "run.json"
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8000
 STATUSES = {"approved", "rejected", "sent", "draft"}  # "draft" = decision undone
 NEXT = {"draft": {"approved", "rejected"}, "approved": {"sent", "draft"}, "rejected": {"draft"}, "sent": {"draft"}}
 
 
 def load() -> dict:
-    return json.loads(DECISIONS.read_text()) if DECISIONS.exists() else {}
+    return json.loads(DECISIONS.read_text(encoding="utf-8")) if DECISIONS.exists() else {}
 
 
 def save(decisions: dict) -> None:
     tmp = DECISIONS.with_suffix(".tmp")
-    tmp.write_text(json.dumps(decisions, indent=1))
+    tmp.write_text(json.dumps(decisions, indent=1), encoding="utf-8")
     os.replace(tmp, DECISIONS)  # never leave a half-written file
 
 
@@ -69,7 +75,7 @@ def decide(body: dict) -> dict:
     save(decisions)
     if status == "rejected" and not d["illustrative"]:  # never feed made-up example cases to the agents
         MEMORY.parent.mkdir(parents=True, exist_ok=True)
-        with MEMORY.open("a") as f:
+        with MEMORY.open("a", encoding="utf-8") as f:
             f.write(json.dumps({"site_id": d["site_id"], "company": text(body, "company", 100),
                                 "event_start": d["event_start"], "final_verdict": "rejected_by_reviewer",
                                 "reviewer_reason": note, "decided_at": now}) + "\n")
@@ -88,6 +94,15 @@ class Handler(SimpleHTTPRequestHandler):
     def do_GET(self):
         if self.path == "/api/decisions":
             return self._json(200, load())
+        if self.path.split("?")[0] == "/data/run.json" and RUN_JSON.exists():  # newest data, not the copy baked into dist
+            data = RUN_JSON.read_bytes()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("Content-Length", str(len(data)))
+            self.end_headers()
+            self.wfile.write(data)
+            return
         return super().do_GET()
 
     def do_POST(self):
@@ -110,8 +125,9 @@ class Handler(SimpleHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    build = HERE / "build"
-    if not (build / "index.html").exists():
-        sys.exit("No page yet: run python andrew-site/build.py first.")
+    if not (DIST / "index.html").exists():
+        sys.exit("No page yet: run python andrew-site/build.py, then npm install && npm run build in andrew-site/web.")
+    if not RUN_JSON.exists():
+        sys.exit("No data yet: run python andrew-site/build.py first.")
     print(f"Sentinels on http://localhost:{PORT}  (decisions saved to {DECISIONS})")
-    ThreadingHTTPServer(("127.0.0.1", PORT), partial(Handler, directory=str(build))).serve_forever()
+    ThreadingHTTPServer(("127.0.0.1", PORT), partial(Handler, directory=str(DIST))).serve_forever()

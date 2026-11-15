@@ -2,3 +2,7 @@ build/
 history.json
 decisions.json
 decisions.tmp
+gauge_coords.json
+web/node_modules/
+web/dist/
+web/public/data/
