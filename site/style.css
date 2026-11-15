@@ -35,8 +35,7 @@ b { font-weight: 600; }
 .top { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between;
   height: 76px; padding: 0 clamp(16px, 4vw, 72px); background: #fff; color: var(--band); border-bottom: 1px solid var(--line); }
 .brand { font: 800 1.5rem/1 var(--serif); letter-spacing: -.04em; text-decoration: none; color: var(--band); }
-.brand { display: inline-flex; align-items: center; gap: .5rem; }
-.brand .mark { width: 1.6rem; height: 1.6rem; flex: none; }
+.brand span { color: var(--gold); }
 .top nav { display: flex; gap: 28px; font-size: .875rem; font-weight: 550; }
 .top nav a { position: relative; padding-block: 10px; text-decoration: none; color: var(--ink-2); transition: color .2s; }
 .top nav a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 4px; height: 1px; background: var(--gold);
