@@ -1,4 +1,4 @@
-# Andrew's site: Sentinels app page
+# Andrew's site: Sentinel app page
 
 A self-contained copy of the app page Andrew built: the 3D spill map with the Figma "Sentinels - App" layout.
 Nothing outside this folder is changed.

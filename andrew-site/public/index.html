@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sentinels</title>
+<title>Sentinel</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
@@ -515,7 +515,7 @@
 <body>
 <header class="top">
   <div class="brand">
-    <span class="logo">Sentinels</span>
+    <span class="logo">Sentinel</span>
     <nav class="nav"><a href="#map" data-view="map" class="on">Map</a><a href="#cases" data-view="cases">Cases</a><a href="#reports" data-view="reports">Reports</a></nav>
   </div>
   <div class="top-right"><span class="updated" id="updated"></span><button class="check dash-only" id="pc-go">Check your postcode</button></div>
@@ -1712,7 +1712,7 @@ function downloadPack(s, d) {
   const c = s.case, L = [];
   if (c.illustrative) L.push("> **EXAMPLE, NOT A REAL EVIDENCE PACK.** The agent text in this pack was made up to show the format. Do not send it.", "");
   L.push("# Evidence pack: possible dry-day sewage spill", "", `**${title(s.name)}** overflow, ${s.company} (${s.id})`, "",
-    `Reviewed and approved by ${d.approved_by} on ${when2(d.approved_at)}. Prepared with Sentinels.`, "",
+    `Reviewed and approved by ${d.approved_by} on ${when2(d.approved_at)}. Prepared with Sentinel.`, "",
     "## Report", "", d.report || c.report, "",
     "## The spill", "", `- Spill started: ${c.event_start}`,
     `- Discharging: ${s.hours == null ? "unknown (monitor offline)" : fmt(s.hours) + " hours"} at the time of the detector run (${when2(RUN.run_at.replace(" ", "T"))})`, "",
@@ -1727,7 +1727,7 @@ function downloadPack(s, d) {
   if (srcs.length) L.push("## Sources", "", ...srcs.map(x => x.url ? `- [${x.name || x.url}](${x.url})` : `- ${x.name}`), "");
   L.push("---", "", "This is a report of a possible breach for investigation, not proof. Spill data is self-reported by the water company and rain gauges are sparse.");
   const a = el("a"); a.href = URL.createObjectURL(new Blob([L.join("\n")], { type: "text/markdown" }));
-  a.download = `sentinels-${c.illustrative ? "EXAMPLE-" : ""}evidence-pack-${s.id}.md`;
+  a.download = `sentinel-${c.illustrative ? "EXAMPLE-" : ""}evidence-pack-${s.id}.md`;
   document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
 

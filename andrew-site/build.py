@@ -1,4 +1,4 @@
-"""Build Andrew's Sentinels app page (3D map + side panel) from the latest detector run.
+"""Build Andrew's Sentinel app page (3D map + side panel) from the latest detector run.
 
     python andrew-site/build.py                       -> andrew-site/build/index.html
     python -m http.server 8000 -d andrew-site/build   -> http://localhost:8000
