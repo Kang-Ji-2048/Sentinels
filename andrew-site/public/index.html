@@ -1074,7 +1074,7 @@ function select(s, fromPc = false) {
 // ---------- Affected water (Andrew, water-systems-and-postcode) ----------
 // Rivers, streams and lakes near a spill, read from the basemap's vector tiles once they've loaded, out to a reach set
 // by an estimated impact score. Flow direction isn't known, so this is "could be affected", not a plume.
-const RECEIVING_KM = 20, SEA = new Set(["ocean", "sea", "bay", "strait", "reef", "dock"]);
+const RING_KM = AREA_M / 1000, SEA = new Set(["ocean", "sea", "bay", "strait", "reef", "dock"]);
 const BANDS = [[60, "high", 10], [30, "medium", 5], [0, "low", 2]];  // score threshold, label, reach in km
 function setAffected(features) { const src = map.getSource("affected"); if (src) src.setData({ type: "FeatureCollection", features }); }
 // Estimated impact, 0-100: duration, still running, dryness (less dilution) and a small receiving water push it up; the
@@ -1095,51 +1095,80 @@ function impactScore(s, receivingKind) {
 const GENERIC = new Set(["river", "stream", "brook", "beck", "burn", "creek", "estuary", "estu", "trib", "tributary", "canal", "water",
   "sound", "via", "sws", "the", "of", "and", "at", "on", "upper", "lower", "north", "south", "east", "west", "main", "drain", "ditch", "s", "n", "e", "w"]);
 const nameWords = x => String(x || "").toLowerCase().replace(/\(.*?\)/g, " ").replace(/[^a-z ]/g, " ").split(/\s+/).filter(w => w.length > 2 && !GENERIC.has(w));
-function waterAround(m, s) {  // water features within RECEIVING_KM of a spill, from the loaded vector tiles
-  const waterLayer = m.getLayer("water");
-  if (!waterLayer) return null;
+// Water inside the spill's dashed 10 km ring, from the basemap's vector tiles (both the "water" and "waterway" layers).
+function waterAround(m, s) {
+  const srcs = ["water", "waterway"].map(id => m.getLayer(id)).filter(Boolean);
+  if (!srcs.length) return null;
   const recv = new Set(nameWords(s.name)), kx = Math.cos(s.lat * Math.PI / 180) * 111.32, ky = 110.57;
   const kmOf = c => Math.hypot((c[0] - s.lon) * kx, (c[1] - s.lat) * ky);
-  const nearest = g => { let best = Infinity; const walk = c => { if (typeof c[0] === "number") best = Math.min(best, kmOf(c)); else c.forEach(walk); }; walk(g.coordinates); return best; };
-  const found = [];
-  for (const f of m.querySourceFeatures(waterLayer.source, { sourceLayer: waterLayer.sourceLayer })) {
-    if (SEA.has(f.properties.kind) || SEA.has(f.properties.class)) continue;
-    const name = f.properties.name || f.properties["name:en"] || "";
-    const receiving = recv.size > 0 && nameWords(name).some(w => recv.has(w));
-    const km = nearest(f.geometry);
-    if (km <= RECEIVING_KM) found.push({ f, name, km, receiving });
-  }
-  return { found, kmOf };
-}
-function pickWater(s, around) {  // the receiving water reaches 1.5x further: it takes the sewage first
-  const { found, kmOf } = around;
-  const recvHit = found.filter(x => x.receiving).sort((a, b) => a.km - b.km)[0];
-  const kind = !recvHit ? null : recvHit.f.geometry.type.includes("Polygon") ? "wide" : recvHit.f.properties.kind_detail || "river";
-  const imp = impactScore(s, kind), R = imp.reach, keep = [], names = new Map(), seen = new Set();
-  const fade = (km, reach) => Math.max(0, 1 - km / reach) ** 0.8;
-  for (const { f, name, km, receiving } of found) {
-    const reach = receiving ? 1.5 * R : R;
-    if (km > reach) continue;
-    const g = f.geometry;
-    if (g.type.includes("Polygon")) {  // lakes and estuaries: only ones that sit inside the reach, never a whole coastline
-      const ring = g.type === "Polygon" ? g.coordinates[0] : g.coordinates.flatMap(p => p[0]);
-      if (Math.max(...ring.map(kmOf)) > reach * 1.3) continue;
-      const k = ring.length + ":" + ring[0].map(v => v.toFixed(4)).join(",");
-      if (seen.has(k)) continue; seen.add(k);
-      keep.push({ type: "Feature", properties: { w: fade(km, reach), r: receiving }, geometry: g });
-    } else {  // rivers: cut into segments, keep the ones inside the reach, each fading with its own distance
-      for (const line of g.type === "LineString" ? [g.coordinates] : g.coordinates)
-        for (let i = 1; i < line.length; i++) {
-          const a = line[i - 1], b = line[i], d = (kmOf(a) + kmOf(b)) / 2;
-          if (d > reach) continue;
-          const k = [a, b].map(c => c.map(v => v.toFixed(5)).join(",")).sort().join("|");  // tiles overlap: draw each segment once
-          if (seen.has(k)) continue; seen.add(k);
-          keep.push({ type: "Feature", properties: { w: fade(d, reach), r: receiving }, geometry: { type: "LineString", coordinates: [a, b] } });
-        }
+  const lines = [], polys = [], done = new Set();
+  for (const L of srcs) {
+    if (done.has(L.source + "|" + L.sourceLayer)) continue; done.add(L.source + "|" + L.sourceLayer);
+    for (const f of m.querySourceFeatures(L.source, { sourceLayer: L.sourceLayer })) {
+      if (SEA.has(f.properties.kind) || SEA.has(f.properties.class)) continue;
+      const name = f.properties.name || f.properties["name:en"] || "", g = f.geometry;
+      const receiving = recv.size > 0 && nameWords(name).some(w => recv.has(w));
+      if (g.type === "LineString" || g.type === "MultiLineString")
+        for (const line of g.type === "LineString" ? [g.coordinates] : g.coordinates) lines.push({ line, name, receiving });
+      else if (g.type.includes("Polygon")) {
+        const ring = g.type === "Polygon" ? g.coordinates[0] : g.coordinates.flatMap(q => q[0]);
+        if (ring.length && Math.max(...ring.map(kmOf)) <= RING_KM) polys.push({ g, ring, name, receiving });  // only lakes/estuaries wholly inside the ring
+      }
     }
-    if (name && (!names.has(name) || km < names.get(name).km)) names.set(name, { km, isReceiving: receiving });
   }
-  return { impact: imp, keep, names: [...names.entries()].sort((a, b) => b[1].isReceiving - a[1].isReceiving || a[1].km - b[1].km) };
+  return { lines, polys, kmOf };
+}
+// Follow the river downstream from the overflow. OpenStreetMap draws every waterway in the direction it flows, and the
+// basemap keeps that order, so walking segment by segment from the outfall traces where the sewage goes. Upstream water
+// isn't affected and isn't drawn. Stops at the 10 km ring. If no river runs past the outfall, nothing is guessed.
+function pickWater(s, around) {
+  const { lines, polys, kmOf } = around;
+  const key = c => c[0].toFixed(4) + "," + c[1].toFixed(4);  // ~10 m: joins segments that tiles cut apart
+  const out = new Map(), seen = new Set();                    // node -> segments leaving it, in flow direction
+  for (const { line, name, receiving } of lines)
+    for (let i = 1; i < line.length; i++) {
+      const a = line[i - 1], b = line[i], k = key(a) + ">" + key(b);
+      if (seen.has(k) || kmOf(a) > RING_KM && kmOf(b) > RING_KM) continue; seen.add(k);
+      (out.get(key(a)) || out.set(key(a), []).get(key(a))).push({ a, b, name, receiving });
+    }
+  // The outfall: the closest river point within 1.5 km, preferring the named receiving watercourse.
+  let start = null, best = Infinity;
+  for (const segs of out.values()) for (const g of segs) {
+    const d = kmOf(g.a) - (g.receiving ? 0.5 : 0);
+    if (kmOf(g.a) <= 1.5 && d < best) { best = d; start = g; }
+  }
+  const kx = Math.cos(s.lat * Math.PI / 180) * 111.32, ky = 110.57, segKm = g => Math.hypot((g.b[0] - g.a[0]) * kx, (g.b[1] - g.a[1]) * ky);
+  const keep = [], names = new Map(), ends = [];
+  let traced = 0;
+  if (start) {
+    const queue = [[key(start.a), 0]], visited = new Set();
+    while (queue.length) {
+      const [node, along] = queue.shift();
+      if (visited.has(node)) continue; visited.add(node);
+      const next = out.get(node) || [];
+      if (!next.length) ends.push(node);
+      for (const g of next) {
+        if (kmOf(g.b) > RING_KM || along > 25) continue;  // the ring is the limit
+        const to = along + segKm(g);
+        traced = Math.max(traced, to);
+        keep.push({ type: "Feature", properties: { w: Math.max(0.35, 1 - to / (RING_KM * 1.6)), r: true }, geometry: { type: "LineString", coordinates: [g.a, g.b] } });
+        if (g.name && !names.has(g.name)) names.set(g.name, { km: along, isReceiving: g.receiving });
+        queue.push([key(g.b), to]);
+      }
+    }
+    // Lakes and estuaries the traced river runs into or through.
+    const pts = keep.flatMap(f => f.geometry.coordinates);
+    for (const p of polys) {
+      const near = pts.some(q => p.ring.some(c => Math.abs(c[0] - q[0]) < 0.004 && Math.abs(c[1] - q[1]) < 0.003));
+      if (!near) continue;
+      keep.push({ type: "Feature", properties: { w: 0.8, r: true }, geometry: p.g });
+      if (p.name && !names.has(p.name)) names.set(p.name, { km: 0, isReceiving: p.receiving });
+    }
+  }
+  const recvSeg = start && start.receiving ? start : null;
+  const kind = !start ? null : recvSeg ? "river" : "stream";
+  const imp = impactScore(s, kind);
+  return { impact: { ...imp, traced: start && traced >= 0.2 ? traced : 0 }, keep: traced >= 0.2 ? keep : [], names: traced >= 0.2 ? [...names.entries()] : [] };
 }
 // After the camera arrives: draw what's loaded, then redraw while the rest of the tiles come in.
 function waterWhenLoaded(spills, done) {
@@ -1162,10 +1191,11 @@ function renderAffected() {
   if (!box || !impact) return;
   const tag = el("span", "itag " + impact.band, `Estimated impact ${impact.score} · ${impact.band}`);
   tag.title = `${impact.parts.map(([l, p]) => `${l} +${Math.round(p)}`).join(" · ")} · × ${impact.conf.toFixed(2)} ${impact.hasCase ? "agents' confidence" : "detector verdict"}. A rough guide: no spill volume or river flow data exists.`;
-  const names = affectedNames.slice(0, 4).map(([n, i]) => `${n}${i.isReceiving ? " (receiving)" : ""}`);
-  box.replaceChildren(tag, el("b", null, "Water that could be affected, in red: "),
-    names.length ? names.join(", ") + (affectedNames.length > 4 ? ` and ${affectedNames.length - 4} more` : "") : "no named rivers or lakes nearby",
-    `. Out to ${impact.reach} km (${1.5 * impact.reach} km along the receiving water); which way it flows isn't known.`);
+  const names = affectedNames.slice(0, 4).map(([n]) => n);
+  if (!impact.traced) return box.replaceChildren(tag, "No mapped river runs past this overflow within 1.5 km, so its downstream path isn't drawn.");
+  box.replaceChildren(tag, el("b", null, "Downstream, in red: "),
+    names.length ? names.join(" → ") + (affectedNames.length > 4 ? ` and ${affectedNames.length - 4} more` : "") : "unnamed watercourses",
+    `. Traced ${fmt(impact.traced)} km with the flow, to the edge of the 10 km ring. Upstream water isn't affected and isn't shown.`);
 }
 
 // ---------- Check your postcode (Andrew), on the same map ----------
@@ -1226,7 +1256,7 @@ function showPc(state) {
     near.replaceChildren(el("h2", null, `${hits.length} sewage spill${hits.length > 1 ? "s" : ""} on a dry day within ${AFFECT_KM} km of ${r.postcode}`),
       el("p", "lead", still ? `${still} ${still === 1 ? "is" : "are"} still spilling now. Avoid the water marked in red.` : "Avoid the water marked in red for the next couple of days."),
       ol, adviceBox(hits),
-      el("p", "sub", `${asOf} Possible dry-day spills from the water companies' own monitoring, not confirmed pollution. Which way the water flows isn't known.`), clear);
+      el("p", "sub", `${asOf} Possible dry-day spills from the water companies' own monitoring, not confirmed pollution. Red marks the river downstream of each overflow, traced from the map's river directions.`), clear);
   }
   resetBtn.hidden = false;
   overlay.setProps({ layers: layers() });
