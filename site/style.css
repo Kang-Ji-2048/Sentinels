@@ -44,7 +44,7 @@ b { font-weight: 600; }
 .top nav a:hover::after { transform: scaleX(1); }
 
 /* Hero */
-.hero { min-height: calc(100svh - 76px); padding: 64px 24px 80px; max-width: 1040px; margin: 0 auto; display: flex; flex-direction: column;
+.hero { padding: 88px 24px 72px; max-width: 1040px; margin: 0 auto; display: flex; flex-direction: column;
   justify-content: center; align-items: center; text-align: center; position: relative; }
 .eyebrow { font: 600 .75rem/1.5 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 22px; }
 h1 { font: 800 clamp(2.4rem, 5vw, 4.2rem)/1.04 var(--serif); margin: 0 0 28px; letter-spacing: -.04em; }
@@ -62,7 +62,7 @@ h1 em { font-style: normal; color: var(--dry); }
 .section-label { margin: 0 0 14px; font: 600 .75rem/1.5 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
 .section-label::before { content: ""; display: inline-block; width: 22px; border-top: 2px solid var(--dry); vertical-align: middle; margin-right: 12px; }
 .fig { margin: 0; }
-.scrollcue { position: absolute; bottom: 28px; left: 50%; text-decoration: none; color: var(--ink-3); font-size: 22px; animation: bob 2s infinite; }
+.scrollcue { position: absolute; bottom: 20px; left: 50%; text-decoration: none; color: var(--ink-3); font-size: 22px; animation: bob 2s infinite; }
 @keyframes bob { 50% { transform: translateY(6px); } }
 
 /* Scrollytelling map */
@@ -198,8 +198,8 @@ h2 { font: 700 clamp(2rem, 3.4vw, 3rem)/1.12 var(--serif); margin: 0 0 14px; let
 @media (min-width: 901px) { #case-data { position: sticky; top: 96px; } }
 
 /* Demo video */
-.demo { padding-top: 72px; }
-.video-frame { position: relative; aspect-ratio: 16 / 9; background: var(--bg-2); border: 1px solid var(--line); border-top: 1px solid var(--gold); border-radius: var(--radius); overflow: hidden; }
+.demo { padding-top: 64px; padding-bottom: 64px; }
+.video-frame { position: relative; aspect-ratio: 16 / 9; width: min(100%, calc((100svh - 240px) * 16 / 9)); margin: 0 auto; background: var(--bg-2); border: 1px solid var(--line); border-top: 1px solid var(--gold); border-radius: var(--radius); overflow: hidden; }
 .video-frame video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; }
 .video-pending { position: absolute; inset: 0; display: grid; place-items: center; }
 
