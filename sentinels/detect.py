@@ -65,7 +65,7 @@ def assess(spill: dict, gauges: list[dict], readings_by_station: dict[str, list[
         if before_24 is None or before_48 is None:
             continue  # gauge offline for the window: missing data is not evidence of a dry day
         per_gauge.append({
-            "station": g["station"], "km": round(g["km"], 1),
+            "station": g["station"], "km": round(g["km"], 1), "lat": g.get("lat"), "lon": g.get("lon"),
             "mm_0_24h_before": before_24, "mm_24_48h_before": before_48,
             "mm_during": _sum(rd, t0, end or now) or 0.0,
         })

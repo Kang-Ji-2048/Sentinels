@@ -430,6 +430,9 @@
   body.dash .vchip.likely_breach { background: #fbe3e7; color: var(--crimson); }
   body.dash .vchip.needs_review { background: #fbf1cc; color: #7a5d00; }
   body.dash .vchip.likely_innocent { background: #e2ecf5; color: var(--navy); }
+  body.dash .vchip.sev { background: #fff; border: 1px solid var(--rule); padding: 2px 9px; }
+  body.dash .cgist { margin: 10px 0 0; font-size: 13px; line-height: 1.5; color: var(--muted); }
+  body.dash .cgist b { color: var(--ink); font-weight: 600; }
   body.dash .cact { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 6px; }
   body.dash .cact .btn { display: inline-flex; gap: 10px; border-radius: 10px; padding: 11px 16px; }
   body.dash .cact .go { flex: 1; display: flex; justify-content: space-between; gap: 12px; }
@@ -469,6 +472,7 @@
     <div class="map">
       <div class="mctrl dash-only">
         <label class="toggle"><input type="checkbox" class="dry-only"> Dry spills only <span class="badge" id="n2"></span></label>
+        <label class="toggle"><input type="checkbox" id="flat2d"> 2D map</label>
         <span class="inrange" id="of2"></span>
       </div>
       <form class="pcbox dash-only" id="pc-form" autocomplete="on">
@@ -557,6 +561,8 @@ const AREA_M = 10000;          // the detector checks rain gauges within 10 km
 const DRY_MM = 0.25;           // detector threshold: under this in a 24 h window is a dry day
 const wet = g => g.mm_0_24h_before >= DRY_MM || g.mm_24_48h_before >= DRY_MM;
 let dryOnly = false;
+let flat2d = false;  // "2D map" toggle: selecting a spill keeps the map flat and north-up, with dots instead of domes
+try { flat2d = localStorage.getItem("sentinels-2d") === "on"; } catch {}
 const MAP2D = /*MAP2D*/false;
 const DASH = /*DASH*/false;    // build.py writes dashboard.html with this set: the card layout, flat map  // build.py writes 2d.html with this set: the showcase site's flat dot map
 const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -576,6 +582,7 @@ const fmt = (x, d = 1) => x == null ? "n/a" : x.toFixed(d);
 const hrs = s => s.hours == null ? "?" : fmt(s.hours);  // null = monitor offline, duration unknown
 const dry = sites.filter(s => s.verdict === "dry_spill_candidate").sort((a, b) => (b.hours ?? -1) - (a.hours ?? -1));
 const AFFECT_KM = 5;  // the postcode check's radius
+let genieSpill = null;  // set by the Ask Genie block: swaps its suggested questions when a spill is selected
 let pcState = null, pcBack = null, pcMarkers = [], affectedNames = [], impact = null;  // postcode check + affected water (see below)
 
 document.getElementById("n").textContent = dry.length;
@@ -674,7 +681,7 @@ function layers() {
     // Tilted in on a spill: the dry spills stand up as columns (height = hours discharging), the selected one gold.
     // Tilted in on a spill: each 2D dot's soft glow inflates into a flat-shaded dome (no lighting, like the rest of the
     // site's flat graphics), with a crisp rim where it meets the ground; the 2D dot itself stays put inside it.
-    const rise = !selected ? 0 : REDUCED ? 1 : easeOut((performance.now() - selectedAt - 700) / 1500);
+    const rise = !selected || flat2d ? 0 : REDUCED ? 1 : easeOut((performance.now() - selectedAt - 700) / 1500);  // 2D: no domes
     const show = rise > 0.02;
     const domeR = s => dotSize(s) * 2.6 * m * (s.id === sel ? 1.3 : 1);  // metres; dotSize is the 2D dot's radius in px
     const rgb = s => s.id === sel ? GOLD.slice(0, 3) : (COL[s.verdict] || COL.no_gauge);
@@ -694,7 +701,7 @@ function layers() {
         background: true, getBackgroundColor: [255, 255, 255, 240], getBorderColor: s => [...(VERDICT_RGB[s.case.final_verdict] || [20, 32, 43]), 120],
         getBorderWidth: 1, backgroundPadding: [6, 3], getTextAnchor: "middle", getAlignmentBaseline: "bottom", characterSet: "auto",
         parameters: { depthCompare: "always" }, updateTriggers: { getPosition: [rise, m, sel] } }),
-      new deck.TextLayer({ id: "sel-label", data: rise > 0.05 ? [selected] : [], getPosition: s => [s.lon, s.lat, domeR(s) * rise + 8 * m],
+      new deck.TextLayer({ id: "sel-label", data: rise > 0.05 || flat2d ? [selected] : [], getPixelOffset: [0, flat2d ? -52 : 0], getPosition: s => [s.lon, s.lat, domeR(s) * rise + 8 * m],
         getText: s => s.case ? `${hrs(s)} h  ·  ${verdictLine(s.case)}` : `${hrs(s)} h`, characterSet: "auto", getSize: 17, getColor: [255, 255, 255, 255], fontFamily: "Inter Tight, system-ui, sans-serif", fontWeight: 700,
         background: true, getBackgroundColor: [18, 53, 91, 235], backgroundPadding: [8, 4], getTextAnchor: "middle", getAlignmentBaseline: "bottom",
         parameters: { depthCompare: "always" }, updateTriggers: { getPosition: [rise, m] } }),
@@ -757,6 +764,22 @@ map.addControl(overlay);
 map.on("zoom", () => overlay.setProps({ layers: layers() }));
 const resetBtn = document.getElementById("reset");
 document.querySelectorAll(".dry-only").forEach(c => c.onchange = e => { dryOnly = e.target.checked; overlay.setProps({ layers: layers() }); });
+{
+  const box = document.getElementById("flat2d");
+  const apply = () => {  // flat: no tilting or rotating by hand either
+    for (const h of [map.dragRotate, map.touchZoomRotate]) flat2d ? (h.disableRotation ? h.disableRotation() : h.disable()) : (h.enableRotation ? h.enableRotation() : h.enable());
+    if (flat2d) map.touchPitch.disable(); else map.touchPitch.enable();
+  };
+  box.checked = flat2d; apply();
+  box.onchange = () => {
+    flat2d = box.checked; apply();
+    try { localStorage.setItem("sentinels-2d", flat2d ? "on" : "off"); } catch {}
+    selectedAt = performance.now() - 700;  // domes rise (or drop) straight away
+    if (selected) map.easeTo({ pitch: flat2d ? 0 : 62, bearing: flat2d ? 0 : -24, padding: { top: flat2d ? 80 : 200, bottom: 20, left: 40, right: 40 }, duration: REDUCED ? 0 : 900 });
+    else if (flat2d) map.easeTo({ pitch: 0, bearing: 0, duration: REDUCED ? 0 : 600 });
+    overlay.setProps({ layers: layers() });
+  };
+}
 resetBtn.onclick = () => select(null);
 map.addControl(new maplibregl.NavigationControl({ visualizePitch: !MAP2D || DASH, showCompass: !MAP2D || DASH }), "bottom-right");
 if (MAP2D && !REDUCED) requestAnimationFrame(function tick(now) {  // pulse rings on dry spills; first frame runs after the page script
@@ -856,6 +879,26 @@ function renderCaseDash(c, s, preview = false) {
     const chip = el("span", "vchip " + k.final_verdict, k.final_verdict.replace(/_/g, " "));
     verdict.append(chip, el("span", null, `${pc(k.breach_confidence)}% confident after the evidence check` + (k.skeptic ? ` (skeptic alone: ${pc(k.skeptic.breach_confidence)}%)` : "")));
   } else verdict.append(el("span", "vchip none", "not reviewed"), el("span", null, s.verdict === "dry_spill_candidate" ? "No agent has looked at this spill yet." : "Rain nearby explains this spill."));
+  // Key findings (from Andrew's branch): severity, the top objection still open and ruled out, all from the agents' own output.
+  let gist = null;
+  if (k) {
+    if (k.case && k.case.severity) verdict.insertBefore(el("span", "vchip sev", `Severity ${k.case.severity}`), verdict.children[1]);
+    const short = t => {  // "Tidal influence: long explanation..." -> "Tidal influence"
+      t = String(t || "").trim();
+      const i = t.indexOf(":");
+      let h = i > 8 && i < 100 ? t.slice(0, i) : t.split(/(?<=\.)\s/)[0].replace(/\.$/, "");
+      if (h.length > 44) h = h.slice(0, 44).replace(/\s+\S*$/, "") + "…";
+      return h;
+    };
+    const first = xs => `${short(xs[0])}${xs.length > 1 ? ` (+${xs.length - 1} more)` : ""}`;
+    const standing = (k.ruling && k.ruling.objections_standing) || [], refuted = (k.ruling && k.ruling.objections_refuted) || [], bits = [];
+    if (standing.length) bits.push([`Still open: `, first(standing) + "."]);
+    if (refuted.length) bits.push([`Ruled out: `, first(refuted) + "."]);
+    const seen = k.spill && Array.isArray(k.spill.gauges) ? k.spill : null;  // the run the agents worked from
+    if (seen && (seen.gauges.length !== s.gauges.length || seen.duration_hours !== s.hours))
+      bits.push([`Earlier run: `, `the agents saw ${seen.gauges.length} gauge${seen.gauges.length === 1 ? "" : "s"} and ${seen.duration_hours == null ? "an unknown duration" : fmt(seen.duration_hours) + " h"}.`]);
+    if (bits.length) { gist = el("p", "cgist"); for (const [b, t] of bits) gist.append(el("b", null, b), t + " "); }
+  }
   const act = el("div", "cact");
   if (k && k.report) {
     const go = el("button", "btn go"); go.append(el("span", null, "Review the evidence pack"), el("span", null, "→"));
@@ -869,7 +912,7 @@ function renderCaseDash(c, s, preview = false) {
   if (s.gauges.length) { const ul = el("ul"); for (const g of s.gauges) ul.append(el("li", null, `${g.station}, ${fmt(g.km)} km: ${fmt(g.mm_0_24h_before, 2)} mm in the 24 h before, ${fmt(g.mm_24_48h_before, 2)} mm in the 24 h before that`)); gl.append(ul); }
   else gl.append(el("p", "lede", "No Environment Agency gauge within 10 km, so rain can't be ruled in or out."));
   more.append(gl, ...(k ? agentSections(k, s) : []));
-  const out = [head, meta, verdict, act];
+  const out = [head, meta, verdict, ...(gist ? [gist] : []), act];
   if (!preview) { const aff = el("div", "affect"); aff.id = "affected"; aff.append("Finding the water nearby…"); out.push(aff); }
   if (!preview && pcBack) { const b = el("button", "tlink back", `← Back to spills near ${pcBack.r.postcode}`); b.onclick = () => showPc(pcBack); out.unshift(b); }
   c.replaceChildren(...out, more);
@@ -934,6 +977,7 @@ function select(s, fromPc = false) {
   if (DASH && views.map && !views.map.hidden)  // shareable link straight to this spill: #map/<site id>
     history.replaceState(null, "", selected ? `#map/${encodeURIComponent(selected.id)}` : "#map");
   renderRows(); renderCase(); showGauges();
+  if (genieSpill) genieSpill(selected);
   overlay.setProps({ layers: layers() });
   if (!selected) {
     resetBtn.hidden = true;
@@ -944,8 +988,8 @@ function select(s, fromPc = false) {
   if (DASH) {  // a slow arc out and back in, so you see where in England the spill is
     markPins();
     if (pins.has(s.id)) siteMarker.remove(); else showLabel(s, true);
-    map.flyTo({ center: [s.lon, s.lat], zoom: 9.4, pitch: 62, bearing: -24, curve: 1.7, duration: REDUCED ? 0 : 2600,
-                padding: { top: 200, bottom: 20, left: 40, right: 40 }, essential: true });  // spill sits low so its column has headroom
+    map.flyTo({ center: [s.lon, s.lat], zoom: 9.4, pitch: flat2d ? 0 : 62, bearing: flat2d ? 0 : -24, curve: 1.7, duration: REDUCED ? 0 : 2600,
+                padding: { top: flat2d ? 80 : 200, bottom: 20, left: 40, right: 40 }, essential: true });  // spill sits low so its column has headroom
     return resetBtn.hidden = false;
   }
   showLabel(s, true);
@@ -1545,10 +1589,20 @@ function downloadPack(s, d) {
   const off = document.getElementById("ask-off"), form = document.getElementById("ask-form"), q = document.getElementById("ask-q");
   const go = document.getElementById("ask-go"), fresh = document.getElementById("ask-new"), log = document.getElementById("ask-log");
   let conv = null, busy = false;
+  let chips = [];
   const setOff = msg => { off.textContent = msg; off.hidden = !msg; q.disabled = go.disabled = !!msg; chips.forEach(b => b.disabled = !!msg); };
-  const chips = ["Which water company has the most dry spills?", "Show the longest dry spills", "Which cases did the agents rate likely breach, and why?"]
-    .map(t => { const b = el("button", null, t); b.type = "button"; b.onclick = () => { q.value = t; form.requestSubmit(); }; return b; });
-  document.getElementById("ask-chips").append(...chips);
+  const GENERAL = ["Which water company has the most dry spills?", "Show the longest dry spills", "Which cases did the agents rate likely breach, and why?"];
+  const setChips = list => {
+    chips = list.map(t => { const b = el("button", null, t); b.type = "button"; b.disabled = q.disabled; b.onclick = () => { q.value = t; form.requestSubmit(); }; return b; });
+    document.getElementById("ask-chips").replaceChildren(...chips);
+  };
+  setChips(GENERAL);
+  genieSpill = s => {  // a spill is selected: suggest questions about it, naming the site so Genie scopes its query
+    document.querySelector("#ask-toggle span").textContent = s ? `Ask Genie about ${title(s.name)}` : "Ask Genie about this data";
+    q.placeholder = s ? `Ask about ${title(s.name)} or any spill` : "Ask a question about the spills";
+    setChips(s ? [`How many dry spills has overflow ${s.id} (${title(s.name)}) had?`, `How does ${s.company} compare with other water companies on dry spills?`,
+                  `What rain did the gauges near overflow ${s.id} (${title(s.name)}) record?`] : GENERAL);
+  };
   setOff("Checking for the Genie connection…");
   fetch("/api/genie").then(r => r.ok ? r.json() : Promise.reject())
     .then(d => setOff(d.configured ? "" : "Genie isn't set up on this machine. Set DATABRICKS_HOST, DATABRICKS_TOKEN and GENIE_SPACE_ID, then restart python andrew-site/serve.py."))

@@ -16,12 +16,14 @@ python andrew-site/serve.py                       # open http://localhost:8000
 
 - **Map tab:** a flat dot map of every spill in the last 48 hours (red = dry-spill candidate, navy =
   rain-explained, grey = no gauge within 10 km; dot size = hours discharging), with numbered pins on the six
-  longest dry spills. "Dry spills only" hides the rest.
+  longest dry spills. "Dry spills only" hides the rest. "2D map" keeps the map flat and north-up when a spill
+  is selected (dots instead of 3D domes); the browser remembers the choice.
 - **Selecting a spill** (a dot, a pin or a list row) flies the map in and tilts it into 3D: spills stand up as
   columns (height = hours discharging, selected one gold), a dashed ring marks the 10 km rain-check area and
   the gauges inside it show their readings. "Show all of England" flies back out flat.
 - **Right column:** the longest dry spills, then the selected spill's card: hours, gauges, the agents' verdict,
-  a button to its evidence pack, and the full agent conversation folded underneath.
+  a button to its evidence pack, and the full agent conversation folded underneath. For agent-checked spills
+  the card also shows the investigator's severity and the top objection still open and ruled out.
 - **Ask Genie:** a floating button, bottom right (see below).
 - **Cases tab:** a status board (New, Ruled innocent, Needs review, Report drafted, Approved, Rejected), the
   confidence swing (how far the web evidence moved the skeptic's view) and repeat sites (overflows with more
@@ -30,8 +32,9 @@ python andrew-site/serve.py                       # open http://localhost:8000
   reject it (with a reason), download the approved pack as Markdown, mark it as sent, or undo. Nothing is
   emailed: a person sends the downloaded pack.
 - **Ask Genie** (floating button, bottom right): plain-English follow-up questions to the Sentinels Genie agent on Databricks, which writes and
-  runs the SQL. Each answer shows the text, a results table and the SQL. Needs `serve.py` running with these
-  set in the shell (never commit them):
+  runs the SQL. Each answer shows the text, a results table and the SQL. With a spill selected, the suggested
+  questions are about that overflow and its company. Needs `serve.py` running with these set in the shell or
+  in a `.env` file at the repo root (git-ignored; never commit them):
 
   ```
   export DATABRICKS_HOST=https://dbc-xxxx.cloud.databricks.com

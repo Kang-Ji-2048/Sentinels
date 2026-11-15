@@ -135,7 +135,17 @@ class Handler(SimpleHTTPRequestHandler):
                                     if self.path == "/api/genie" else "Couldn't save. Check the server window."})
 
 
+def load_env(path: Path) -> None:
+    """KEY=VALUE lines from .env, without overriding what the environment already sets."""
+    if path.exists():
+        for line in path.read_text(encoding="utf-8").splitlines():
+            key, sep, value = line.strip().partition("=")
+            if sep and key and not key.startswith("#"):
+                os.environ.setdefault(key.removeprefix("export ").strip(), value.strip().strip("'\""))
+
+
 if __name__ == "__main__":
+    load_env(HERE.parent / ".env")
     build = HERE / "build"
     if not (build / "index.html").exists():
         sys.exit("No page yet: run python andrew-site/build.py first.")

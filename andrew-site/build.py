@@ -29,6 +29,17 @@ sites = [{"id": a["id"], "company": a["company"], "name": a.get("receivingwaterc
           "status": a.get("status") if a.get("status") is not None else
                     -1 if a.get("monitor_offline") else 1 if not a.get("latesteventend") else 0}
          for a in run["assessed"] if a.get("longitude") is not None and a.get("latitude") is not None]
+# Gauge positions: runs made before detect.py saved them have none, so fill them in by station id from a newer
+# local run (data/latest_run.json) when there is one. Without positions the page still works, minus the gauge dots.
+newer = root / "data" / "latest_run.json"
+if newer.exists() and newer != run_file:
+    where = {g["station"]: (g["lat"], g["lon"]) for a in json.loads(newer.read_text(encoding="utf-8"))["assessed"]
+             for g in a.get("gauges") or [] if g.get("lat") is not None}
+    for s in sites:
+        s["gauges"] = [g if g.get("lat") is not None or g["station"] not in where
+                       else {**g, "lat": where[g["station"]][0], "lon": where[g["station"]][1]} for g in s["gauges"]]
+all_g = [g for s in sites for g in s["gauges"]]
+print(f"gauges with a map position: {sum(g.get('lat') is not None for g in all_g)} of {len(all_g)}")
 cases = {}
 for f in sorted([*(root / "data" / "reports").glob("*.json"), *(f for f in (root / "data").glob("example_*.json") if f.name != "example_run.json"),
                  *here.glob("demo_*.json")],  # demo_* = made-up placeholder cases, flagged "illustrative"
