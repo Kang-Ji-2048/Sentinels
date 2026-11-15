@@ -1,4 +1,4 @@
-"""Build Andrew's Sentinels app page (3D map + side panel) from the latest detector run.
+"""Build Andrew's Sentinel app page (3D map + side panel) from the latest detector run.
 
     python andrew-site/build.py                       -> andrew-site/build/index.html
     python -m http.server 8000 -d andrew-site/build   -> http://localhost:8000
@@ -24,6 +24,7 @@ def rain48(a):
 sites = [{"id": a["id"], "company": a["company"], "name": a.get("receivingwatercourse") or a["id"],
           "lat": a["latitude"], "lon": a["longitude"], "verdict": a["verdict"],
           "hours": a.get("duration_hours"),  # None = monitor offline
+          "start": str(a["latesteventstart"]) if a.get("latesteventstart") else None,  # Home tab's spill timeline
           "rain48": rain48(a), "gauges": a.get("gauges") or [],
           # feed status: 1 discharging now, 0 stopped, -1 monitor offline (older runs have no Status, so derive it)
           "status": a.get("status") if a.get("status") is not None else

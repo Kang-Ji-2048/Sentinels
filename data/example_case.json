@@ -1,40 +1,40 @@
 {
- "site_id": "SBB00211",
- "company": "South West Water",
- "watercourse": "CARNON RIVER",
- "event_start": "2026-11-13 17:14:21+00:00",
- "duration_hours": 21.1,
- "final_verdict": "needs_review",
- "breach_confidence": 0.62,
- "skeptic_confidence": 0.42,
+ "site_id": "NWL00415",
+ "company": "Northumbrian Water",
+ "watercourse": "Dawdon Dene Beck",
+ "event_start": "2026-11-14 18:26:20+00:00",
+ "duration_hours": 16.4,
+ "final_verdict": "likely_breach",
+ "breach_confidence": 0.8,
+ "skeptic_confidence": 0.78,
  "skeptic_model": "system.ai.gpt-oss-120b",
- "strongest_objection": "A telemetry or data\u2011feed error (including a stuck EDM sensor) could produce a false, long\u2011lasting \u2018open\u2019 event even though the monitor is nominally online, making the apparent dry\u2011weather spill unreliable.",
+ "strongest_objection": "A 16.4\u2011hour continuous overflow recorded by an online EDM monitor, with virtually zero rainfall at two gauges\u202f\u2013\u202fthe nearest only 0.8\u202fkm away \u2013 is inconsistent with a brief sensor glitch or missed rain, making a genuine dry\u2011spill the most plausible explanation.",
  "severity": "high",
  "n_sources": 5,
- "decided_at": "2026-11-14 17:39:58.759024+00:00",
+ "decided_at": "2026-11-15 11:02:55.159819+00:00",
  "spill": {
-  "id": "SBB00211",
-  "company": "South West Water",
-  "receivingwatercourse": "CARNON RIVER",
-  "latitude": 50.218504,
-  "longitude": -5.103782,
+  "id": "NWL00415",
+  "company": "Northumbrian Water",
+  "receivingwatercourse": "Dawdon Dene Beck",
+  "latitude": 54.82785,
+  "longitude": -1.35538,
   "status": null,
-  "latesteventstart": "2026-11-13 17:14:21+00:00",
+  "latesteventstart": "2026-11-14 18:26:20+00:00",
   "latesteventend": null,
-  "duration_hours": 21.1,
+  "duration_hours": 16.4,
   "monitor_offline": false,
   "gauges": [
    {
-    "station": "48182",
-    "km": 5.7,
-    "mm_0_24h_before": 0.0,
+    "station": "025878",
+    "km": 0.8,
+    "mm_0_24h_before": 0.2,
     "mm_24_48h_before": 0.0,
     "mm_during": 0.0
    },
    {
-    "station": "48103",
-    "km": 6.5,
-    "mm_0_24h_before": 0.2,
+    "station": "026090",
+    "km": 7.5,
+    "mm_0_24h_before": 0.0,
     "mm_24_48h_before": 0.0,
     "mm_during": 0.0
    }
@@ -45,332 +45,342 @@
   "verdict": "dry_spill_candidate"
  },
  "case": {
-  "summary": "Storm overflow SBB00211 (South West Water) has been discharging into the Carnon River since 2026-11-13 17:14:21 UTC. The event is still ongoing, with no recorded end time and a duration of 21.1 hours so far. The monitor is reported as online (monitor_offline: false), and the status field is null. Both nearby Environment Agency rain gauges recorded essentially dry conditions. Gauge 48182 (5.7 km away) recorded 0.0 mm in the 24h before the spill, 0.0 mm in the 24-48h before, and 0.0 mm during it. Gauge 48103 (6.5 km away) recorded 0.2 mm in the 24h before, 0.0 mm in the 24-48h before, and 0.0 mm during. The maximum across gauges is 0.2 mm in the prior 24h, 0.0 mm in the prior 24-48h and 0.0 mm during. The feed's verdict is 'dry_spill_candidate'. A 21.1-hour discharge with no measurable rain during the event and only 0.2 mm in the preceding 48 hours is hard to reconcile with the permit condition that overflows operate only under heavy rainfall. This makes it a potential dry-weather spill, though it is not confirmed. There are no past cases at this site in memory. The company's record in memory shows 2 cases across 2 sites, 1 of them assessed as likely breach.",
+  "summary": "Storm overflow NWL00415 (Northumbrian Water) discharging into Dawdon Dene Beck began a spill at 2026-11-14 18:26:20 UTC. The spill has no recorded end time and has lasted 16.4 hours, with the monitor reported online (monitor_offline: false). Rainfall at both nearby Environment Agency gauges was negligible. Station 025878, 0.8 km away, recorded 0.2 mm in the 24h before, 0.0 mm in the 24\u201348h before, and 0.0 mm during the spill. Station 026090, 7.5 km away, recorded 0.0 mm in all three windows. The maxima across gauges were 0.2 mm (0\u201324h before), 0.0 mm (24\u201348h before) and 0.0 mm (during). The feed classifies the event as a 'dry_spill_candidate'. With essentially no rain before or during a 16.4-hour discharge, there is no apparent heavy-rain justification, so this is a potential permit breach. There are no prior cases at this site in memory. The company's record in memory is 1 case, 1 likely breach, across 1 site.",
   "breach_indicators": [
-   "Zero rainfall (0.0 mm) recorded at both gauges during the 21.1-hour discharge",
-   "Maximum of only 0.2 mm in the 24h before the spill start (gauge 48103); 0.0 mm at gauge 48182",
-   "0.0 mm at both gauges in the 24-48h window before the spill, so there is no evidence of antecedent wet conditions",
-   "Discharge is long (21.1 hours) and ongoing, with no end time recorded",
-   "Monitor is reported online (monitor_offline: false), so the event is not obviously an offline-monitor artefact",
-   "Automated verdict flags the event as 'dry_spill_candidate'",
-   "Company has 1 likely breach out of 2 cases in memory (other site)"
+   "Zero rainfall (0.0 mm) recorded during the spill at both gauges (025878 at 0.8 km, 026090 at 7.5 km).",
+   "Only 0.2 mm of rain in the 24 hours before the spill, at the closest gauge (0.8 km); 0.0 mm at the 7.5 km gauge.",
+   "0.0 mm of rain in the 24\u201348 hours before the spill at both gauges, so no recent wet antecedent conditions are evident.",
+   "Spill duration of 16.4 hours with no recorded end (latesteventend: null), so the spill appears to be ongoing or unclosed.",
+   "Monitor reported online (monitor_offline: false), so the discharge signal is not obviously a monitor fault.",
+   "The closest rain gauge is only 0.8 km from the outfall, which strengthens the representativeness of the dry readings.",
+   "Automated verdict of 'dry_spill_candidate'.",
+   "The company has 1 prior likely breach in memory (1 case, 1 site), though not at this site."
   ],
   "repeat_offender": false,
   "severity": "high",
   "questions_for_evidence": [
-   "Is the spill at SBB00211 still ongoing, and what is its final end time and total duration according to South West Water's live storm overflow map?",
-   "Did localised rainfall fall at the overflow's location or in its catchment that the gauges 5.7 km and 6.5 km away missed? Check Met Office radar for 11-14 November 2026.",
-   "Was there any blockage, pump failure, power outage or equipment fault at the associated sewage treatment works or pumping station around 13 November 2026?",
-   "Has South West Water reported this event to the Environment Agency as an incident or flagged it as a monitor or telemetry error?",
-   "Is there high groundwater or tidal infiltration affecting the Carnon River area sewer network that could explain dry-weather flow (and would itself be relevant to permit compliance)?",
-   "What are the specific permit conditions for SBB00211 (e.g. pass-forward flow requirements, storage), and is it under an existing EA investigation?",
-   "Are there any public, river-user or angler reports of sewage, pollution or fish impacts on the Carnon River or downstream Restronguet Creek around 13-14 November 2026?",
-   "Does the EA's Event Duration Monitoring return history for this site show prior spills in dry weather?"
+   "Does Northumbrian Water's live storm overflow map or EDM feed confirm the NWL00415 spill start of 2026-11-14 18:26 UTC, and has an end time since been recorded?",
+   "What is the Environmental Permit for NWL00415 and its consent conditions (e.g., pass-forward flow, storm tank requirements)?",
+   "Did the Environment Agency radar or other rain gauges near Dawdon/Seaham show any rainfall on 13\u201315 November 2026 that the two gauges missed?",
+   "Was there snowmelt, high groundwater or tidal influence around Dawdon Dene in mid-November 2026 that could cause infiltration-driven flows?",
+   "Did Northumbrian Water report any pumping station failure, blockage, power outage or asset fault at or upstream of this overflow around 14 November 2026?",
+   "Is the EDM monitor at NWL00415 known to give false positives? Has the company flagged the event as a monitor error?",
+   "Were there any Environment Agency pollution incident reports or public complaints for Dawdon Dene Beck or the adjacent coast around 14\u201315 November 2026?",
+   "What was the earlier likely-breach case for Northumbrian Water in our records, and does it show a similar pattern (e.g., the same catchment or the same failure mode)?",
+   "What is NWL00415's annual spill count and hours in the Environment Agency EDM annual returns, to establish whether dry or long-duration spills are recurring here?"
   ]
  },
  "skeptic": {
   "innocent_explanations": [
    {
-    "explanation": "EDM sensor fault or telemetry glitch causing a false \u201copen\u201d signal that was not cleared, resulting in a prolonged apparent overflow.",
-    "plausibility": "medium"
-   },
-   {
-    "explanation": "Localized rainfall that fell within the overflow catchment but was not captured by the two gauges 5\u20117\u202fkm away (e.g., a brief convective shower).",
-    "plausibility": "medium"
-   },
-   {
-    "explanation": "Snowmelt contributing extra flow.",
+    "explanation": "EDM sensor fault or spurious trigger (very short blip) that was mis\u2011interpreted as a long event",
     "plausibility": "low"
    },
    {
-    "explanation": "Groundwater or tidal back\u2011flow into the combined sewer system raising water levels without rain.",
+    "explanation": "Rainfall that fell between the two gauges or was too localized for the gauges to detect",
     "plausibility": "low"
    },
    {
-    "explanation": "Emergency discharge triggered by pump failure, power loss or other equipment fault that forces the overflow open regardless of rainfall.",
+    "explanation": "Snowmelt contributing runoff in mid\u2011November",
+    "plausibility": "low"
+   },
+   {
+    "explanation": "High groundwater or base\u2011flow infiltration raising stream levels",
     "plausibility": "medium"
    },
    {
-    "explanation": "Data\u2011feed or logging error (e.g., missing end\u2011time stamp) inflating the recorded duration and giving the impression of a continuous spill.",
+    "explanation": "Tidal backflow or surge at the outfall causing overflow",
     "plausibility": "medium"
+   },
+   {
+    "explanation": "Emergency discharge triggered by pump failure, blockage or power loss upstream",
+    "plausibility": "medium"
+   },
+   {
+    "explanation": "Data\u2011feed or timestamp error that created a phantom start time",
+    "plausibility": "low"
    }
   ],
-  "strongest_objection": "A telemetry or data\u2011feed error (including a stuck EDM sensor) could produce a false, long\u2011lasting \u2018open\u2019 event even though the monitor is nominally online, making the apparent dry\u2011weather spill unreliable.",
-  "breach_confidence": 0.42,
+  "strongest_objection": "A 16.4\u2011hour continuous overflow recorded by an online EDM monitor, with virtually zero rainfall at two gauges\u202f\u2013\u202fthe nearest only 0.8\u202fkm away \u2013 is inconsistent with a brief sensor glitch or missed rain, making a genuine dry\u2011spill the most plausible explanation.",
+  "breach_confidence": 0.78,
   "model": "system.ai.gpt-oss-120b"
  },
  "evidence": {
-  "report": "# Evidence pack for SBB00211 (South West Water \u2192 Carnon River), spill starting 13 Nov 2026\n\n**Bottom line:** I found nothing that explains this spill innocently: no reported local rain, pump failure, power cut or telemetry fault. The background makes a dry-weather breach more plausible. The region was in drought, and the Carnon River had heavy dry-day spilling in 2025. But nothing confirms a breach for this event. I'd keep it as a likely dry spill that needs official records to settle.\n\nI used all 5 searches and all 3 page reads.\n\n## What the searches found\n\n**1. Incident reports for this spill (Carnon River, 6\u201330 Nov 2026):** Nothing usable. I found no news, Environment Agency notice or South West Water statement about this discharge. That means I couldn't check the investigator's questions on its end time, whether it was reported to the Environment Agency, or whether anyone reported sewage or harm to fish.\n\n**2. Local weather (10\u201316 Nov 2026):** Nothing usable for Cornwall. The results were a US forecast, an Orkney forecast, a Canadian town called Cornwall, a time-zone page and event listings. I left them all out. **The search found nothing that challenges the gauge readings (0.0 mm during the spill; at most 0.2 mm in the 24 hours before).** I couldn't check Met Office radar, so localised rain in the catchment can't be ruled out.\n\n**3. Pump failure or power cut near Devoran, Bissoe or Carnon Downs (Nov 2026):** Nothing about a sewage incident. The results were only about leaks in the clean-water supply. **I found no reported pump failure, power cut or equipment fault.**\n\n**4. Regional conditions at the time (BBC, published 6 Nov 2026, one week before the spill), https://www.bbc.co.uk/news/articles/cv62yy453wlpo:**\n- Regulators wrote to South West Water about leakage, citing \"ongoing drought conditions\".\n- Parts of Devon and Cornwall were \"affected by severe drought\".\n- South West Water said reservoir levels were \"starting to recover\", but rainfall in the coming months would be \"paramount\".\n\n**5. Dry spills on this river (Surfers Against Sewage), https://www.sas.org.uk/updates/illegal-sewage-dumping-excellent-bathing-waters-investigation/:**\n- The search snippet says \"the River Carnon experienced almost 1,000 hours of dry-day sewage spills\" in 2025. The figure comes from Environment Agency data obtained under Freedom of Information.\n- The page I read in full cut off before that paragraph, so I only have it from the snippet.\n- The page itself says 2025 was the first year companies had to report dry-spill data. It defines a dry spill as one where rain is below 0.25 mm on the day and the following 24 hours. **This event's readings are below that threshold.**\n\n**6. A nearby treatment works (South West Water's own page), https://www.southwestwater.co.uk/about-us/latest-news/cuts-storm-overflow-spills-by-97:**\n- Carnon Downs Wastewater Treatment Works overflowed 290 times in 2023, 8 times in 2024, and once in 2025 \"so far\".\n- The company said the cause was groundwater getting into the sewers and overwhelming the works in wet weather. It built a 500,000-litre storm tank and installed a new pumping system and monitoring equipment.\n- **Caveat:** No source confirms that SBB00211 is the Carnon Downs overflow or that it discharges into the Carnon River. Treat this as context only.\n\n**Left out:** Content-farm articles about South West Water fines, a passing mention of the Carnon River after Storm Bert, the 2022 Ofwat investigation (company-wide, not this site), and the foreign or irrelevant weather pages.\n\n## Findings\n\n**Points towards a breach**\n- The gauges show 0.0 mm during the 21.1-hour discharge and at most 0.2 mm in the 48 hours before. That fits the Surfers Against Sewage definition of a dry spill (under 0.25 mm). No source contradicts the gauges.\n- Cornwall was in severe drought a week earlier (BBC). That makes rain-driven or wet-groundwater explanations less likely, though this is my inference.\n- The Carnon River had almost 1,000 hours of dry-day spills in 2025, according to Environment Agency data via Surfers Against Sewage (snippet only). So dry spilling on this river is a known pattern.\n- I found no reported pump failure, power cut or emergency at the time.\n\n**Points towards an innocent explanation**\n- At Carnon Downs, South West Water has blamed groundwater getting into the sewers for past overflows, which the skeptic raised. But that was in wet weather, so it fits poorly with drought conditions. It's also unconfirmed that Carnon Downs is this site.\n- The new monitoring and pumping equipment at Carnon Downs could in principle fail or report false readings. No source reports that it did.\n- Not finding a reported fault doesn't prove there wasn't one. Breakdowns are often not published.\n\n**Still unknown**\n- The spill's final end time and total duration, and its current status on South West Water's live map.\n- Whether the company reported it to the Environment Agency, or flagged it as an equipment or telemetry fault. This is the skeptic's strongest objection, and it remains untested.\n- Radar rainfall over the catchment on 11\u201314 Nov 2026.\n- The site's permit conditions, whether there is an existing Environment Agency investigation, and this site's own monitoring history.\n- Whether SBB00211 is the Carnon Downs works overflow.\n- Any public or angler reports of pollution in the Carnon River or Restronguet Creek.",
+  "report": "I found nothing published that explains this spill innocently: no reported asset failure, no unexpected rain and no monitor-fault notice. One published source confirms the spill and gives an end time. A weather forecast supports the dry readings from the rain gauges. Most of the investigator's questions couldn't be answered from public sources. I used all 5 searches and 2 of 3 page reads.\n\n## What the sources show\n\n**1. The spill happened, and has since ended.**\n- NWL00415 appears to be Northumbrian Water's **Dalton\u2011Le\u2011Dale CSO**, a storm overflow into Dawdon Dene Beck, in the Seaham Peterlee Coast catchment. https://www.floodmapper.co.uk/stations/dalton-le-dale-cso-dalton-le-dale/metric/bf40ffca-5ce5-408d-8641-649320a6455a\n  - I matched it by name and river, not by the ID or coordinates, so the match should be confirmed.\n- On the same page, the discharge **started 14 Nov 2026 at 6:26:20 PM**, the same time as our feed. It **ended 15 Nov 2026 at 11:01:21 AM**, about 995 minutes or 16.6 hours. It is the only event in the window shown.\n  - That fills in our feed's missing end time and roughly matches its 16.4 hours.\n- **Caveat:** FloodMapper is an independent site. It republishes data that the Environment Agency oversees and says it doesn't check that data. It is a reasonable copy of the company's monitor feed, but not an official record.\n\n**2. The weather was dry.**\n- The Northern Echo said Friday 13 Nov was chilly and sunny across County Durham, with frost forming overnight. It expected Saturday 14 Nov to stay \"largely dry\", with rain possible later only in north\u2011western areas. It said rain would arrive across parts of County Durham on Sunday 15 Nov. https://www.thenorthernecho.co.uk/news/26726689.north-east-temperatures-plunge-0-weekend-begins/\n  - The page is labelled as written by sister title USA Today.\n  - It is a **forecast published on 13 Nov, not measured rainfall**.\n  - It doesn't say what time rain reached the Seaham coast on the 15th.\n\n**3. No reported incident.**\n- A search for blockages, pumping station failures or power cuts at Seaham, Dalton\u2011le\u2011Dale or Murton (7\u201325 Nov 2026) found **nothing**.\n- A search for news of a sewage spill at Dawdon or Seaham in November 2026 also found **nothing**. Those results were about Dawdon's mine\u2011water scheme and bonus\u2011ban stories, which have nothing to do with this site.\n\n## Findings\n\n**Supports a breach**\n- Published monitor data confirms a single continuous discharge of about 16.6 hours. It started at the time our feed gives, and there is no sign of a short sensor blip.\n- The local paper expected 13\u201314 Nov to be dry and frosty across County Durham. Rain was only expected on the 15th, when the spill was already about 16 hours old. This matches the near\u2011zero readings at both gauges.\n- I found no published pump failure, blockage or power cut that would explain an emergency discharge.\n\n**Supports an innocent explanation**\n- Nothing I found directly supports one.\n- The Northern Echo forecast rain for parts of County Durham on 15 Nov. That could matter only for the last few hours before the 11:01 end, and both gauges recorded 0.0 mm during the spill.\n- Missing news coverage doesn't prove there was no asset fault. Companies often don't publicise them.\n\n**Unknown**\n- The environmental permit and its conditions (pass\u2011forward flow, storm tank).\n- The site's yearly spill counts and hours.\n- Whether Northumbrian Water has flagged this event as a monitor error or an operational problem.\n- Environment Agency incident reports or public complaints about this beck or coast.\n- Tide, surge or groundwater effects. The outfall is near the coast, so this is still worth checking with the Environment Agency, but I found no evidence either way.\n- Measured rainfall from radar or other gauges, as opposed to a forecast.\n- Details of the company's earlier likely\u2011breach case.\n\n**Overall:** the published evidence agrees with the dry\u2011spill flag and with the skeptic's 0.78 confidence. The most useful next step is to ask Northumbrian Water and the Environment Agency directly for the permit, any record of an asset fault or monitor error on 14\u201315 Nov, and tide and groundwater data.",
   "searches": [
    {
-    "query": "Carnon River sewage spill South West Water November 2026",
-    "answer": "The available information does not mention a sewage spill in the Carnon River in November 2026, so I can\u2019t confirm whether one occurred. It includes broader reporting about South West Water pollution and sewage discharges, but no Carnon River incident details.",
+    "query": "Dawdon sewage spill Northumbrian Water Seaham November 2026",
+    "answer": "The available information does **not** report a sewage spill at Dawdon or Seaham in November 2026. It discusses Dawdon\u2019s mine-water treatment scheme and Seaham\u2019s heat network, which uses treated mine water; it does not describe a sewage incident or connect Northumbrian Water to a spill there.",
     "sources": [
      {
-      "name": "Water supplies at risk due to leaks, firm warned",
-      "url": "https://www.yahoo.com/news/world/articles/water-supplies-risk-due-leaks-100732884.html",
-      "snippet": "Regulators warn South West Water&#x27;s leakage rates are 18.5% above forecast.\nWater firm fined \u00a38m for 'horrendous' sewage spills"
+      "name": "Management and Compliance Bulletin - 9th November 2026 | Cura Terrae Water",
+      "url": "https://www.em-solutions.co.uk/management-and-compliance-bulletin/management-and-compliance-bulletin-9th-november-2026/",
+      "snippet": "### Using waste codes for sludge materials: RPS 231  \nThis RPS applies to some exemptions and permits for the treatment, storage and land spreading of certain waste types not covered under them.  \nThe exemptions and permits this RPS applies to are:  \n- T21 waste exemption: recover waste at a wastewater treatment works,\n- S3 waste exemption: storing sludge,\n- SR2010 No 17: storage of waste to be us"
      },
      {
-      "name": "South West Water Fined: The Truth Behind the \u00a38m Penalty (2026)",
-      "url": "https://norcraftdesign.com/article/south-west-water-fined-the-truth-behind-the-8m-penalty",
-      "snippet": "The recent \u00a38 million fine imposed on South West Water for sewage spills is a stark reminder of the environmental consequences of corporate negligence. This hefty penalty, the largest in the company's history, underscores the severity of the situation and the need for stricter accountability. But what does this case truly reveal about the state of our water systems and the challenges we face in en"
+      "name": "Deborah Shaw",
+      "url": "https://www.linkedin.com/in/deborah-shaw-090033167",
+      "snippet": "Since joining Northumbrian Water Group, back in March 2008, I have worked in several areas of the laboratory analysing both drinking water and wastewater samples originating either from within the company i.e. from different stages of the sewage treatment processes for environmental monitoring purposes; to industrial and trade effluents. I originally started my career as a Technician in the Wet Ch"
      },
      {
-      "name": "Water Companies' Dry Weather Sewage Discharges Skyrocket: Is Our Environment at Risk? (2026)",
-      "url": "https://mowaterpolo.org/article/water-companies-dry-weather-sewage-discharges-skyrocket-is-our-environment-at-risk",
-      "snippet": "## The Troubling Rise of Dry Weather Sewage Discharges  \nThe issue of water companies' sewage disposal practices has reached a boiling point, and it's high time we shed light on this environmental crisis. In the first five months of 2026, a shocking surge in suspected illegal discharges of raw sewage into rivers and seas during dry weather has been uncovered. This is not just an environmental conc"
+      "name": "Northumbrian Water Limited (02366703) - Nexok",
+      "url": "https://www.nexok.co.uk/company/02366703/northumbrian-water-limited",
+      "snippet": "# Northumbrian Water Limited  \nPrivate limited company, incorporated 1 April 1989, Pity Me\n## Summary  \n| Company name | Northumbrian Water Limited |\n|---|---|\n| Company status | Active |\n| Company number | 02366703 |\n| Incorporation date | 1 April 1989 (37 years, 7 months ago) |\n| Dissolution date | \u2014 |\n| Category | Private Limited Company with Share Capital |\n| Previous names | \u2014 |\n| Current dir"
      },
      {
-      "name": "Water Companies' Dry Weather Sewage Discharges Skyrocket: Is Our Environment at Risk? (2026)",
-      "url": "https://lalumierecollective.com/article/water-companies-dry-weather-sewage-discharges-skyrocket-is-our-environment-at-risk",
-      "snippet": "## The Troubling Rise of Dry Weather Sewage Discharges  \nThe issue of water companies' sewage disposal practices has reached a boiling point, and it's high time we shed light on this environmental crisis. In the first five months of 2026, a shocking surge in suspected illegal discharges of raw sewage into rivers and seas during dry weather has been uncovered. This is not just an environmental conc"
+      "name": "Mine water heat network wins national award - GOV.UK",
+      "url": "https://www.gov.uk/government/news/mine-water-heat-network-wins-national-award",
+      "snippet": "# Mine water heat network wins national award  \nSeaham Garden Village's heat network, which uses water from our Dawdon mine water treatment scheme, has won a Gamechanger Award.  \nThe Seaham Garden Village mine water heat network has won the Gamechanger Award at the 2026 Accelerate to Zero Awards.  \nJudges chose the scheme from projects across the UK. It was recognised at a ceremony on Thursday 5 N"
      },
      {
-      "name": "South West Water: England's Worst Environmental Offender? Sewage Scandal Exposed (2026)",
-      "url": "https://glowempowers.org/article/south-west-water-england-s-worst-environmental-offender-sewage-scandal-exposed",
-      "snippet": "## The Troubling Data  \nSouth West Water, operating across Devon, Cornwall, Dorset, and Somerset, has consistently ranked among the worst performers in England when it comes to environmental impact. The analysis, conducted by Friends of the Earth, evaluated water companies across six critical categories. South West Water stood out for all the wrong reasons, ranking in the top three for four of the"
+      "name": "Seaham Garden Village Mine Water Heat Network Wins National Gamechanger Award",
+      "url": "https://streamlinefeed.co.ke/news/seaham-garden-village-mine-water-heat-network-wins-national-gamechanger-award",
+      "snippet": "## Engineering and Thermal Extraction  \nThe technological foundation of the Seaham Garden Village network relies on water already being pumped to the surface by the existing Dawdon Mine Water Treatment Scheme. Deep underground, geothermal processes naturally warm the flooded mine water, maintaining a consistent temperature between 18 degrees and 20 degrees Celsius throughout the year.  \nAs the wat"
      },
      {
-      "name": "Matt Pascoe",
-      "url": "https://www.linkedin.com/in/matt-pascoe-973531195",
-      "snippet": "### Clean Water Network and Customer Service Technician at South West Water \u00b7 Exeter, England, United Kingdom (2025-06-01 \u2013 Present)\n**Specialist**  \nMy role is predominantly customer facing responding to calls for clean water network issues such as no water, low pressure, discolouration, burst mains and broken stop taps among other tasks. As well as reactive work, there are planned maintenance ta"
+      "name": "Water industry bonus ban to be tightened as Ofwat warns of \u2018damage to public trust\u2019 | Water industry | The Guardian",
+      "url": "https://www.theguardian.com/business/2026/nov/12/water-industry-bonus-ban-tightened-ofwat",
+      "snippet": "The Labour government introduced the bonus ban last year amid public outrage over sewage leaking into Britain\u2019s rivers and seas.\nAs well as Anglian, Ofwat highlighted potential retention payments of \u00a31m for Thames Water\u2019s chief financial officer, \u00a31.5m for Northumbrian Water chief executive, Heidi Mottram, and \u00a31.7m for Louise Beardmore, the chief executive of United Utilities.\nSewage being proces"
      }
     ]
    },
    {
-    "query": "Cornwall rain weather Truro Redruth 13 November 2026",
-    "answer": "I couldn\u2019t find a specific forecast for rain in Truro or Redruth on 13 November 2026. The available regional forecast says scattered showers on Friday, 13 November, but it doesn\u2019t identify Cornwall or those towns, so it can\u2019t confirm local conditions.",
+    "query": "Seaham County Durham weather rain 14 November 2026",
+    "answer": "I couldn\u2019t find a rain forecast specifically for Seaham, County Durham, for 14 November 2026. The available weather reports refer to other locations and don\u2019t establish conditions in Seaham.",
     "sources": [
      {
-      "name": "Best Time to Visit Cornwall, England (Jun &amp; Jul 2027)",
-      "url": "https://besttimestovisit.com/cornwall-england",
-      "snippet": "### Dec in Cornwall, England  \nWeather  \n9\u00b0C\u00b0C / 48\u00b0F\u00b0F  \n15 days rainy days \u2022 105mmmm  \nWhat to Expect  \nCold, with highs around 9\u00b0C. Warm clothing and layers are essential. Occasional showers are likely, so a light rain jacket is handy. Highs run about 10\u00b0C below Jul, one of the year's warmest months. It also brings the most rain of any month here.  \nCrowd Level  \n\ud83d\udd34 High - Peak tourist season, b"
+      "name": "Durham Region&#8217;s weather, highway closures and top stories",
+      "url": "https://www.durhamregion.com/news/durham-regions-weather-highway-closures-and-top-stories-on-nov-12/article_0cd2c296-f78f-5581-8af3-de6dd2b8bbaa.html",
+      "snippet": "## Happy Thursday morning Durham Region!  \nEnvironment Canada is forecasting showers this morning in the Durham area. The daytime high is expected to reach 6 C. There\u2019s a 40 per cent chance of precipitation.  \nTonight, expect possible flurries or rain showers with a night time low of 0 C. There\u2019s a 60 per cent chance of precipitation overnight.  \nThe sun will set at undefined\n## Today\u2019s reading su"
      },
      {
-      "name": "Current time in Truro",
-      "url": "https://en.true-time.com/truro/",
-      "snippet": "# Current time in Truro  \n*Live local time in Truro with seconds.*\n## United Kingdom, Cornwall, Truro \u2014 current time  \nTuesday, November 10, 2026  \n**Truro on the map**\n## Daylight saving time changes in Truro  \nCurrent time zone  \nUTC+00:00  \nSwitch to summer time UTC+01:00  \nSunday, March 29, 2026 at 1:00 am  \nSwitch to winter time UTC+00:00  \nSunday, October 25, 2026 at 2:00 am"
+      "name": "Durham Water Restrictions: The Hand-Held Hose Rule, Explained",
+      "url": "https://spotlightnc.com/blog/durhams-water-rules-come-down-to-the-hose-in-your-hand",
+      "snippet": "## Why the rules last longer than a good rain  \nWater is now reaching Durham taps through more routes than usual. The city's November 2 update lists four sources:  \n1. Lake Michie and Little River Reservoir, Durham's own reservoirs.\n2. Part of Durham's Jordan Lake allocation, bought through the Town of Cary.\n3. Teer Quarry, which the city is pumping.\n4. The Orange Water and Sewer Authority, from w"
      },
      {
-      "name": "Morning Weather Forecast, 11/13/26 | WAMC",
-      "url": "https://www.wamc.org/weather/2026-11-13/morning-weather-forecast-11-13-26",
-      "snippet": "Cloudy with rain and snow showers today. Highs in the lower 40s.\nMostly cloudy and breezy with a few rain and snow showers tomorrow."
+      "name": "GX94 Precision Weather Forecast \u2013 Afternoon November 14, 2026 | GX94 Radio - Now That's Country! | Harvard Media",
+      "url": "https://www.gx94radio.com/2026/11/14/gx94-precision-weather-forecast-afternoon-november-14-2026/",
+      "snippet": "Wednesday: Cloudy with a 60% chance of rain/snow showers."
      },
      {
-      "name": "Seeker Daily Brief \u2013 November 11, 2026 - The Seeker Newsmagazine Cornwall",
-      "url": "https://theseeker.ca/2026/11/seeker-daily-brief-november-11-2026/",
-      "snippet": "## Cornwall\u2019s outgoing council holds its final meeting  \nCornwall\u2019s outgoing council met for the last time on November 9, with councillors saying their farewells around the table, The Seeker reported. Coun. Carilyne H\u00e9bert answered her last roll call after 12 years on council, and Mayor Justin Towndale looked back on 12 years at the table, including four as mayor, pointing to Sunday bus service an"
+      "name": "Weather forecast | Saturday, 14 November 2026 - eNCA",
+      "url": "https://www.enca.com/weather/weather-forecast-saturday-14-november-2026",
+      "snippet": "Skip to main content &lt;img src=\"https://www.facebook.com/tr?id=2065073530597132&amp;ev=PageView&amp;noscript=1\" alt=\"\" height=\"1\" width=\"1\" /&gt; &lt;iframe src=\"https://www.googletagmanager.com/ns.html?id=GTM-KRX2KW\" height=\"0\" width=\"0\" style=\"display:none;visibility:hidden\"&gt;&lt;/iframe&gt; DStv Channel 403 Saturday, 14 November 2026 Search Open Close ELECTIONS Videos News Business Sport Op"
      },
      {
-      "name": "Weather Forecast 11 November : Showers become frequent, heavy, then wintry later. Gales later. &#8211; The Orkney News",
-      "url": "https://theorkneynews.scot/2026/11/11/weather-forecast-11-november-showers-become-frequent-heavy-then-wintry-later-gales-later/",
-      "snippet": "[Information from The Met Office.](https://weather.metoffice.gov.uk/forecast/gfmzqh0rc#?date=2026-11-11)\n#### Thursday 12 November :  \nAnother day of blustery showers, these wintry over high ground. The gales will soon ease down but strong winds continue through the day. Maximum temperature 7 \u00b0C.\n#### Outlook for Friday to Sunday:  \nLess cold from Friday. Scattered showers Friday merge into longer"
+      "name": "GX94 Precision Weather Forecast \u2013 Morning November 14, 2026 | GX94 Radio - Now That's Country! | Harvard Media",
+      "url": "https://www.gx94radio.com/2026/11/14/gx94-precision-weather-forecast-morning-november-14-2026/",
+      "snippet": "Wednesday: Cloudy with a 30% chance of rain showers and wet snow."
      },
      {
-      "name": "KPS Coffee Morning \u2014 Kernow Property Services | 12 Nov 2026 | EventsList.co.uk",
-      "url": "https://eventslist.co.uk/truro/events/kps-coffee-morning-2026-11-12",
-      "snippet": "## Similar Events in Truro  \n[View all \u2192](https://eventslist.co.uk/truro/exhibitions)  \nFri, 27 Nov 2026  \nCornwall Coffee Morning  \nPenrose Water Gardens  \nFree Entry  \nSat, 14 Nov 2026  \nInk & Wash Travel Journalling  \nCornish Craft Barn  \n\u00a335  \nTue, 1 Dec 2026  \nMini Botanicals \u2014 with Carla Jennings  \nCornish Craft Barn  \n\u00a339  \nWed, 17 Feb 2027  \nMake a Willow Deer  \nCornish Craft Barn  \n\u00a3163  "
+      "name": "Connor Robinson",
+      "url": "https://www.linkedin.com/in/connor-robinson-868090b5",
+      "snippet": "### Food And Beverage Assistant at Seaham Hall \u00b7 Seaham, County Durham, United Kingdom (2017-05-01 \u2013 2018-10-01)\n**Specialist**\n### Food And Beverage Supervisor at Seaham Hall \u00b7 Seaham (2018-10-01 \u2013 2020-07-01)\n**Manager**\n### Restaurant And Bar Manager at Seaham Hall \u00b7 Seaham, England, United Kingdom (2022-03-01 \u2013 Present)\n**Manager**"
      }
     ]
    },
    {
-    "query": "South West Water pumping station failure power cut Devoran Bissoe Carnon Downs November 2026",
-    "answer": "I couldn\u2019t find information confirming a South West Water pumping-station failure or power cut affecting Devoran, Bissoe, and Carnon Downs in November 2026. The available reports concern water-supply risks linked to leakage, not a local pumping-station incident.",
+    "query": "Dawdon Dene storm overflow Northumbrian Water pumping station",
+    "answer": "The available information identifies the **Dalton-Le-Dale CSO** as a Northumbrian Water storm overflow that discharges to **Dawdon Dene Beck**. It does not establish that this overflow is a pumping station or provide details about a specific Northumbrian Water pumping station at Dawdon Dene.",
     "sources": [
      {
-      "name": "South West Water Fined: The Truth Behind the \u00a38m Penalty (2026)",
-      "url": "https://norcraftdesign.com/article/south-west-water-fined-the-truth-behind-the-8m-penalty",
-      "snippet": "The recent \u00a38 million fine imposed on South West Water for sewage spills is a stark reminder of the environmental consequences of corporate negligence. This hefty penalty, the largest in the company's history, underscores the severity of the situation and the need for stricter accountability. But what does this case truly reveal about the state of our water systems and the challenges we face in en"
+      "name": "Dalton-Le-Dale CSO - Live sewage discharge information",
+      "url": "https://www.floodmapper.co.uk/stations/dalton-le-dale-cso-dalton-le-dale/metric/bf40ffca-5ce5-408d-8641-649320a6455a",
+      "snippet": "The water course declared as receiving spills from this monitor is Dawdon Dene Beck. The declared operator of this monitor is NORTHUMBRIAN WATER LTD"
      },
      {
-      "name": "\u30b5\u30a6\u30b9\u30fb\u30a6\u30a7\u30b9\u30c8\u30fb\u30a6\u30a9\u30fc\u30bf\u30fc\u3001\u6f0f\u6c34\u5bfe\u7b56\u306e\u5931\u6557\u3067\u5e72\u3070\u3064\u4e0b\u306e\u7d66\u6c34\u505c\u6b62\u30ea\u30b9\u30af\u304c\u8b66\u544a\u3055\u308c\u308b\uff5cAI\u30d3\u30b8\u30cd\u30b9\u307e\u3068\u3081",
-      "url": "https://biz-matome.com/archives/66111",
-      "snippet": "[\u7d4c\u6e08](https://biz-matome.com/archives/category/%e7%b5%8c%e6%b8%88)\n## \u51fa\u5178\u30fb\u78ba\u8a8d\u65e5  \n\u53c2\u7167\u5143\uff1a[The Guardian\uff1aSouth West Water\u2019s failure to fix leaks \u2018putting customer supplies at risk\u2019](https://www.theguardian.com/business/2026/nov/05/south-west-water-failure-fix-leaks-putting-customer-supplies-at-risk)  \n\u5143\u8a18\u4e8b\u516c\u958b\u65e5\u6642\uff1a2026-11-05T00:00:00\uff0f\u53c2\u7167\u5143\u78ba\u8a8d\u65e5\uff1a2026-11-06"
+      "name": "Deborah Shaw",
+      "url": "https://www.linkedin.com/in/deborah-shaw-090033167",
+      "snippet": "### Data Technician at NWG (Northumbrian Water Group) (2018-12-01 \u2013 2022-01-01)\n**Specialist**\nThe Wastewater Quality and Compliance department are responsible for ensuring the company is compliant with the environmental permits and consents which are in place. This includes consents for the treatment of wastewater and its return to the environment, as well as any discharges from NWL assets which "
      },
      {
-      "name": "Regulators slam South West Water for seven years of failure to stop leaks | wsfp.co.uk",
-      "url": "https://www.wsfp.co.uk/news/south-west-water-regulators-criticism-warning-customers-at-risk-supplies-wimbleball-reservoir-levels-recovering-970727",
-      "snippet": "WATER supplies to customers of South West Water (SWW) were being put at risk because the company was not doing enough to tackle leaks, industry regulator Ofwat has said in a no holds barred critique.\n\u00a9 2026 \u2013 Iliffe Media Group Ltd, Winship Road, Milton, Cambridge, CB24 6PP"
+      "name": "Northumbrian Water EPA data report 2020 - GOV.UK",
+      "url": "https://www.gov.uk/government/publications/water-and-sewerage-companies-in-england-environmental-performance-report-2020/northumbrian-water-epa-data-report-2020",
+      "snippet": "### Number of pollution incidents (category 1 to 3) from Northumbrian Water sewerage and clean water supply assets in 2020  \n| Asset type | Number of pollution incidents (category 1 to 3) |\n|---|---|\n| Combined sewer overflow | 6 |\n| Foul sewer | 17 |\n| Other water industry premises | 0 |\n| Pumping station | 12 |\n| Rising main | 0 |\n| Sewage treatment works | 8 |\n| Storm tank | 0 |\n| Surface water"
      },
      {
-      "name": "South West Water warned supplies at risk due to leaks - BBC News",
-      "url": "https://www.bbc.co.uk/news/articles/cv62yy453wlpo",
-      "snippet": "Regulators warn South West Water&#x27;s leakage rates are 18.5% above forecast.\n\"Householders and businesses have been told to save water to avoid worse drought restrictions and that was all down to the dry weather,\" he said."
+      "name": "Northumbrian Water EPA data report 2021 - GOV.UK",
+      "url": "https://www.gov.uk/government/publications/water-and-sewerage-companies-in-england-environmental-performance-report-2021/northumbrian-water-epa-data-report-2021",
+      "snippet": "### Number of pollution incidents (category 1 to 3) from Northumbrian Water sewerage and water supply assets in 2021  \n| Asset type | Number of pollution incidents (category 1 to 3) |\n|---|---|\n| Combined sewer overflow | 9 |\n| Foul sewer | 21 |\n| Other water industry premises | 0 |\n| Pumping station | 25 |\n| Rising main | 4 |\n| Sewage treatment works | 10 |\n| Storm tank | 0 |\n| Surface water outf"
      },
      {
-      "name": "South West Water warned supplies at risk due to leaks | United Kingdom",
-      "url": "https://uk.headtopics.com/news/south-west-water-warned-supplies-at-risk-due-to-leaks-89609527",
-      "snippet": "&quot;Householders and businesses have been told to save water to avoid worse drought restrictions and that was all down to the dry weather,&quot; he said. &quot;Now we learn South West Water has been continually warned for seven years it&#x27;s not doing its bit on leakage."
+      "name": "Northumbrian Water EPA data report 2019 - GOV.UK",
+      "url": "https://www.gov.uk/government/publications/water-and-sewerage-companies-in-england-environmental-performance-report-2019/south-west-water-epa-data-report-2019",
+      "snippet": "### Number of pollution incidents (category 1 to 3) from Northumbrian Water sewerage and clean water supply assets in 2019  \n| Asset type | Number of pollution incidents (category 1 to 3) |\n|---|---|\n| Combined sewer overflow | 4 |\n| Foul sewer | 32 |\n| Other water industry premises | 0 |\n| Pumping station | 9 |\n| Rising main | 0 |\n| Sewage treatment works | 1 |\n| Storm tank | 0 |\n| Surface water "
      },
      {
-      "name": "South West Water scolded in Exeter Question Time showdown | Devon Live",
-      "url": "https://www.devonlive.com/news/devon-news/south-west-water-scolded-exeter-11240803",
-      "snippet": "Plymouth MP Luke Pollard said he wanted more \u201cpublic control\u201d of the utility company and bluntly said: \u201cI\u2019m sick to my back teeth of that company, frankly they are letting our region down and when it comes to measures being proposed to take more public control over those businesses I have to say SWW are the poster child for utter corporate failures.\n\u201cI\u2019m sick to my back teeth of that company'"
+      "name": "Northumbrian Water EPA data report 2022 - GOV.UK",
+      "url": "https://www.gov.uk/government/publications/water-and-sewerage-companies-in-england-environmental-performance-report-2022/northumbrian-water-epa-data-report-2022",
+      "snippet": "### Number of pollution incidents (category 1 to 3) from Northumbrian Water sewerage and water supply assets in 2022  \n| Asset type | Number of pollution incidents (category 1 to 3) |\n|---|---|\n| Combined sewer overflow | 8 |\n| Foul sewer | 13 |\n| Other water industry premises | 0 |\n| Pumping station | 28 |\n| Rising main | 1 |\n| Sewage treatment works | 10 |\n| Storm tank | 0 |\n| Surface water outf"
      }
     ]
    },
    {
-    "query": "Carnon River storm overflow South West Water Environment Agency permit investigation",
-    "answer": "The information confirms sewage releases affecting the Carnon River, but it does **not** identify a specific Environment Agency permit investigation into a Carnon River overflow.\n\nRelevant context:\n- South West Water said several Cornwall overflows activated after Storm Bert, including the Carnon River.\n- Ofwat\u2019s wider investigation into South West Water concerned possible permit and compliance failures across the company; the available reports do not connect it specifically to the Carnon.\n- Surfers Against Sewage reported almost 1,000 hours of dry-day sewage spills on the River Carnon in 2025, based on data obtained from the Environment Agency. That report raises concerns about unpermitted discharges, but the supplied information does not say the EA opened a Carnon-specific investigation.\n- Carnon Downs Wastewater Treatment Works\u2019 overflow reportedly activated 290 times in 2023. A later report says South West Water reduced spills at that site by 97%, but the supplied details do not establish whether those events were investigated or found to breach its permit.",
+    "query": "Northumbrian Water Seaham OR Dalton-le-Dale OR Murton sewer blockage pumping station failure power cut November 2026",
+    "answer": "The provided information does not report a Northumbrian Water sewer blockage, pumping-station failure, or power cut in Seaham, Dalton-le-Dale, or Murton in November 2026. It isn\u2019t enough to confirm whether such an incident occurred.",
     "sources": [
      {
-      "name": "Sewage released into Cornwall rivers and streams after Storm Bert weather chaos - Cornwall Live",
-      "url": "https://www.cornwalllive.com/news/cornwall-news/sewage-released-cornwall-rivers-streams-9743328",
-      "snippet": "The Cornish rivers and streams and beach areas that have had sewage discharged into them by South West Water include: Porth Nanven Stream, Longrock Stream, St Ives Bay, Praze River, Red River, The English Channel at The Lizard, Carnon River, Penryn River, Pill Creek, Tresillian River Estuary, River Fal, tributary of Porth Joke, River Amble, River Allen, tributary of River Fowey, Tremar Stream, Riv"
+      "name": "Dan Herron",
+      "url": "https://www.linkedin.com/in/dan-herron-05583997",
+      "snippet": "## Experience  \n### Project Engineer at NWG (Northumbrian Water Group) \u00b7 Seaham/Durham (2019-04-01 \u2013 2021-04-01)\n**Director**  \nProject Engineer working for the 'Central Support Team' within NWG's Asset Investment department. Responsible for reviewing, updating and creating engineering standards for NWG. This ensures continual learning from project delivery teams is reflected in specifications for"
      },
      {
-      "name": "Ofwat extends sewage dumping inquiry to include South West Water | Water | The Guardian",
-      "url": "https://www.theguardian.com/environment/2022/jun/28/ofwat-sewage-dumping-inquiry-south-west-water",
-      "snippet": "The regulator Ofwat has expanded its investigation into the dumping of raw sewage to include South West [Water](https://www.theguardian.com/environment/water) after finding \u201cshocking\u201d failures in the way the majority of water companies run their waste treatment works.  \nOfwat said on Tuesday it had extended [its inquiry](https://www.theguardian.com/environment/2022/mar/09/ofwat-raises-serious-conc"
+      "name": "Ian Lumley",
+      "url": "https://www.linkedin.com/in/ian-lumley-51ba0420",
+      "snippet": "### Investment Delivery Team Leader - Project Delivery at NWG (Northumbrian Water Group) \u00b7 Durham, England, United Kingdom (2004-03-01 \u2013 2016-10-01)\n**Manager**  \nFor a period of twelve years I fulfilled the role of Investment Team Leader managing a team of up to twelve project managers delivering the Northumbrian Water Wastewater Treatment and Network capital programmes. I was responsible for the"
      },
      {
-      "name": "SAS exposes illegal sewage dumping - Surfers Against Sewage",
-      "url": "https://www.sas.org.uk/updates/illegal-sewage-dumping-excellent-bathing-waters-investigation/",
-      "snippet": "Across England in 2025, there were 2,263 hours of discharges from un-permitted overflows, including one located near a primary school. All of these un-permitted dry spills were recorded from three companies: South West Water, Wessex Water, and ...\nMeanwhile, the River Carnon experienced almost 1,000 hours of dry-day sewage spills. These figures raise serious questions about how accurately official"
+      "name": "Northumbrian Water Limited (02366703) - Nexok",
+      "url": "https://www.nexok.co.uk/company/02366703/northumbrian-water-limited",
+      "snippet": "# Northumbrian Water Limited  \nPrivate limited company, incorporated 1 April 1989, Pity Me\n## Summary  \n| Company name | Northumbrian Water Limited |\n|---|---|\n| Company status | Active |\n| Company number | 02366703 |\n| Incorporation date | 1 April 1989 (37 years, 7 months ago) |\n| Dissolution date | \u2014 |\n| Category | Private Limited Company with Share Capital |\n| Previous names | \u2014 |\n| Current dir"
      },
      {
-      "name": "Ofwat investigates South West Water over sewage discharge - BBC News",
-      "url": "https://www.bbc.co.uk/news/science-environment-61963555",
-      "snippet": "# Ofwat investigates South West Water over sewage discharge  \n- Published  \n**South West Water is under investigation over its treatment of sewage, the Water Services Regulation Authority has announced.**  \nIt joins five other water companies in England and Wales being probed over wastewater concerns.  \nRaw sewage was discharged into waterways 375,000 times last year, according to the Environment "
+      "name": "Northumbrian Water among nine companies hit by bonus ban due to failings | Chronicle Live",
+      "url": "https://www.chroniclelive.co.uk/news/north-east-news/northumbrian-water-among-nine-companies-34899653",
+      "snippet": "The water companies triggered Ofwat\u2019s bonus ban rule in 2025-26, bringing the total blocked to more than \u00a310 million since 2024. As well as Northumbrian Water, the firms include Anglian Water, Severn Trent Water, Southern Water, South West Water, Thames Water, Wessex Water, Yorkshire Water and D\u0175r Cymru.\nNorthumbrian Water is among nine companies across the UK to be hit by bonus bans.\nNorthumbrian"
      },
      {
-      "name": "Ofwat investigates South West Water over sewage discharge",
-      "url": "https://www.bbc.com/news/science-environment-61963555",
-      "snippet": "# Ofwat investigates South West Water over sewage discharge  \n**South West Water is under investigation over its treatment of sewage, the Water Services Regulation Authority has announced.**  \nIt joins five other water companies in England and Wales being probed over wastewater concerns.  \nRaw sewage was discharged into waterways 375,000 times last year, according to the Environment Agency.  \nSout"
+      "name": "Expression of Interest - Northumbrian Water - Newcastle - Jobs4SocialMobility",
+      "url": "https://jobs4socialmobility.com/job/expression-of-interest-northumbrian-water-newcastle/",
+      "snippet": "## Overview  \n**Expression of Interest \u2013 Northumbrian Water \u2013 Newcastle**\n**Job Description**  \nCostain are working closely with Northumbrian Water Group to help shape and deliver its strategic AMP8 infrastructure upgrade programme.  \nUnder the new industry leading collaborative partnership, the Living Water Enterprise (LWE), our role is to upgrade Northumbrian Water\u2019s wastewater and water treatme"
      },
      {
-      "name": "Storm overflows | South West Water",
-      "url": "https://www.southwestwater.co.uk/environment/rivers-and-bathing-waters/storm-overflows",
-      "snippet": "The process is strictly regulated by the Department for Environment, Food and Rural Affairs (Defra) and the Environment Agency.\nOur monitoring teams constantly review data being sent back to us from our EDMs, sewer level monitors, river water quality monitors, flow and pressure monitors and water samples."
+      "name": "Water bosses miss out on \u00a36,500,000 in bonuses after watchdog steps in | News Politics | Metro News",
+      "url": "https://metro.co.uk/2026/11/12/water-bosses-miss-6-500-000-bonuses-watchdog-steps-29786971/",
+      "snippet": "Alongside Southern and D\u0175r Cymru, the other impacted companies were Anglian Water, Northumbrian Water, Severn Trent Water,South West Water, Thames Water, Wessex Water, and Yorkshire Water."
      }
     ]
    },
    {
-    "query": "Carnon Downs wastewater treatment works storm overflow spills Carnon River",
-    "answer": "The available reports say Carnon Downs Wastewater Treatment Works\u2019 storm overflow activated 290 times in 2023. A new storm tank, pumping system and monitoring upgrades were introduced to reduce discharges; South West Water reported a 97% reduction and one spill so far in 2025.\n\nThe sources provided do **not** explicitly confirm that the overflow discharges into the Carnon River.",
+    "query": "North East England weather storm rain Durham Sunderland 13-15 November 2026",
+    "answer": "For **Durham and Sunderland, 13\u201315 November 2026**, the available reports suggest a chilly, mostly sunny start on Friday, with daytime temperatures around **7\u00b0C** in County Durham. Some north-western areas could see rain later. **More unsettled weather, including rain in parts of County Durham, is expected on Sunday 15 November.**\n\nThe information provided does **not** confirm a major storm or give a specific rain forecast for Sunderland or detailed rainfall amounts for either city.",
     "sources": [
      {
-      "name": "Storm Overflow Spills Cut by 97% at Carnon Downs Treatment Works - CornishStuff",
-      "url": "https://cornishstuff.com/south-west-water/storm-overflow-spills-cut-by-97-at-carnon-downs-treatment-works/",
-      "snippet": "South West Water has reported a ... Wastewater Treatment Works, located between Truro and Falmouth, recorded 290 storm overflow activations in 2023....\nMajor drop in discharges from Carnon Downs site thanks to new upgrades South West Water has reported a 97% reduction in storm overflow spills at one of Cornwall\u2019s worst-performing sites last year, with just one spill recorded so far in 2025. Carnon"
+      "name": "North East temperatures plunge to below 0 as the weekend begins | The Northern Echo",
+      "url": "https://www.thenorthernecho.co.uk/news/26726689.north-east-temperatures-plunge-0-weekend-begins/",
+      "snippet": "The weather is set to turn more unsettled on Sunday (November 15), with outbreaks of rain expected across parts of County Durham and Teesside.\nThe freezing conditions followed a chilly start to Friday (November 13), which saw sunshine across much of County Durham, Darlington and Teesside, with daytime temperatures reaching around 7C.\nDarlington, Durham, Middlesbrough and Hartlepool are all expecte"
      },
      {
-      "name": "South West Water massively reduced overflow spills at one site - Cornwall Live",
-      "url": "https://www.cornwalllive.com/news/cornwall-news/south-west-water-massively-reduced-10247188",
-      "snippet": "South West Water reduced storm overflow spills by 97 per cent last year at one of its highest spilling sites in Cornwall. In 2023 Carnon Downs Wastewater Treatment Works, between Truro and Falmouth, was named one of the region\u2019s largest spilling ...\nThe project also included a new pumping system and monitoring equipment to manage storm overflows effectively and ensure stored water is returned from"
+      "name": "SATIRICAL PLANET NEWS: TODAY\u2019S WEATHER, FRIDAY 13 NOVEMBER 2026",
+      "url": "https://satiricalplanet.substack.com/p/satirical-planet-news-todays-weather-069",
+      "snippet": "Northern Ireland stays mostly dry beneath variable cloud. Eastern Scotland has the better dry spells, while showers spread across western districts and the Northern Isles face rain with strengthening winds. Northwest England also becomes showery later.\nAround exposed northern Scottish coasts, stronger winds and showers warrant care, particularly as conditions deteriorate later. Check local flood i"
      },
      {
-      "name": "Storm overflows down by 97 per cent after major upgrades | voicenewspapers.co.uk",
-      "url": "https://www.voicenewspapers.co.uk/news/storm-overflows-down-by-97-per-cent-after-major-upgrades-800323",
-      "snippet": "SOUTH West Water reduced storm overflow spills by 97 per cent last year at one of its highest spilling sites in Cornwall. Carnon Downs Wastewater Treatment Works, between Truro and Falmouth, activated 290 times in 2023 and was one of the region\u2019s ...\nSOUTH West Water reduced storm overflow spills by 97 per cent last year at one of its highest spilling sites in Cornwall. Carnon Downs Wastewater Tre"
+      "name": "Sunderland \u2014 M\u00e9t\u00e9o horaire et pr\u00e9visions sur 14 jours, conditions du jour | Heure.now",
+      "url": "https://heure.now/sunderland/meteo/",
+      "snippet": "# \ud83c\uddec\ud83c\udde7 M\u00e9t\u00e9o \u00e0 Sunderland  \n## M\u00e9t\u00e9o actuelle \u00e0 Sunderland  \n4\u00b0C  \nRessenti 0\u00b0C. Ensoleill\u00e9.  \n\ud83c\udf2c\ufe0f 20 km/h NW  \n\ud83d\udca7 68% Humidit\u00e9  \n\ud83e\udded 1007 hPa  \n\ud83d\udc41\ufe0f 10.0 km Visibilit\u00e9  \n\u2600\ufe0f Indice UV : 0.2  \n\ud83c\udf21\ufe0f Point de ros\u00e9e : -2\u00b0C  \n\ud83c\udf05  \n[Lever du soleil](https://heure.now/sunderland/soleil/): 07:31 AM  \n\ud83c\udf07  \n[Coucher de soleil](https://heure.now/sunderland/soleil/): 04:07 PM  \nSuperpositions de carte :\n## M\u00e9t\u00e9o \u00e0 Sunder"
      },
      {
-      "name": "Storm overflow spills cut by 97% at one of Cornwall\u2019s top spilling sites | South West Water",
-      "url": "https://www.southwestwater.co.uk/about-us/latest-news/cuts-storm-overflow-spills-by-97",
-      "snippet": "Carnon Downs Wastewater Treatment Works, between Truro and Falmouth, had one of the region\u2019s largest spilling overflows in 2023, activating 290 times.\nAndy Pettifer, South West Water\u2019s Wastewater Operations Manager for West Cornwall, said: \"Our teams have worked hard to make these changes and it is great to see real improvements taking shape which reduce our storm overflow use and helps to protect"
+      "name": "Met Office forecasts snow for the UK in coming days - where 9cm per hour could fall",
+      "url": "https://www.derehamtimes.co.uk/news/national/uk-today/26729971.met-office-forecasts-uk-snow-coming-days---see/",
+      "snippet": "The Met Office has forecast snow from Monday (November 16), with falls expected in Scotland, Wales, and northern England - see exactly where.\n\u2014 UK Health Security Agency (@UKHSA) November 13, 2026"
      },
      {
-      "name": "Carnon River",
-      "url": "https://en.wikipedia.org/wiki/Carnon_River",
-      "snippet": "River in Cornwall, England  \n- date: April 2022  \nInfobox river:\n- name: Carnon River\n- image: Carnon River near Point Mills - geograph.org.uk - 1234714.jpg\n- image caption: Carnon River near Point Mills\n- pushpin map: Cornwall\n- pushpin map caption: Location within Cornwall\n- subdivision type1: Country\n- subdivision name1: England\n- subdivision type2: County\n- subdivision name2: Cornwall\n- source"
+      "name": "Met Office snow maps show 18 areas facing Arctic blast on Monday | Leeds Live",
+      "url": "https://www.leeds-live.co.uk/news/uk-world-news/met-office-snow-maps-show-34913701",
+      "snippet": "Met Office mapping indicates snow ... Lanarkshire, and sections of northern England. The early hours snowfall is expected across Lancashire, Durham, Cumbria and parts of North Yorkshire, according to the charts, reports the ...\nMet Office mapping indicates snow will arrive in areas of the Scottish Highlands, southern Scotland including Lanarkshire, and sections of northern England. The early hours"
      },
      {
-      "name": "South West Water cuts storm overflow spills by 97% at one of Cornwall\u2019s top spilling sites | H2O Global News",
-      "url": "https://h2oglobalnews.com/south-west-water-cuts-storm-overflow-spills-by-97-at-one-of-cornwalls-top-spilling-sites/",
-      "snippet": "Carnon Downs Wastewater Treatment Works, between Truro and Falmouth, had one of the region\u2019s largest spilling overflows in 2023, activating 290 times.\nAndy Pettifer, South West Water\u2019s Wastewater Operations Manager for West Cornwall, said: \u201cOur teams have worked hard to make these changes and it is great to see real improvements taking shape which reduce our storm overflow use and helps to protect"
+      "name": "UK weather: Up to 16\u00b0C in the south while 53mph gales and snow hit the north in three-day Atlantic clash",
+      "url": "https://www.yourweather.co.uk/news/forecasts/uk-weather-up-to-16-c-in-the-south-while-53mph-gales-and-snow-hit-the-north-in-three-day-atlantic-clash.html",
+      "snippet": "Two Atlantic lows bring heavy rain, 53mph gales and a brief covering of snow, before milder air sweeps it all away on Tuesday\nForecasts Why is the Super El Ni\u00f1o of 2026 attracting so much attention?\nIts forward flank will act as a warm sector conveyor belt, drawing a brief spike of milder air up from the south to push afternoon highs to 15\u00b0C in Brighton, 13\u00b0C in Plymouth, and 11\u00b0C in London and Ca"
      }
     ]
    }
   ],
   "fetches": [
    {
-    "url": "https://www.sas.org.uk/updates/illegal-sewage-dumping-excellent-bathing-waters-investigation/",
-    "chars": 8000
+    "url": "https://www.floodmapper.co.uk/stations/dalton-le-dale-cso-dalton-le-dale/metric/bf40ffca-5ce5-408d-8641-649320a6455a",
+    "chars": 6504
    },
    {
-    "url": "https://www.bbc.co.uk/news/articles/cv62yy453wlpo",
-    "chars": 8000
-   },
-   {
-    "url": "https://www.southwestwater.co.uk/about-us/latest-news/cuts-storm-overflow-spills-by-97",
-    "chars": 3403
+    "url": "https://www.thenorthernecho.co.uk/news/26726689.north-east-temperatures-plunge-0-weekend-begins/",
+    "chars": 7390
    }
   ]
  },
  "ruling": {
-  "final_confidence": 0.62,
+  "final_confidence": 0.8,
   "objections_refuted": [
-   "Snowmelt contributing extra flow: no support for it, mid-November in Cornwall during drought makes it implausible",
-   "Groundwater or tidal back-flow raising sewer levels without rain: the region was in severe drought (BBC, 6 Nov 2026), and past groundwater infiltration at Carnon Downs happened in wet weather, so this fits poorly (weakened, not strictly disproven)"
+   "EDM sensor fault or spurious short blip: an independent republication of the monitor feed (FloodMapper) shows a single continuous discharge starting 14 Nov 18:26:20 and ending 15 Nov 11:01:21, about 16.6 hours.",
+   "Data-feed or timestamp error creating a phantom start: the same start time appears in an independent source.",
+   "Localized rain missed by the gauges: a contemporaneous forecast described 13\u201314 Nov as dry and frosty across County Durham, with rain only from 15 Nov. This matches 0.0\u20130.2 mm at a gauge 0.8 km away.",
+   "Snowmelt: there is no evidence of snow. The weather was frosty and sunny, and the skeptic itself rated this as low plausibility."
   ],
   "objections_standing": [
-   "EDM sensor fault or telemetry glitch producing a false prolonged 'open' signal: untested, with no company or EA statement either way",
-   "Localised rainfall missed by the gauges 5.7\u20136.5 km away: radar not checked, though the drought context and two dry gauges make it less likely",
-   "Emergency discharge from pump failure or power loss: no reports found, but such faults often go unpublished, and an emergency discharge would still be reportable",
-   "Data-feed logging error (missing end time inflating duration): the event is still open with a null status, so this remains unverified"
+   "Emergency discharge from pump failure, blockage or power loss: no public report was found, but companies often don't publicise faults. Even if true, this would still be a reportable dry-day discharge.",
+   "Tidal backflow or surge at a near-coastal outfall: not checked, with no evidence either way.",
+   "High groundwater or infiltration: not verified. It is speculative given the dry antecedent conditions, so it carries limited weight.",
+   "Site identity match by name only: NWL00415 was matched to Dalton-le-Dale CSO by name and watercourse, not by ID or coordinates."
   ],
-  "reasoning": "Both gauges show effectively zero rain (at most 0.2 mm in 48h and 0.0 mm during). That is below the 0.25 mm dry-spill threshold, and no source contradicts it. The region was in severe drought a week earlier, which undercuts the rain-driven and groundwater explanations. The Carnon River reportedly had about 1,000 hours of dry-day spills in 2025, so this would fit a known pattern, though that figure comes from a search snippet only. The skeptic's strongest objection, a telemetry or sensor fault behind a long open-ended event with null status, cannot be tested from public sources and remains the main uncertainty. An equipment-driven emergency discharge would still merit investigation. Localised rain remains possible but is unlikely given the dry conditions. On balance this is a credible dry-day spill worth referring for investigation, tempered by the unverified monitor integrity and the ongoing, unconfirmed duration."
+  "reasoning": "Rainfall at both gauges was essentially zero across all windows, and the nearest gauge is only 0.8 km from the outfall. An independent copy of the monitor data confirms a continuous discharge of about 16.6 hours starting at the reported time. This rules out a sensor blip or a timestamp artefact. A local forecast corroborates dry weather on 13\u201314 Nov, with rain only on the 15th, when the spill was already well under way, and the gauges still show 0.0 mm during the spill. The remaining innocent explanations (asset failure, tidal influence, groundwater) are unverified and largely speculative. An asset failure would still warrant investigation as an unpermitted dry discharge. Residual uncertainty comes from the unofficial data source, the name-based site match, and the unchecked tidal and groundwater effects. A confidence slightly above the skeptic's 0.78 is warranted."
  },
- "report": "# Evidence pack: SBB00211 (South West Water \u2192 Carnon River), event starting 13 Nov 2026\n\n**Pipeline verdict:** needs_review \u00b7 **Adjudicated confidence:** 0.62 \u00b7 **Skeptic confidence:** 0.42 \u00b7 **Severity (investigator):** high\n\n---\n\n## Summary\n\nStorm overflow SBB00211, operated by South West Water and discharging to the Carnon River, began discharging at **2026-11-13 17:14:21 UTC**. At the time of data extraction the event was **still open**, with no end time recorded and a duration of **21.1 hours** so far. Two Environment Agency rain gauges 5.7 km and 6.5 km away recorded **0.0 mm during the event** and **at most 0.2 mm in the 48 hours before it**. The automated feed flagged the event as a `dry_spill_candidate`.\n\nNo public source found explains the discharge innocently. The main unresolved uncertainty is whether the event reflects a **monitor, telemetry or data-feed fault**. Public sources cannot test this.\n\nThis is a **possible** dry-weather discharge that warrants investigation. It is **not a confirmed breach**.\n\n---\n\n## The spill (data)\n\n| Field | Value |\n|---|---|\n| Site ID | SBB00211 |\n| Company | South West Water |\n| Receiving watercourse | Carnon River |\n| Location | 50.218504, -5.103782 |\n| Event start | 2026-11-13 17:14:21 UTC |\n| Event end | Not recorded (ongoing) |\n| Duration so far | 21.1 h |\n| Status field | null |\n| Monitor offline | false |\n| Feed verdict | dry_spill_candidate |\n\nSource: spill data feed for SBB00211.\n\nTwo caveats apply to this data:\n- The event is open-ended and the status field is null, so the final duration is unknown.\n- \"Monitor offline: false\" means the monitor reports as online. It does not by itself confirm that the reading is valid.\n\n---\n\n## Rainfall context\n\n| Gauge | Distance | 24\u201348 h before | 0\u201324 h before | During event |\n|---|---|---|---|---|\n| 48182 | 5.7 km | 0.0 mm | 0.0 mm | 0.0 mm |\n| 48103 | 6.5 km | 0.0 mm | 0.2 mm | 0.0 mm |\n| **Max** | | **0.0 mm** | **0.2 mm** | **0.0 mm** |\n\nSource: gauge readings in the spill data feed.\n\n- Surfers Against Sewage gives this definition of a dry spill: rainfall below 0.25 mm on the day and the following 24 hours ([SAS](https://www.sas.org.uk/updates/illegal-sewage-dumping-excellent-bathing-waters-investigation/)). The readings here fall below that figure. However, the gauge windows used here (relative to the spill start) do not exactly match that day-based definition, and the post-event window is incomplete because the event is ongoing.\n- A BBC report published on 6 Nov 2026, a week before the event, states that parts of Devon and Cornwall were \"affected by severe drought\" and refers to \"ongoing drought conditions\" ([BBC](https://www.bbc.co.uk/news/articles/cv62yy453wlpo)).\n- **Not checked:** Met Office radar for the catchment on 11\u201314 Nov 2026. Localised rain that missed both gauges cannot be ruled out.\n\n---\n\n## Innocent explanations considered\n\n| Explanation | Skeptic plausibility | Status after evidence review |\n|---|---|---|\n| EDM sensor fault or telemetry glitch (stuck \"open\" signal) | medium | **Standing.** It is untested, and no company or EA statement was found either way. |\n| Data-feed or logging error (missing end time inflating duration) | medium | **Standing.** The event is open with a null status. |\n| Localised rainfall missed by the gauges | medium | **Standing but weakened.** Radar was not checked. Both gauges were dry, and the region was in drought ([BBC](https://www.bbc.co.uk/news/articles/cv62yy453wlpo)). |\n| Emergency discharge from pump failure or power loss | medium | **Standing.** No reports were found, but such faults often go unpublished. An emergency discharge would itself be reportable and relevant to compliance. |\n| Groundwater or tidal infiltration | low | **Weakened, not disproven.** South West Water attributed past overflows at nearby Carnon Downs WwTW to groundwater infiltration in wet weather ([SWW](https://www.southwestwater.co.uk/about-us/latest-news/cuts-storm-overflow-spills-by-97)). That explanation fits poorly with drought conditions. |\n| Snowmelt | low | **Refuted.** It is implausible in mid-November in Cornwall during drought, and no source supports it. |\n\n**Skeptic's strongest objection, stated in full:** *\"A telemetry or data-feed error (including a stuck EDM sensor) could produce a false, long-lasting 'open' event even though the monitor is nominally online, making the apparent dry-weather spill unreliable.\"*\n\nThis objection has **not been tested**. Only South West Water's telemetry and fault logs, or EA records, can resolve it.\n\n---\n\n## Web evidence (cited)\n\n1. **Regional drought one week before the event.** The BBC reported on 6 Nov 2026 that regulators had written to South West Water citing \"ongoing drought conditions\". The same report said parts of Devon and Cornwall were \"affected by severe drought\" and that reservoir levels were \"starting to recover\". [https://www.bbc.co.uk/news/articles/cv62yy453wlpo](https://www.bbc.co.uk/news/articles/cv62yy453wlpo)\n\n2. **Dry-day spilling on the Carnon River in 2025.** A Surfers Against Sewage search snippet states that \"the River Carnon experienced almost 1,000 hours of dry-day sewage spills\" in 2025, based on EA data obtained under FOI. The page also sets out the <0.25 mm dry-spill definition. *Caveat: the full page read cut off before the Carnon paragraph, so the figure is from the snippet only.* [https://www.sas.org.uk/updates/illegal-sewage-dumping-excellent-bathing-waters-investigation/](https://www.sas.org.uk/updates/illegal-sewage-dumping-excellent-bathing-waters-investigation/)\n\n3. **Nearby Carnon Downs WwTW history.** South West Water's own page reports the following:\n   - The works' overflow activated 290 times in 2023, 8 times in 2024, and once in 2025 \"so far\".\n   - The company attributed this to groundwater infiltration in wet weather.\n   - It installed a 500,000-litre storm tank, a new pumping system and new monitoring equipment.\n\n   *Caveat: no source confirms that SBB00211 is the Carnon Downs overflow. Treat this as context only.* [https://www.southwestwater.co.uk/about-us/latest-news/cuts-storm-overflow-spills-by-97](https://www.southwestwater.co.uk/about-us/latest-news/cuts-storm-overflow-spills-by-97)\n\n**Searched with no usable result:**\n- incident or news reports of this specific discharge\n- local Cornwall weather reports for 10\u201316 Nov 2026\n- reports of pump failure, power cut or equipment fault near Devoran, Bissoe or Carnon Downs in Nov 2026\n\n---\n\n## Confidence and recommendation\n\n**Evidence supporting a possible breach:**\n- The gauges show 0.0 mm rain during a 21.1 h+ discharge and at most 0.2 mm in the prior 48 h. No source contradicts these readings.\n- The region was in documented drought conditions a week earlier.\n- The river shows a reported pattern of dry-day spilling in 2025 (snippet only).\n- No public report of an emergency or equipment fault was found.\n\n**Evidence against, or unresolved:**\n- A monitor or telemetry fault is untested. This is the skeptic's strongest objection.\n- The event is open-ended with a null status, so the duration may be inflated by a logging error.\n- Radar rainfall was not checked.\n- The site's identity relative to Carnon Downs WwTW is unconfirmed.\n- The permit conditions are unknown.\n\n**Adjudicated confidence: 0.62** (skeptic: 0.42).\n\n**Recommendation:** Refer to the Environment Agency as a **possible** dry-weather discharge for investigation. Ask for the EDM, telemetry and operational records needed to confirm or exclude a monitor fault. Before sending, the reviewer may wish to:\n- re-check South West Water's live storm overflow map for the final end time\n- check Met Office radar for 13\u201314 Nov 2026\n\n---\n\n## Draft message to the Environment Agency\n\n> **Subject:** Report of a POSSIBLE storm overflow permit breach for investigation \u2013 SBB00211 (South West Water), Carnon River, 13 Nov 2026\n>\n> Dear Environment Agency,\n>\n> I am writing to report a **possible** dry-weather discharge from a storm overflow, for your investigation. I am not asserting that a breach has occurred. The available data raises questions that only official and operator records can resolve.\n>\n> **Site:** SBB00211, South West Water, discharging to the Carnon River (approx. 50.218504, -5.103782).\n>\n> **Event:** Event Duration Monitoring data shows a discharge starting **2026-11-13 17:14:21 UTC**. When the data was checked, the event was still open, with no end time recorded, a duration of **21.1 hours**, and a null status field. The monitor was reported as online.\n>\n> **Rainfall:** Environment Agency rain gauges 48182 (5.7 km) and 48103 (6.5 km) recorded **0.0 mm during the discharge**, and a maximum of **0.2 mm in the preceding 48 hours**. Public reporting from 6 Nov 2026 describes severe drought conditions in parts of Devon and Cornwall (https://www.bbc.co.uk/news/articles/cv62yy453wlpo). Surfers Against Sewage has also reported, citing EA data obtained under FOI, almost 1,000 hours of dry-day spills on the River Carnon in 2025 (https://www.sas.org.uk/updates/illegal-sewage-dumping-excellent-bathing-waters-investigation/).\n>\n> **Caveats:** This event could reflect any of the following:\n> - an EDM sensor, telemetry or data-feed fault\n> - localised rainfall not captured by the gauges (radar has not been checked)\n> - an emergency discharge caused by equipment failure\n>\n> I have found no public information confirming or excluding these.\n>\n> **I would be grateful if you could establish:**\n> 1. Whether South West Water has confirmed this event, and its actual end time and total duration.\n> 2. Whether the EDM or telemetry for SBB00211 was functioning correctly, or whether a fault has been reported.\n> 3. Whether any pump failure, power loss or other operational incident occurred at the associated assets around 13\u201314 Nov 2026, and whether it was reported to you.\n> 4. The permit conditions for SBB00211, and whether the discharge complied with them given the rainfall recorded.\n> 5. Whether this site is already subject to investigation, and whether its EDM history shows other dry-weather discharges.\n>\n> Thank you for considering this report.\n>\n> Kind regards,\n> [Name]\n> [Contact details]\n\n## Citation check (Linkup fetch)\n\n9 of 9 cited claims were confirmed by re-reading the cited page.\n\n- \u2705 Surfers Against Sewage defines a dry spill as one occurring when rainfall is below 0.25 mm on the day and the following 24 hours. (https://www.sas.org.uk/updates/illegal-sewage-dumping-excellent-bathing-waters-investigation/) \"A dry spill occurs when a sewer overflow releases sewage when rainfall is below 0.25mm on the day of the spill and the following 24 hours.\"\n- \u2705 A BBC report published on 6 Nov 2026 states that parts of Devon and Cornwall were affected by severe drought. (https://www.bbc.co.uk/news/articles/cv62yy453wlpo) \"Parts of Devon, Cornwall, Dorset, Somerset, East Sussex and West Sussex are affected by severe drought.\"\n- \u2705 The BBC report refers to ongoing drought conditions. (https://www.bbc.co.uk/news/articles/cv62yy453wlpo) \"The joint letter, seen by the BBC, said the leakage rate was \"unacceptable\" and placed customers \"at a greater level of risk\" given ongoing drought conditions.\"\n- \u2705 The BBC reported that regulators had written to South West Water citing ongoing drought conditions. (https://www.bbc.co.uk/news/articles/cv62yy453wlpo) \"Ofwat, the Department of the Environment, Food and Rural Affairs and the Environment Agency wrote to the firm to warn leakage levels were 18.5% above forecast and had increased since the previous year\"\n- \u2705 The BBC report said reservoir levels were starting to recover. (https://www.bbc.co.uk/news/articles/cv62yy453wlpo) \"Reservoir levels across the South West are starting to recover but the amount of rainfall in coming months would be paramount to them becoming full again, said South West Water.\"\n- \u2705 South West Water attributed past overflows at Carnon Downs WwTW to groundwater infiltration in wet weather. (https://www.southwestwater.co.uk/about-us/latest-news/cuts-storm-overflow-spills-by-97) \"Groundwater, the water found underground in the cracks and spaces in soil, sand, and rock, was found to be entering the sewers which flow into the works and overwhelming it during periods of wet weath\"\n- \u2705 Surfers Against Sewage states that the River Carnon experienced almost 1,000 hours of dry-day sewage spills in 2025, based on EA data obtained under FOI. (https://www.sas.org.uk/updates/illegal-sewage-dumping-excellent-bathing-waters-investigation/) \"Meanwhile, the River Carnon experienced almost 1,000 hours of dry-day sewage spills.\"\n- \u2705 The Carnon Downs WwTW overflow activated 290 times in 2023, 8 times in 2024, and once in 2025 so far. (https://www.southwestwater.co.uk/about-us/latest-news/cuts-storm-overflow-spills-by-97) \"Carnon Downs Wastewater Treatment Works, between Truro and Falmouth, had one of the region\u2019s largest spilling overflows in 2023, activating 290 times. Thanks to targeted improvements from the teams at\"\n- \u2705 South West Water installed a 500,000-litre storm tank, a new pumping system and new monitoring equipment at Carnon Downs WwTW. (https://www.southwestwater.co.uk/about-us/latest-news/cuts-storm-overflow-spills-by-97) \"To hold these additional flows and prevent them from being released through the storm overflow, a new storm tank was built, providing up to half a million litres of extra storage. The project also inc\"",
+ "report": "# Evidence pack: possible dry-day discharge at NWL00415 (Northumbrian Water, Dawdon Dene Beck)\n\n**Pipeline verdict:** likely_breach. **Adjudicated confidence:** 0.80.\n\n## Summary\n\nStorm overflow **NWL00415** (Northumbrian Water) discharges to **Dawdon Dene Beck** at 54.82785, -1.35538. It began spilling at **18:26:20 UTC on 14 Nov 2026**. The monitor was online.\n\n- The feed showed the spill still open at 16.4 hours.\n- An independent republication of the monitor data gives an end time of **11:01:21 on 15 Nov 2026**, a total of about **16.6 hours**.\n- Rainfall at two nearby Environment Agency gauges was essentially zero before and during the spill. The nearer gauge is 0.8 km from the outfall.\n- No published asset failure, monitor-fault notice or unexpected rainfall was found.\n\nThe pattern is consistent with a discharge in dry weather. Tidal, groundwater and asset-failure explanations have not been ruled out.\n\n## The spill (data)\n\n| Field | Value | Source |\n|---|---|---|\n| Site ID | NWL00415 | Spill feed |\n| Operator | Northumbrian Water | Spill feed |\n| Receiving water | Dawdon Dene Beck | Spill feed |\n| Location | 54.82785, -1.35538 | Spill feed |\n| Start | 2026-11-14 18:26:20 UTC | Spill feed; matches [FloodMapper](https://www.floodmapper.co.uk/stations/dalton-le-dale-cso-dalton-le-dale/metric/bf40ffca-5ce5-408d-8641-649320a6455a) |\n| End | Null in feed; 2026-11-15 11:01:21 on FloodMapper | [FloodMapper](https://www.floodmapper.co.uk/stations/dalton-le-dale-cso-dalton-le-dale/metric/bf40ffca-5ce5-408d-8641-649320a6455a) |\n| Duration | 16.4 h in feed (event still open); about 995 min (16.6 h) on FloodMapper | Both |\n| Monitor offline | false | Spill feed |\n| Automated flag | dry_spill_candidate | Spill feed |\n\n**Site identity:** FloodMapper lists a Northumbrian Water monitor called **Dalton-Le-Dale CSO** discharging to Dawdon Dene Beck. The evidence agent matched it to NWL00415 **by name and watercourse only**, not by ID or coordinates. This match needs confirming.\n\n**Data status:** FloodMapper is an independent site. It republishes data overseen by the Environment Agency and states that it does not verify that data. It is not an official record.\n\n## Rainfall context\n\nEnvironment Agency rain gauges (spill feed):\n\n| Station | Distance | 0\u201324 h before | 24\u201348 h before | During spill |\n|---|---|---|---|---|\n| 025878 | 0.8 km | 0.2 mm | 0.0 mm | 0.0 mm |\n| 026090 | 7.5 km | 0.0 mm | 0.0 mm | 0.0 mm |\n| **Max** | | **0.2 mm** | **0.0 mm** | **0.0 mm** |\n\n**Supporting forecast:** The Northern Echo published a forecast on 13 Nov ([source](https://www.thenorthernecho.co.uk/news/26726689.north-east-temperatures-plunge-0-weekend-begins/)). It described:\n- 13 Nov as chilly and sunny across County Durham, with frost overnight\n- 14 Nov as expected to be \"largely dry\", with rain possible later only in north-western areas\n- rain arriving in parts of County Durham on 15 Nov\n\n**Caveats on the rainfall evidence:**\n- The Northern Echo article is a forecast, not measured rainfall.\n- The page is labelled as written by a sister title.\n- It does not say when rain reached the Seaham coast on 15 Nov.\n- The feed's \"during\" window appears to reflect a snapshot taken at 16.4 h. The last roughly 10 minutes before the 11:01 end may not be covered by the gauge figures.\n\n## Innocent explanations considered\n\nThe skeptic's assessment, with the adjudicator's ruling:\n\n| Explanation | Skeptic plausibility | Status |\n|---|---|---|\n| EDM sensor fault or short blip | Low | **Refuted.** FloodMapper shows a single continuous event of about 16.6 h. |\n| Data-feed or timestamp error | Low | **Refuted.** The same start time appears in an independent source. |\n| Localised rain missed by gauges | Low | **Largely refuted.** The gauge is 0.8 km away and the forecast was dry for 13\u201314 Nov. |\n| Snowmelt | Low | **Refuted.** No evidence of snow before the event. |\n| High groundwater or infiltration | Medium | **Standing, unverified.** Limited weight given the dry antecedent conditions. |\n| Tidal backflow or surge (outfall near the coast) | Medium | **Standing, unverified.** No evidence either way. |\n| Emergency discharge from pump failure, blockage or power loss | Medium | **Standing.** No public report found, but companies often do not publicise faults. A discharge like this would still be a dry-day discharge warranting investigation. |\n\n**Skeptic's strongest objection (quoted):**\n\n> \"A 16.4-hour continuous overflow recorded by an online EDM monitor, with virtually zero rainfall at two gauges \u2013 the nearest only 0.8 km away \u2013 is inconsistent with a brief sensor glitch or missed rain, making a genuine dry-spill the most plausible explanation.\"\n\nThe skeptic's own strongest objection therefore favours a breach. Its confidence in a breach was 0.78.\n\n**Strongest remaining case against a breach:** tidal or surge influence at a near-coastal outfall, or an unpublicised asset failure. Neither has been checked against data.\n\n## Web evidence (cited)\n\n1. **FloodMapper: Dalton-Le-Dale CSO live discharge page.** https://www.floodmapper.co.uk/stations/dalton-le-dale-cso-dalton-le-dale/metric/bf40ffca-5ce5-408d-8641-649320a6455a\n   - Lists the operator as Northumbrian Water and the receiving water as Dawdon Dene Beck, in the Seaham Peterlee Coast catchment.\n   - Shows a discharge from 14 Nov 2026 18:26:20 to 15 Nov 2026 11:01:21, about 995 minutes.\n   - This is the only event in the window shown.\n   - It is an unofficial republication, and the site was matched by name only.\n2. **The Northern Echo: \"North East temperatures plunge to below 0 as the weekend begins\".** https://www.thenorthernecho.co.uk/news/26726689.north-east-temperatures-plunge-0-weekend-begins/\n   - Forecast published 13 Nov: 13\u201314 Nov dry and frosty across County Durham, rain from 15 Nov.\n\n**Searches that found nothing:**\n- Blockage, pumping station failure or power cut at Seaham, Dalton-le-Dale or Murton in November 2026.\n- News of a sewage spill at Dawdon or Seaham in November 2026.\n\nThe absence of reports is not proof that no incident occurred.\n\n## Confidence and recommendation\n\n**Confidence: 0.80 (likely breach)**\n\nWhat supports this:\n- Near-zero rainfall across all windows at a gauge 0.8 km from the outfall.\n- A continuous discharge of about 16.6 hours, independently corroborated.\n- A dry forecast for the period.\n- No published innocent explanation.\n\nWhat creates residual uncertainty:\n- The data source is unofficial.\n- The site was matched to NWL00415 by name only.\n- Tidal and groundwater effects have not been checked.\n- Asset-fault records have not been seen.\n\n**Severity:** high. The site has no prior cases in our records. Our internal records hold one other likely-breach case for Northumbrian Water at a different site. This is not a public finding.\n\n**Recommendation:** Forward to the Environment Agency as a **possible** breach for investigation. Request:\n1. Confirmation that NWL00415 is Dalton-le-Dale CSO, plus the official EDM record of the event.\n2. The environmental permit conditions, including pass-forward flow and storm tank requirements.\n3. Any operator record of an asset fault or monitor error on 14\u201315 Nov 2026.\n4. Tide, surge and groundwater data for the outfall.\n5. Annual EDM spill counts and hours for the site.\n\n**Unknowns not resolved by public sources:**\n- Permit conditions\n- Annual returns\n- Environment Agency incident reports or public complaints\n- Radar-measured rainfall\n\n## Draft message to the Environment Agency\n\n> **Subject: Report of a POSSIBLE storm overflow permit breach for investigation: NWL00415 (Dawdon Dene Beck), 14\u201315 November 2026**\n>\n> Dear Environment Agency,\n>\n> I am writing to report a **possible** breach of permit conditions at a Northumbrian Water storm overflow, for your investigation. This is not a confirmed finding. It is based on publicly available monitoring and rainfall data.\n>\n> **Site:** NWL00415, Northumbrian Water, discharging to Dawdon Dene Beck (54.82785, -1.35538). It appears to correspond to Dalton-le-Dale CSO, matched by name and watercourse only; please confirm.\n>\n> **Event:** EDM data show a discharge starting **14 Nov 2026 at 18:26:20 UTC**. The monitor was reported online. An independent republication of the monitor data (FloodMapper) shows it ending **15 Nov 2026 at 11:01:21**, a duration of about 16.6 hours.\n>\n> **Rainfall:** Two Environment Agency gauges recorded:\n> - **Station 025878 (0.8 km):** 0.2 mm in the 24 h before, 0.0 mm in the 24\u201348 h before, 0.0 mm during.\n> - **Station 026090 (7.5 km):** 0.0 mm in all three windows.\n>\n> A contemporaneous local forecast described 13\u201314 November as dry and frosty across County Durham.\n>\n> **Why this may be a breach:** A discharge of about 16.6 hours with essentially no rainfall before or during the event suggests the overflow may have operated outside storm conditions.\n>\n> **Possible alternative explanations not yet ruled out:**\n> - tidal or surge influence at this near-coastal outfall\n> - high groundwater or infiltration\n> - an unreported pumping station failure, blockage or power loss\n>\n> I found no public report of any of these.\n>\n> **I would be grateful if you could:**\n> 1. Confirm the official EDM record for this event.\n> 2. Check the event against the permit conditions.\n> 3. Establish whether Northumbrian Water has recorded an asset fault or monitor error for 14\u201315 November 2026.\n> 4. Consider tide and groundwater data for the outfall.\n>\n> Sources:\n> - https://www.floodmapper.co.uk/stations/dalton-le-dale-cso-dalton-le-dale/metric/bf40ffca-5ce5-408d-8641-649320a6455a\n> - https://www.thenorthernecho.co.uk/news/26726689.north-east-temperatures-plunge-0-weekend-begins/\n>\n> Kind regards,\n> [Name]\n> [Contact details]\n\n## Citation check (Linkup fetch)\n\n7 of 10 cited claims were confirmed by re-reading the cited page.\n\n- \u2705 FloodMapper lists a Northumbrian Water monitor called Dalton-Le-Dale CSO discharging to Dawdon Dene Beck. (https://www.floodmapper.co.uk/stations/dalton-le-dale-cso-dalton-le-dale/metric/bf40ffca-5ce5-408d-8641-649320a6455a) \"# Dawdon Dene Beck at Dalton-Le-Dale CSO\n\nThe water course declared as receiving spills from this monitor is Dawdon Dene Beck.\n\nThe declared operator of this monitor is NORTHUMBRIAN WATER LTD\"\n- \u2705 FloodMapper places the Dalton-Le-Dale CSO in the Seaham Peterlee Coast catchment. (https://www.floodmapper.co.uk/stations/dalton-le-dale-cso-dalton-le-dale/metric/bf40ffca-5ce5-408d-8641-649320a6455a) \"[River Basins](/data-explorer/basins) [Northumbria](/data-explorer/basins/Northumbria) [Wear](/data-explorer/management-catchments/Wear) [Seaham Peterlee Coast](/data-explorer/operational-catchments/S\"\n- \u26a0\ufe0f FloodMapper shows a discharge starting at 18:26:20 on 14 Nov 2026, matching the spill feed start time. (https://www.floodmapper.co.uk/stations/dalton-le-dale-cso-dalton-le-dale/metric/bf40ffca-5ce5-408d-8641-649320a6455a)\n- \u26a0\ufe0f FloodMapper shows the discharge ending at 11:01:21 on 15 Nov 2026, a duration of about 995 minutes (16.6 hours). (https://www.floodmapper.co.uk/stations/dalton-le-dale-cso-dalton-le-dale/metric/bf40ffca-5ce5-408d-8641-649320a6455a)\n- \u2705 FloodMapper shows this as the only event in the window displayed, a single continuous discharge. (https://www.floodmapper.co.uk/stations/dalton-le-dale-cso-dalton-le-dale/metric/bf40ffca-5ce5-408d-8641-649320a6455a) \"Discharge Timeline (Last 2 Days)\n\nTotal Discharge Events\n\n1\n\nDischarge List\n\n#\n\nStart Time\n\nEnd Time\n\nDuration (minutes)\n\n1\n\n11/14/2026, 6:26:20 PM\n\n11/15/2026, 11:02:48 AM\n\n996.4784833333333\"\n- \u2705 FloodMapper republishes data overseen by the Environment Agency and states that it does not verify that data. (https://www.floodmapper.co.uk/stations/dalton-le-dale-cso-dalton-le-dale/metric/bf40ffca-5ce5-408d-8641-649320a6455a) \"Station overseen (meaning either provided, or regulated) by: The Environment Agency ... Please note that **FloodMapper** does not verify or check the accuracy of the data provided by third parties. Th\"\n- \u26a0\ufe0f The Northern Echo published a forecast on 13 Nov describing 13 Nov as chilly and sunny across County Durham with frost overnight. (https://www.thenorthernecho.co.uk/news/26726689.north-east-temperatures-plunge-0-weekend-begins/)\n- \u2705 The Northern Echo forecast said 14 Nov was expected to be largely dry, with rain possible later only in north-western areas. (https://www.thenorthernecho.co.uk/news/26726689.north-east-temperatures-plunge-0-weekend-begins/) \"Saturday (November 14) is expected to remain largely dry, with a mixture of cloudy skies and sunny intervals throughout the day. ... while some north-western areas could see rain arriving later in the\"\n- \u2705 The Northern Echo forecast said rain would arrive in parts of County Durham on 15 Nov. (https://www.thenorthernecho.co.uk/news/26726689.north-east-temperatures-plunge-0-weekend-begins/) \"The weather is set to turn more unsettled on Sunday (November 15), with outbreaks of rain expected across parts of County Durham and Teesside.\"\n- \u2705 The Northern Echo forecast page is labelled as written by a sister title. (https://www.thenorthernecho.co.uk/news/26726689.north-east-temperatures-plunge-0-weekend-begins/) \"This article is brought to you by our exclusive subscriber partnership with our sister title USA Today, and has been written by our American colleagues.\"",
  "citations": {
-  "checked": 9,
-  "verified": 9,
-  "precision": 1.0,
+  "checked": 10,
+  "verified": 7,
+  "precision": 0.7,
   "checks": [
    {
-    "claim": "Surfers Against Sewage defines a dry spill as one occurring when rainfall is below 0.25 mm on the day and the following 24 hours.",
-    "url": "https://www.sas.org.uk/updates/illegal-sewage-dumping-excellent-bathing-waters-investigation/",
+    "claim": "FloodMapper lists a Northumbrian Water monitor called Dalton-Le-Dale CSO discharging to Dawdon Dene Beck.",
+    "url": "https://www.floodmapper.co.uk/stations/dalton-le-dale-cso-dalton-le-dale/metric/bf40ffca-5ce5-408d-8641-649320a6455a",
     "status": "verified",
-    "quote": "A dry spill occurs when a sewer overflow releases sewage when rainfall is below 0.25mm on the day of the spill and the following 24 hours."
+    "quote": "# Dawdon Dene Beck at Dalton-Le-Dale CSO\n\nThe water course declared as receiving spills from this monitor is Dawdon Dene Beck.\n\nThe declared operator of this monitor is NORTHUMBRIAN WATER LTD"
    },
    {
-    "claim": "A BBC report published on 6 Nov 2026 states that parts of Devon and Cornwall were affected by severe drought.",
-    "url": "https://www.bbc.co.uk/news/articles/cv62yy453wlpo",
+    "claim": "FloodMapper places the Dalton-Le-Dale CSO in the Seaham Peterlee Coast catchment.",
+    "url": "https://www.floodmapper.co.uk/stations/dalton-le-dale-cso-dalton-le-dale/metric/bf40ffca-5ce5-408d-8641-649320a6455a",
     "status": "verified",
-    "quote": "Parts of Devon, Cornwall, Dorset, Somerset, East Sussex and West Sussex are affected by severe drought."
+    "quote": "[River Basins](/data-explorer/basins) [Northumbria](/data-explorer/basins/Northumbria) [Wear](/data-explorer/management-catchments/Wear) [Seaham Peterlee Coast](/data-explorer/operational-catchments/Seaham Peterlee Coast) [Dalton Beck to North Sea](/data-explorer/water-bodies/Dalton Beck to North Sea) Dalton-Le-Dale CSO"
    },
    {
-    "claim": "The BBC report refers to ongoing drought conditions.",
-    "url": "https://www.bbc.co.uk/news/articles/cv62yy453wlpo",
-    "status": "verified",
-    "quote": "The joint letter, seen by the BBC, said the leakage rate was \"unacceptable\" and placed customers \"at a greater level of risk\" given ongoing drought conditions."
+    "claim": "FloodMapper shows a discharge starting at 18:26:20 on 14 Nov 2026, matching the spill feed start time.",
+    "url": "https://www.floodmapper.co.uk/stations/dalton-le-dale-cso-dalton-le-dale/metric/bf40ffca-5ce5-408d-8641-649320a6455a",
+    "status": "not_supported",
+    "quote": "11/14/2026, 6:26:20 PM"
    },
    {
-    "claim": "The BBC reported that regulators had written to South West Water citing ongoing drought conditions.",
-    "url": "https://www.bbc.co.uk/news/articles/cv62yy453wlpo",
-    "status": "verified",
-    "quote": "Ofwat, the Department of the Environment, Food and Rural Affairs and the Environment Agency wrote to the firm to warn leakage levels were 18.5% above forecast and had increased since the previous year. The joint letter, seen by the BBC, said the leakage rate was \"unacceptable\" and placed customers \"at a greater level of risk\" given ongoing drought conditions."
+    "claim": "FloodMapper shows the discharge ending at 11:01:21 on 15 Nov 2026, a duration of about 995 minutes (16.6 hours).",
+    "url": "https://www.floodmapper.co.uk/stations/dalton-le-dale-cso-dalton-le-dale/metric/bf40ffca-5ce5-408d-8641-649320a6455a",
+    "status": "not_supported",
+    "quote": ""
    },
    {
-    "claim": "The BBC report said reservoir levels were starting to recover.",
-    "url": "https://www.bbc.co.uk/news/articles/cv62yy453wlpo",
+    "claim": "FloodMapper shows this as the only event in the window displayed, a single continuous discharge.",
+    "url": "https://www.floodmapper.co.uk/stations/dalton-le-dale-cso-dalton-le-dale/metric/bf40ffca-5ce5-408d-8641-649320a6455a",
     "status": "verified",
-    "quote": "Reservoir levels across the South West are starting to recover but the amount of rainfall in coming months would be paramount to them becoming full again, said South West Water."
+    "quote": "Discharge Timeline (Last 2 Days)\n\nTotal Discharge Events\n\n1\n\nDischarge List\n\n#\n\nStart Time\n\nEnd Time\n\nDuration (minutes)\n\n1\n\n11/14/2026, 6:26:20 PM\n\n11/15/2026, 11:02:48 AM\n\n996.4784833333333"
    },
    {
-    "claim": "South West Water attributed past overflows at Carnon Downs WwTW to groundwater infiltration in wet weather.",
-    "url": "https://www.southwestwater.co.uk/about-us/latest-news/cuts-storm-overflow-spills-by-97",
+    "claim": "FloodMapper republishes data overseen by the Environment Agency and states that it does not verify that data.",
+    "url": "https://www.floodmapper.co.uk/stations/dalton-le-dale-cso-dalton-le-dale/metric/bf40ffca-5ce5-408d-8641-649320a6455a",
     "status": "verified",
-    "quote": "Groundwater, the water found underground in the cracks and spaces in soil, sand, and rock, was found to be entering the sewers which flow into the works and overwhelming it during periods of wet weather."
+    "quote": "Station overseen (meaning either provided, or regulated) by: The Environment Agency ... Please note that **FloodMapper** does not verify or check the accuracy of the data provided by third parties. The data is used as received from the source."
    },
    {
-    "claim": "Surfers Against Sewage states that the River Carnon experienced almost 1,000 hours of dry-day sewage spills in 2025, based on EA data obtained under FOI.",
-    "url": "https://www.sas.org.uk/updates/illegal-sewage-dumping-excellent-bathing-waters-investigation/",
-    "status": "verified",
-    "quote": "Meanwhile, the River Carnon experienced almost 1,000 hours of dry-day sewage spills."
+    "claim": "The Northern Echo published a forecast on 13 Nov describing 13 Nov as chilly and sunny across County Durham with frost overnight.",
+    "url": "https://www.thenorthernecho.co.uk/news/26726689.north-east-temperatures-plunge-0-weekend-begins/",
+    "status": "not_supported",
+    "quote": ""
    },
    {
-    "claim": "The Carnon Downs WwTW overflow activated 290 times in 2023, 8 times in 2024, and once in 2025 so far.",
-    "url": "https://www.southwestwater.co.uk/about-us/latest-news/cuts-storm-overflow-spills-by-97",
+    "claim": "The Northern Echo forecast said 14 Nov was expected to be largely dry, with rain possible later only in north-western areas.",
+    "url": "https://www.thenorthernecho.co.uk/news/26726689.north-east-temperatures-plunge-0-weekend-begins/",
     "status": "verified",
-    "quote": "Carnon Downs Wastewater Treatment Works, between Truro and Falmouth, had one of the region\u2019s largest spilling overflows in 2023, activating 290 times. Thanks to targeted improvements from the teams at South West Water these spills were reduced to just 8 in 2024, despite it being the wettest hydrological year on record, and just one spill in 2025 so far."
+    "quote": "Saturday (November 14) is expected to remain largely dry, with a mixture of cloudy skies and sunny intervals throughout the day. ... while some north-western areas could see rain arriving later in the day."
    },
    {
-    "claim": "South West Water installed a 500,000-litre storm tank, a new pumping system and new monitoring equipment at Carnon Downs WwTW.",
-    "url": "https://www.southwestwater.co.uk/about-us/latest-news/cuts-storm-overflow-spills-by-97",
+    "claim": "The Northern Echo forecast said rain would arrive in parts of County Durham on 15 Nov.",
+    "url": "https://www.thenorthernecho.co.uk/news/26726689.north-east-temperatures-plunge-0-weekend-begins/",
     "status": "verified",
-    "quote": "To hold these additional flows and prevent them from being released through the storm overflow, a new storm tank was built, providing up to half a million litres of extra storage. The project also included a new pumping system and monitoring equipment to manage storm overflows effectively and ensure stored water is returned from the storm tank back to the treatment process as soon as site has capacity to treat it."
+    "quote": "The weather is set to turn more unsettled on Sunday (November 15), with outbreaks of rain expected across parts of County Durham and Teesside."
+   },
+   {
+    "claim": "The Northern Echo forecast page is labelled as written by a sister title.",
+    "url": "https://www.thenorthernecho.co.uk/news/26726689.north-east-temperatures-plunge-0-weekend-begins/",
+    "status": "verified",
+    "quote": "This article is brought to you by our exclusive subscriber partnership with our sister title USA Today, and has been written by our American colleagues."
    }
   ]
  }

@@ -1,4 +1,4 @@
-/* Sentinels showcase: loads data/run.json (+ data/case.json if present) and drives the page. */
+/* Sentinel showcase: loads data/run.json (+ data/case.json if present) and drives the page. */
 const COL = { dry_spill_candidate: [200, 16, 46], rain_explained: [18, 53, 91], no_gauge: [110, 120, 125] };   // Figma tokens
 const NEUTRAL = [18, 53, 91];
 const fmt = n => Number(n).toLocaleString("en-GB");
@@ -241,41 +241,53 @@ function renderCase(s, c) {
   }).join("");
 
   if (!c) return;
-  document.getElementById("pending-note").textContent =
-    `Real output from one traced run, decided ${when(c.decided_at)}. Final verdict: ${String(c.final_verdict).replace(/_/g, " ")}.`;
+  document.getElementById("pending-note").textContent = `Real output from one traced run, decided ${when(c.decided_at)}.`;
+  const verdict = String(c.final_verdict).replace(/_/g, " ").replace(/^./, x => x.toUpperCase());
+  const standing = (c.ruling && c.ruling.objections_standing) || [];
+  const firstClause = x => String(x).split(/[:;(]/)[0].trim();
+  const strip = document.getElementById("verdict");
+  strip.hidden = false;
+  strip.innerHTML = `<div><span class="v-k">Verdict</span><span class="v-v hot">${esc(verdict)}</span></div>
+    <div><span class="v-k">Breach confidence</span><span class="v-v">${Math.round(Number(c.breach_confidence) * 100)}%</span></div>
+    ${c.citations && c.citations.checked ? `<div><span class="v-k">Citations verified</span><span class="v-v">${c.citations.verified}/${c.citations.checked}</span></div>` : ""}
+    ${standing.length ? `<div class="v-wide"><span class="v-k">Main doubt left</span><span class="v-t">${esc(firstClause(standing[0]))}</span></div>` : ""}`;
+
+  // Each agent: a one-line gist, with the full output folded away.
+  const more = html => `<details><summary>Full output</summary>${html}</details>`;
   const set = (k, html) => { const b = document.querySelector(`[data-agent="${k}"] .body`); b.classList.remove("pending"); b.innerHTML = html; };
-  if (c.case) set("investigator", `<p>${esc(c.case.summary)}</p>
-    <ul>${(c.case.breach_indicators || []).map(x => `<li>${esc(x)}</li>`).join("")}</ul>
-    <p>Severity <span class="pill">${esc(c.case.severity)}</span> Repeat offender <span class="pill">${c.case.repeat_offender ? "yes" : "no"}</span></p>`);
+  if (c.case) set("investigator", `<p>Severity ${esc(c.case.severity)}. ${(c.case.breach_indicators || []).length} signs of a breach, ${c.case.repeat_offender ? "and a repeat offender" : "no past cases at this site"}.</p>
+    ${more(`<p>${esc(c.case.summary)}</p><ul>${(c.case.breach_indicators || []).map(x => `<li>${esc(x)}</li>`).join("")}</ul>`)}`);
   if (c.skeptic) {
     const conf = Number(c.skeptic.breach_confidence);
     document.querySelector('[data-agent="skeptic"] h4 small').textContent = c.skeptic.model || "different model";
-    set("skeptic", `<p><b>Strongest objection:</b> ${esc(c.skeptic.strongest_objection)}</p>
-      <ul>${(c.skeptic.innocent_explanations || []).map(x => `<li>${esc(x.explanation)} <span class="pill">${esc(x.plausibility)}</span></li>`).join("")}</ul>
-      <div class="conf"><span>skeptic: breach likely?</span><div class="track"><div class="fill" style="width:${conf * 100}%"></div></div><span>${conf.toFixed(2)}</span></div>`);
+    set("skeptic", `<p>${esc(c.skeptic.strongest_objection)}</p>
+      <div class="conf"><span>breach likely?</span><div class="track"><div class="fill" style="width:${conf * 100}%"></div></div><span>${conf.toFixed(2)}</span></div>
+      ${more(`<ul>${(c.skeptic.innocent_explanations || []).map(x => `<li>${esc(x.explanation)} <span class="pill">${esc(x.plausibility)}</span></li>`).join("")}</ul>`)}`);
   }
   if (c.evidence) {
     const all = c.evidence.searches.flatMap(q => q.sources || []).filter((x, i, a) => x.url && a.findIndex(y => y.url === x.url) === i);
     const cited = all.filter(x => (c.evidence.report || "").includes(x.url));   // only sources the evidence pack actually cites
     const srcs = (cited.length ? cited : all).slice(0, 8);
-    const cit = c.citations && c.citations.checked ? `<p><b>${c.citations.verified} of ${c.citations.checked}</b> cited claims verified against the source page.</p>` : "";
-    set("evidence", `<p>${c.evidence.searches.length} live searches${c.evidence.fetches ? `, ${c.evidence.fetches.length} full pages read` : ""}.</p>${cit}
-      <ul>${c.evidence.searches.map(q => `<li>${esc(q.query)}</li>`).join("")}</ul>
-      <p><b>Sources cited</b></p><ul class="sources">${srcs.map(x => `<li><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.name || x.url)}</a></li>`).join("")}</ul>`);
+    const cit = c.citations && c.citations.checked ? ` ${c.citations.verified} of ${c.citations.checked} cited claims checked against the source page.` : "";
+    set("evidence", `<p>${c.evidence.searches.length} live searches${c.evidence.fetches ? `, ${c.evidence.fetches.length} pages read` : ""}.${cit}</p>
+      <ul class="sources">${srcs.map(x => `<li><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.name || x.url)}</a></li>`).join("")}</ul>
+      ${more(`<p>Searches:</p><ul>${c.evidence.searches.map(q => `<li>${esc(q.query)}</li>`).join("")}</ul>`)}`);
   } else {
     set("evidence", "<p>Skipped: the skeptic was near-certain this spill is innocent, so no web search was spent on it.</p>");
   }
   if (c.ruling) {
     const r = c.ruling, from = Number(c.skeptic_confidence ?? c.skeptic?.breach_confidence), to = Number(r.final_confidence);
-    set("adjudicator", `<p>${esc(r.reasoning)}</p>
+    set("adjudicator", `<p>${(r.objections_refuted || []).length} objections refuted, ${(r.objections_standing || []).length} still standing.</p>
+      <div class="conf"><span>${isNaN(from) ? "" : from.toFixed(2) + " → "}final</span><div class="track"><div class="fill" style="width:${to * 100}%"></div></div><span>${to.toFixed(2)}</span></div>
+      ${more(`<p>${esc(r.reasoning)}</p>
       <div class="ruling"><div><h6>Refuted</h6><ul>${(r.objections_refuted || []).map(x => `<li>${esc(x)}</li>`).join("") || "<li>None</li>"}</ul></div>
-      <div><h6>Still standing</h6><ul>${(r.objections_standing || []).map(x => `<li>${esc(x)}</li>`).join("") || "<li>None</li>"}</ul></div></div>
-      <div class="conf"><span>${isNaN(from) ? "" : from.toFixed(2) + " → "}final</span><div class="track"><div class="fill" style="width:${to * 100}%"></div></div><span>${to.toFixed(2)}</span></div>`);
+      <div><h6>Still standing</h6><ul>${(r.objections_standing || []).map(x => `<li>${esc(x)}</li>`).join("") || "<li>None</li>"}</ul></div></div>`)}`);
   } else {
     set("adjudicator", "<p>Not needed: the skeptic was near-certain this spill is innocent, so the case stopped early.</p>");
   }
-  if (c.report && window.marked) set("drafter", `<div class="report">${marked.parse(esc(c.report).replace(/&gt;/g, ">"))}</div>`);
-  else if (!c.report) set("drafter", "<p>No report drafted for this verdict.</p>");
+  if (c.report) set("drafter", `<p>Evidence pack and draft report to the Environment Agency, waiting for a person to approve.</p>
+    ${more(`<div class="report">${window.marked ? marked.parse(esc(c.report).replace(/&gt;/g, ">")) : `<pre>${esc(c.report)}</pre>`}</div>`)}`);
+  else set("drafter", "<p>No report drafted for this verdict.</p>");
 }
 
 function reveals() {

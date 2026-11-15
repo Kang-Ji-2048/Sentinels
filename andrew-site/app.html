@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sentinels</title>
+<title>Sentinel</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
@@ -240,19 +240,65 @@
   .detail details.srcs { margin-top: 14px; font-size: 13px; }
   .detail details.srcs summary { cursor: pointer; color: var(--navy); font-weight: 600; }
   .detail details.srcs ul { margin-top: 6px; }
+  /* Home tab (Kang 09:27): headline, pipeline strip, company bars, start-time chart, agent cases. Flat, ruled. */
+  .home { flex: 1; min-height: 0; overflow-y: auto; background: var(--paper); padding: 28px 36px 40px; }
+  .home h1 { margin: 0; font: 700 40px var(--serif); line-height: 1.1; }
+  .home .intro { margin: 8px 0 0; max-width: 640px; color: var(--muted); }
+  .home h2 { margin: 26px 0 8px; font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+  .hhead { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; }
+  .hgo { display: flex; gap: 10px; }
+  .hgo .btn { text-decoration: none; border-radius: 3px; }
+  .pipe { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--rule); }
+  .pipe li { border-left: 1px solid var(--rule); position: relative; }
+  .pipe li:first-child { border-left: 0; }
+  .pipe li::before { content: ""; position: absolute; left: 0; right: 0; top: -1px; height: 3px; background: var(--gold); }
+  .pipe li.inv::before { background: var(--navy); }
+  .pipe a { display: grid; align-content: start; gap: 2px; padding: 12px 14px 12px; color: inherit; text-decoration: none; height: 100%; transition: background .15s; }
+  .pipe li:first-child a { padding-left: 0; }
+  .pipe a:hover { background: #fff; }
+  .pipe .k { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .pipe b { font-size: 30px; line-height: 1.1; color: var(--navy); font-variant-numeric: tabular-nums; }
+  .pipe li:nth-child(3) b { color: var(--crimson); }
+  .pipe .l { font-size: 13px; color: var(--muted); line-height: 1.3; }
+  .hgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 36px; }
+  .bars { border-top: 1px solid var(--ink); }
+  .bar { display: grid; grid-template-columns: 110px minmax(0, 1fr) 52px; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--rule); font-size: 13.5px; }
+  .bar .cotrack { display: flex; height: 12px; }
+  .bar .cotrack i { display: block; height: 100%; transform-origin: left; animation: grow-x .6s cubic-bezier(.2,.7,.2,1) both; }
+  .bar .v { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); font-size: 12.5px; }
+  .home i.d { background: var(--crimson); } .home i.o { background: #a9b6c0; }
+  .key { margin: 8px 0 0; font-size: 12.5px; color: var(--muted); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .key i { display: inline-block; width: 10px; height: 10px; }
+  .key i.o { margin-left: 8px; }
+  .home .cols { display: flex; align-items: flex-end; gap: 3px; height: 262px; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); padding-top: 8px; }
+  .home .col { flex: 1; height: 100%; display: flex; flex-direction: column-reverse; }
+  .home .col i { display: block; transform-origin: bottom; animation: grow-y .6s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes grow-x { from { transform: scaleX(0); } } @keyframes grow-y { from { transform: scaleY(0); } }
+  @media (prefers-reduced-motion: reduce) { .bar .cotrack i, .home .col i { animation: none; } }
+  .axis { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--muted); margin-top: 4px; }
+  .hcase { display: grid; gap: 2px; width: 100%; text-align: left; padding: 10px 0; background: none; border: 0; border-bottom: 1px solid var(--rule); font: inherit; color: inherit; cursor: pointer; transition: padding .15s, background .15s; }
+  .hcase:first-child { border-top: 1px solid var(--ink); }
+  .hcase:hover { background: #fff; padding-left: 8px; }
+  .hcase .t { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+  .hcase .m { font-size: 13px; color: var(--muted); }
+  body.dash .home .vchip { border-radius: 3px; font-size: 12px; padding: 2px 8px; }
+  @media (max-width: 1100px) { .pipe { grid-template-columns: repeat(4, minmax(0, 1fr)); } .pipe li:nth-child(5) { border-left: 0; } .pipe li:nth-child(5) a { padding-left: 0; } .hgrid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 700px) { .home { padding: 20px 16px 32px; } .home h1 { font-size: 30px; } .pipe { grid-template-columns: 1fr 1fr; } .pipe li:nth-child(odd) { border-left: 0; } .pipe li:nth-child(odd) a { padding-left: 0; } .pipe li:nth-child(5) { border-left: 0; } .hgrid { grid-template-columns: 1fr; } .hgo { width: 100%; } }
   /* Reports brief (Kang 09:22: shorter, plainer). Ruled key/value rows; full pack folded below. */
   .brief { display: grid; grid-template-columns: 110px minmax(0, 1fr); margin: 18px 0 0; border-top: 1px solid var(--ink); font-size: 14.5px; line-height: 1.5; }
   .brief dt, .brief dd { margin: 0; padding: 9px 0; border-bottom: 1px solid var(--rule); }
   .brief dt { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; padding-top: 12px; }
   .brief dd ul { list-style: none; padding: 0; display: block; }
   .brief dd li { padding: 1px 0; }
-  .brief dd li::before { content: "–"; color: var(--muted); margin-right: 8px; }
+  .brief dd li:not(.cite)::before { content: "–"; color: var(--muted); margin-right: 8px; }
   .brief .vchip { margin-right: 4px; }
   .detail details.fold > summary { cursor: pointer; color: var(--navy); font-weight: 600; list-style: none; }
   .detail details.fold > summary::-webkit-details-marker { display: none; }
   .detail details.fold > summary::before { content: "+"; display: inline-block; width: 16px; font-weight: 700; }
   .detail details.fold[open] > summary::before { content: "−"; }
   .brief details.fold .rlist { margin-top: 8px; }
+  .brief .cite { padding: 8px 0; }
+  .cite > .meta { grid-column: 2; font-size: 12.5px; }
   .detail details.pack { margin-top: 18px; }
   .detail details.pack > summary { padding: 10px 0; }
   .detail details.pack .wc { color: var(--muted); font-weight: 400; }
@@ -510,13 +556,52 @@
   body.dash .askbox #ask-log { max-height: none; flex: 1; }
   body.dash .askbox .ask-body { flex: 1; overflow: hidden; }
   @media (max-width: 900px) { body.dash .askbox { right: 16px; bottom: 16px; } }
+  /* Polish pass (Kang 09:22): one flat system across tabs. Square 3px corners, thin rules instead of shadows on
+     cards; floating map controls keep one light shadow so they read over the map. Short, quiet motion. */
+  body.dash { background: var(--paper); }
+  body.dash .mcard, body.dash .side { border-color: var(--rule); border-radius: 3px; box-shadow: none; }
+  body.dash .mcard .map, body.dash .rows, body.dash .side .case { border-radius: 3px; }
+  body.dash .rows { border-color: var(--rule); }
+  body.dash .row { border-top-color: #e3e8e2; }
+  body.dash .side .case { background: var(--paper); border-color: var(--rule); border-top: 3px solid var(--navy); }
+  body.dash .seg, body.dash .seg a, body.dash .badge, body.dash .row .no, body.dash .vchip, .pill, body.dash .cact .btn,
+  body.dash .gauge-label, .gauge-label, .site-label, .count, .reset, body.dash .mcard .reset, .askbox .api-off, .askbox input, .askbox .btn, .turn pre,
+  body.dash .askbox.closed, body.dash .askbox.closed .ask-toggle, .askbox .chips button, body.dash.wide .pclose { border-radius: 3px; }
+  body.dash .askbox { border-radius: 3px; }
+  body.dash .askbox:not(.closed) .ask-toggle, .askbox:not(.closed) .ask-toggle { border-radius: 3px 3px 0 0; }
+  body.dash .mctrl, body.dash .mcard .key, body.dash .pcbox, body.dash .tour, body.dash .mcard .reset, body.dash .gauge-label, .count {
+    border-radius: 3px; box-shadow: 0 1px 3px rgba(18, 53, 91, .16); }
+  body.dash .askbox.closed .ask-toggle { box-shadow: 0 1px 3px rgba(18, 53, 91, .2); }
+  body.dash .askbox:not(.closed) { box-shadow: 0 6px 20px rgba(18, 53, 91, .18); }
+  body.dash.wide .mcard { border-radius: 3px; }
+  body.dash.wide .side { box-shadow: 0 6px 20px rgba(18, 53, 91, .18); }
+  .btn { border-radius: 3px; transition: background .15s, color .15s, border-color .15s, transform .1s; }
+  .btn:not(:disabled):hover { background: #0d2846; border-color: #0d2846; }
+  .btn.ghost:not(:disabled):hover, .btn.danger:not(:disabled):hover { background: #fff; }
+  .btn:not(:disabled):active, .check:active, body.dash .tour:active { transform: translateY(1px); }
+  .check { transition: filter .15s; } .check:hover { filter: brightness(.95); }
+  body.dash .row, .queue .pick, .file, .ctable tr { transition: background .15s, border-color .15s; }
+  .tlink { transition: color .15s; }
+  /* Motion: views fade up on open, list rows stagger in, the case card cross-fades when the spill changes. */
+  @keyframes rise { from { opacity: 0; transform: translateY(6px); } }
+  @keyframes fade { from { opacity: 0; } }
+  .enter { animation: fade .22s ease-out; }
+  .enter .pipe li, .enter .hgrid > section, .enter .file, .enter .queue .pick, .enter .funnel > div, .enter .brief { animation: rise .35s cubic-bezier(.2, .7, .2, 1) both; }
+  .enter .pipe li:nth-child(2), .enter .file:nth-child(2), .enter .queue .pick:nth-child(2), .enter .funnel > div:nth-child(2), .enter .hgrid > section:nth-child(2) { animation-delay: .04s; }
+  .enter .pipe li:nth-child(3), .enter .file:nth-child(3), .enter .queue .pick:nth-child(3), .enter .funnel > div:nth-child(3), .enter .hgrid > section:nth-child(3) { animation-delay: .08s; }
+  .enter .pipe li:nth-child(4), .enter .funnel > div:nth-child(4) { animation-delay: .12s; }
+  .enter .pipe li:nth-child(5) { animation-delay: .16s; } .enter .pipe li:nth-child(6) { animation-delay: .2s; } .enter .pipe li:nth-child(7) { animation-delay: .24s; }
+  .swap > * { animation: rise .3s cubic-bezier(.2, .7, .2, 1) both; }
+  .swap > :nth-child(2) { animation-delay: .03s; } .swap > :nth-child(3) { animation-delay: .06s; } .swap > :nth-child(n+4) { animation-delay: .09s; }
+  .detail details.fold[open] > :not(summary) { animation: rise .25s ease-out both; }
+  @media (prefers-reduced-motion: reduce) { .enter, .enter *, .swap > *, .detail details.fold[open] > * { animation: none !important; } }
 </style>
 </head>
 <body>
 <header class="top">
   <div class="brand">
-    <span class="logo">Sentinels</span>
-    <nav class="nav"><a href="#map" data-view="map" class="on">Map</a><a href="#cases" data-view="cases">Cases</a><a href="#reports" data-view="reports">Reports</a></nav>
+    <span class="logo">Sentinel</span>
+    <nav class="nav"><a href="#home" data-view="home">Home</a><a href="#map" data-view="map" class="on">Map</a><a href="#cases" data-view="cases">Cases</a><a href="#reports" data-view="reports">Reports</a></nav>
   </div>
   <div class="top-right"><span class="updated" id="updated"></span><button class="check dash-only" id="pc-go">Check your postcode</button></div>
 </header>
@@ -526,9 +611,9 @@
       <div>
         <p class="eyebrow">Sewage spill watch · England</p>
         <h1 class="mtitle">The spills rain can't explain.</h1>
-        <p class="msub">Every storm overflow in England, 9 water companies · <span id="runat"></span></p>
+        <p class="msub">Overflows may only release sewage in heavy rain. A dry spill is one that started with no rain nearby. · <span id="runat"></span></p>
       </div>
-      <div class="hero-n"><b id="n3"></b><span>dry spills <br>in 48 hours</span></div>
+      <div class="hero-n"><b id="n3"></b><span>dry spills <br>in the last 2 days</span></div>
     </div>
     <div class="map">
       <div class="mctrl dash-only">
@@ -541,16 +626,16 @@
       </form>
       <button class="reset" id="reset" hidden>Show all of England</button>
       <button class="tour dash-only" id="tour">▶ Play tour</button>
-      <button class="widebtn dash-only" id="wide" aria-pressed="false" aria-label="Deep dive: bigger map and the full list" title="Deep dive: bigger map and the full list">
+      <button class="widebtn dash-only" id="wide" aria-pressed="false" aria-label="Bigger map and the full list" title="Bigger map and the full list">
         <svg class="i-out" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></svg>
         <svg class="i-in" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 11h-6V5M5 13h6v6M13 11l7-7M11 13l-7 7"/></svg>
       </button>
       <button class="reset panel-open dash-only" id="panel-open" hidden>Show the list</button>
-      <div id="map" role="img" aria-label="Map of England: one mark per spilling overflow, sized by hours discharging"></div>
+      <div id="map" role="img" aria-label="Map of England: one dot per sewage spill, bigger the longer it has run"></div>
       <div class="key dash-only">
-        <span><i class="sw dry"></i>Dry spill</span><span><i class="sw rain"></i>Rain explained</span><span><i class="sw none"></i>No gauge</span>
-        <span><i class="vdot needs_review"></i>Checked by the agents</span>
-        <span class="size" title="Dry spill: every rain gauge within 10 km saw under 0.25 mm in each of the two days before it began.">Size = hours discharging</span>
+        <span><i class="sw dry"></i>Dry spill</span><span><i class="sw rain"></i>Rained nearby</span><span><i class="sw none"></i>No rain gauge nearby</span>
+        <span><i class="vdot needs_review"></i>Checked by our AI agents</span>
+        <span class="size" title="Dry spill: no rain gauge within 10 km recorded more than a trace (0.25 mm) on either of the two days before it began.">Bigger dot = longer spill</span>
       </div>
       <div class="count classic-only">
         <div class="n" id="n"></div>
@@ -588,15 +673,28 @@
     <div class="rows" id="rows"></div>
     <div class="case" id="case"></div>
     <div class="near" id="near" hidden aria-live="polite"></div>
-    <p class="foot">A candidate, not proof. A person approves any report before it is sent.</p>
+    <p class="foot">A warning sign, not proof. A person checks every report before it's sent.</p>
   </aside>
+</main>
+<main class="home" id="home-view" hidden>
+  <div class="hhead">
+    <div><h1 id="h-title"></h1><p class="intro">Storm overflows are only allowed to release sewage in heavy rain. These ones did it when the rain gauges nearby showed almost no rain for the two days before.</p></div>
+    <div class="hgo"><a class="btn" href="#map">Open the map</a><a class="btn ghost" href="#postcode">Check your postcode</a></div>
+  </div>
+  <h2>How a spill becomes a report</h2>
+  <ol class="pipe" id="pipe"></ol>
+  <div class="hgrid">
+    <section><h2>By water company</h2><div id="h-co"></div></section>
+    <section><h2>When the spills started</h2><div id="h-time"></div></section>
+    <section><h2>Checked by our AI agents</h2><div id="h-cases"></div></section>
+  </div>
 </main>
 <main class="cases" id="cases-view" hidden>
   <div class="chead">
-    <div><h1>Cases</h1><p class="intro">A skeptic argues each spill was innocent, a researcher checks the web, a judge makes the call. A person decides what gets sent.</p></div>
+    <div><h1>Cases</h1><p class="intro">For each dry spill, one AI agent searches the web for evidence and another makes the call. A person decides what gets sent.</p></div>
     <div class="funnel" id="funnel"></div>
   </div>
-  <h2>Checked by the agents</h2>
+  <h2>Checked by our AI agents</h2>
   <div class="files" id="files"></div>
   <h2>All dry spills</h2>
   <div class="ctable" id="ctable"></div>
@@ -620,8 +718,8 @@ const RUN = /*DATA*/null;
 const sites = RUN.sites;
 const VERDICT = {
   dry_spill_candidate: { name: "Dry spill candidate", fill: [200, 16, 46, 190], px: 6 },
-  rain_explained: { name: "Rain explained", fill: [18, 53, 91, 110], px: 4 },
-  no_gauge: { name: "No gauge within 10 km", fill: [110, 120, 125, 130], px: 4 },
+  rain_explained: { name: "Rained nearby", fill: [18, 53, 91, 110], px: 4 },
+  no_gauge: { name: "No rain gauge within 10 km", fill: [110, 120, 125, 130], px: 4 },
 };
 const GOLD = [232, 197, 71, 235];
 const PX_PER_HOUR = 2;         // column height; sized in screen pixels so columns stay readable at any zoom
@@ -647,6 +745,7 @@ let pulse = 0;
 const VERDICT_NAME = { likely_breach: "likely breach", needs_review: "needs review", likely_innocent: "ruled innocent" };
 const VERDICT_RGB = { likely_breach: [200, 16, 46], needs_review: [138, 104, 0], likely_innocent: [18, 53, 91] };
 const verdictLine = k => `${VERDICT_NAME[k.final_verdict] || k.final_verdict.replace(/_/g, " ")} · ${Math.round(k.breach_confidence * 100)}%`;
+const replay = (node, cls) => { node.classList.remove(cls); void node.offsetWidth; node.classList.add(cls); };  // restart a CSS animation
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
 const title = s => s === s.toUpperCase() ? s.toLowerCase().replace(/\b\w/g, c => c.toUpperCase()) : s;
 const fmt = (x, d = 1) => x == null ? "n/a" : x.toFixed(d);
@@ -659,7 +758,7 @@ let pcState = null, pcBack = null, pcMarkers = [], affectedNames = [], impact = 
 document.getElementById("n").textContent = dry.length;
 document.getElementById("of").textContent = `of ${sites.length} spills started. No meaningful rain at any gauge within 10 km.`;
 document.getElementById("n2").textContent = document.getElementById("n3").textContent = dry.length;
-document.getElementById("of2").textContent = `${dry.length} of ${sites.length} spills in 48 h are dry`;
+document.getElementById("of2").textContent = `${dry.length} of ${sites.length} spills in the last 2 days had no rain nearby`;
 document.getElementById("rows-n").textContent = dry.length;
 const when = new Date(RUN.run_at.replace(" ", "T"));
 document.getElementById("updated").textContent = document.getElementById("runat").textContent = isNaN(when) ? "" :
@@ -831,7 +930,7 @@ const overlay = new deck.MapboxOverlay({
     key: new deck.DirectionalLight({ color: [255, 248, 235], intensity: 1.1, direction: [-1, -2, -2.5] }),
     fill: new deck.DirectionalLight({ color: [210, 225, 240], intensity: 0.5, direction: [2, 1, -1] }) })] : [],
   onClick: info => info.object && select(info.object),
-  getTooltip: ({ object }) => object && object.name && { text: `${title(object.name)}  ·  ${hrs(object)} h${object.case ? "  ·  " + verdictLine(object.case) : ""}`,
+  getTooltip: ({ object }) => object && object.name && { text: `${title(object.name)}  ·  ${hrs(object)} hours${object.case ? "  ·  " + verdictLine(object.case) : ""}`,
     style: DASH ? { background: "#fff", color: "#14202b", font: "600 14px 'Inter Tight', sans-serif", padding: "6px 10px", borderRadius: "8px",
                     boxShadow: "0 4px 14px rgba(18,53,91,.18)", border: "1px solid #dde4ea" }
                 : { background: "rgba(227,233,223,.95)", color: "#14202b", font: "600 15px 'Inter Tight', sans-serif", padding: "5px 10px", borderRadius: "6px" } },
@@ -855,7 +954,7 @@ function syncPanel() {
   const apply = (dur, first) => {
     document.body.classList.toggle("wide", wideMap);
     btn.setAttribute("aria-pressed", wideMap);
-    btn.title = wideMap ? "Back to the overview" : "Deep dive: bigger map and the full list"; btn.setAttribute("aria-label", btn.title);
+    btn.title = wideMap ? "Back to the overview" : "Bigger map and the full list"; btn.setAttribute("aria-label", btn.title);
     syncPanel();
     if (!first) renderRows();  // at load the page's own first render does this, after everything it needs exists
     map.resize();  // the map's box just changed size
@@ -925,7 +1024,7 @@ function renderCase() {
   if (DASH && !selected && dry[0]) return renderCaseDash(c, dry[0], true);  // preview the longest dry spill until one is picked
   if (!selected) {
     const box = el("div", "empty");
-    box.append(el("h2", null, DASH ? "Pick a spill" : "Case"), el("p", null, DASH ? "Select a spill on the map or in the list above to read its case: the rain gauges checked and what the agents concluded." : "Select a spill on the map or a row above to read the case."));
+    box.append(el("h2", null, DASH ? "Pick a spill" : "Case"), el("p", null, DASH ? "Click a spill on the map or in the list above to see how much rain fell nearby and what our AI agents made of it." : "Select a spill on the map or a row above to read the case."));
     return c.replaceChildren(box);
   }
   if (DASH) return renderCaseDash(c, selected);
@@ -957,17 +1056,17 @@ function renderCaseDash(c, s, preview = false) {
   const k = s.case, rank = dry.indexOf(s) + 1, pc = x => Math.round(x * 100);
   const head = el("div", "chead"), info = el("div"), score = el("div", "score");
   info.append(el("p", "eyebrow", preview ? "Longest dry spill right now" : rank ? `Dry spill · #${rank} longest` : (VERDICT[s.verdict] || VERDICT.no_gauge).name), el("h3", null, title(s.name)));
-  score.append(el("b", null, hrs(s)), el("span", null, s.hours == null ? "monitor offline" : "hours discharging"));
+  score.append(el("b", null, hrs(s)), el("span", null, s.hours == null ? "monitor offline" : "hours spilling"));
   head.append(info, score);
   const wettest = s.gauges.length ? Math.max(...s.gauges.map(g => Math.max(g.mm_0_24h_before ?? 0, g.mm_24_48h_before ?? 0))) : null;
   const meta = el("div", "cmeta");
   meta.append(el("span", null, `${s.company} · ${s.id}`),
-    el("span", null, s.gauges.length ? `${s.gauges.length} rain gauge${s.gauges.length === 1 ? "" : "s"} within 10 km · wettest day ${fmt(wettest, 2)} mm` : "No rain gauge within 10 km"));
+    el("span", null, s.gauges.length ? `${s.gauges.length} rain gauge${s.gauges.length === 1 ? "" : "s"} within 10 km · most rain on any day: ${fmt(wettest, 2)} mm` : "No rain gauge within 10 km"));
   const verdict = el("div", "cverdict");
   if (k) {
-    const chip = el("span", "vchip " + k.final_verdict, k.final_verdict.replace(/_/g, " "));
-    verdict.append(chip, el("span", null, `${pc(k.breach_confidence)}% confident after the evidence check` + (k.skeptic ? ` (skeptic alone: ${pc(k.skeptic.breach_confidence)}%)` : "")));
-  } else verdict.append(el("span", "vchip none", "not reviewed"), el("span", null, s.verdict === "dry_spill_candidate" ? "No agent has looked at this spill yet." : "Rain nearby explains this spill."));
+    const chip = el("span", "vchip " + k.final_verdict, VERDICT_NAME[k.final_verdict] || k.final_verdict.replace(/_/g, " "));
+    verdict.append(chip, el("span", null, `${pc(k.breach_confidence)}% sure it's a real breach, after checking the web`));
+  } else verdict.append(el("span", "vchip none", "not checked yet"), el("span", null, s.verdict === "dry_spill_candidate" ? "Our AI agents haven't looked at this spill yet." : "Rain nearby explains this spill."));
   // Key findings (from Andrew's branch): severity, the top objection still open and ruled out, all from the agents' own output.
   let gist = null;
   if (k) {
@@ -981,30 +1080,31 @@ function renderCaseDash(c, s, preview = false) {
     };
     const first = xs => `${short(xs[0])}${xs.length > 1 ? ` (+${xs.length - 1} more)` : ""}`;
     const standing = (k.ruling && k.ruling.objections_standing) || [], refuted = (k.ruling && k.ruling.objections_refuted) || [], bits = [];
-    if (standing.length) bits.push([`Still open: `, first(standing) + "."]);
-    if (refuted.length) bits.push([`Ruled out: `, first(refuted) + "."]);
+    if (standing.length) bits.push([`Doubt still open: `, first(standing) + "."]);
+    if (refuted.length) bits.push([`Doubt ruled out: `, first(refuted) + "."]);
     const seen = k.spill && Array.isArray(k.spill.gauges) ? k.spill : null;  // the run the agents worked from
     if (seen && (seen.gauges.length !== s.gauges.length || seen.duration_hours !== s.hours))
-      bits.push([`Earlier run: `, `the agents saw ${seen.gauges.length} gauge${seen.gauges.length === 1 ? "" : "s"} and ${seen.duration_hours == null ? "an unknown duration" : fmt(seen.duration_hours) + " h"}.`]);
+      bits.push([`Older data: `, `the agents saw ${seen.gauges.length} gauge${seen.gauges.length === 1 ? "" : "s"} and ${seen.duration_hours == null ? "an unknown duration" : fmt(seen.duration_hours) + " h"}.`]);
     if (bits.length) { gist = el("p", "cgist"); for (const [b, t] of bits) gist.append(el("b", null, b), t + " "); }
   }
   const act = el("div", "cact");
   if (k && k.report) {
-    const go = el("button", "btn go"); go.append(el("span", null, "Review the evidence pack"), el("span", null, "→"));
+    const go = el("button", "btn go"); go.append(el("span", null, "Read the draft report"), el("span", null, "→"));
     go.onclick = () => { openReport = s; location.hash = "reports"; };
     act.append(go);
   }
   if (preview) { const fly = el("button", "btn " + (k && k.report ? "ghost" : "go")); fly.append(el("span", null, "Fly to it"), el("span", null, "→")); fly.onclick = () => select(s); act.append(fly); }
   else { const back = el("button", "btn ghost", "Show all of England"); back.onclick = () => select(null); act.append(back); }
-  const more = el("details", "cmore"); more.append(el("summary", null, k ? "Read the gauges and the agents' conversation" : "Read the gauge readings"));
+  const more = el("details", "cmore"); more.append(el("summary", null, k ? "See the rain readings and how the AI agents argued it" : "See the rain readings"));
   const gl = el("section"); gl.append(el("span", "tag", "Rain gauges within 10 km"));
-  if (s.gauges.length) { const ul = el("ul"); for (const g of s.gauges) ul.append(el("li", null, `${g.station}, ${fmt(g.km)} km: ${fmt(g.mm_0_24h_before, 2)} mm in the 24 h before, ${fmt(g.mm_24_48h_before, 2)} mm in the 24 h before that`)); gl.append(ul); }
-  else gl.append(el("p", "lede", "No Environment Agency gauge within 10 km, so rain can't be ruled in or out."));
+  if (s.gauges.length) { const ul = el("ul"); for (const g of s.gauges) ul.append(el("li", null, `${g.station}, ${fmt(g.km)} km away: ${fmt(g.mm_0_24h_before, 2)} mm of rain the day before, ${fmt(g.mm_24_48h_before, 2)} mm the day before that`)); gl.append(ul); }
+  else gl.append(el("p", "lede", "No rain gauge within 10 km, so we can't tell whether it rained."));
   more.append(gl, ...(k ? agentSections(k, s) : []));
   const out = [head, meta, verdict, ...(gist ? [gist] : []), act];
   if (!preview) { const aff = el("div", "affect"); aff.id = "affected"; aff.append("Finding the water nearby…"); out.push(aff); }
   if (!preview && pcBack) { const b = el("button", "tlink back", `← Back to spills near ${pcBack.r.postcode}`); b.onclick = () => showPc(pcBack); out.unshift(b); }
   c.replaceChildren(...out, more);
+  if (c.dataset.sid !== s.id) { c.dataset.sid = s.id; replay(c, "swap"); }  // fade the card in when the spill changes
   if (!preview && impact && impact.siteId === s.id) renderAffected();
 }
 // The agent conversation, in the order it happened. All text is model or web output: textContent only.
@@ -1019,17 +1119,15 @@ function agentSections(k, s) {
     b.append(el("b", null, "Example conversation"), el("span", null, "Made up to show how a case will look. No agent has run on this site, and none of the text below is real."));
     out.push(b);
   }
-  out.push(turn(`Agents' verdict: ${k.final_verdict.replace(/_/g, " ")}, ${pct(k.breach_confidence)} confident`));
+  out.push(turn(`Agents' verdict: ${VERDICT_NAME[k.final_verdict] || k.final_verdict.replace(/_/g, " ")}, ${pct(k.breach_confidence)} sure`));
   out.at(-1).firstChild.classList.toggle("dry", k.final_verdict === "likely_breach");
   // The agents may have worked from an earlier detector run than the map shows: say so when the facts differ.
   const seen = k.spill && Array.isArray(k.spill.gauges) ? k.spill : null;
   if (s && seen && (seen.gauges.length !== s.gauges.length || seen.duration_hours !== s.hours)) {
     const h = seen.duration_hours == null ? "an unknown time" : `${fmt(seen.duration_hours)} h`;
-    out.at(-1).append(el("p", "lede", `The agents worked from an earlier detector run: ${seen.gauges.length} gauge${seen.gauges.length === 1 ? "" : "s"} within 10 km and ${h} discharging. The map and gauge list above are from a later run.`));
+    out.at(-1).append(el("p", "lede", `The agents looked at older data: ${seen.gauges.length} rain gauge${seen.gauges.length === 1 ? "" : "s"} within 10 km and ${h} spilling. The map and readings above are newer.`));
   }
   if (k.case) out.push(turn(`Investigator · severity ${k.case.severity}`, para(k.case.summary), list(k.case.breach_indicators)));
-  if (k.skeptic) out.push(turn(`Skeptic · ${k.skeptic.model || "model unknown"} · ${pct(k.skeptic.breach_confidence)} genuine`,
-    para(k.skeptic.strongest_objection), list(k.skeptic.innocent_explanations, x => `${x.explanation} (${x.plausibility} plausibility)`)));
   if (k.evidence) {
     const searches = (k.evidence.searches || []).map(q => {
       const d = el("details"); d.append(el("summary", null, q.query), para(q.answer));
@@ -1042,11 +1140,11 @@ function agentSections(k, s) {
       }
       d.append(ul); return d;
     });
-    out.push(turn(`Evidence agent · ${searches.length} web searches`, el("pre", null, k.evidence.report), ...searches));
-  } else out.push(turn("Evidence agent", para("Not run: the skeptic dismissed the case before any web search.")));
-  if (k.ruling) out.push(turn(`Adjudicator · ${pct(k.ruling.final_confidence)} genuine`, para(k.ruling.reasoning),
-    list(k.ruling.objections_refuted, x => `Refuted: ${x}`), list(k.ruling.objections_standing, x => `Still standing: ${x}`)));
-  if (k.report) { const d = el("details"); d.append(el("summary", null, "Read the draft"), el("pre", null, k.report)); out.push(turn("Drafted evidence pack", d)); }
+    out.push(turn(`Web researcher · ${searches.length} searches`, el("pre", null, k.evidence.report), ...searches));
+  } else out.push(turn("Web researcher", para("Skipped: an innocent explanation was found first.")));
+  if (k.ruling) out.push(turn(`Judge · ${pct(k.ruling.final_confidence)} sure it's real`, para(k.ruling.reasoning),
+    list(k.ruling.objections_refuted, x => `Ruled out: ${x}`), list(k.ruling.objections_standing, x => `Still open: ${x}`)));
+  if (k.report) { const d = el("details"); d.append(el("summary", null, "Read the draft"), el("pre", null, k.report)); out.push(turn("Draft report", d)); }
   return out;
 }
 let gaugeMarkers = [];
@@ -1055,7 +1153,7 @@ function showGauges() {
   gaugeMarkers = (selected ? selected.gauges : []).filter(g => g.lat != null).map(g => {
     const box = el("div", "gauge-label");
     box.classList.toggle("wet", wet(g));
-    box.append(el("b", null, `${fmt(g.mm_0_24h_before + g.mm_24_48h_before, 2)} mm`), ` rain in 48 h · gauge ${g.station}`);
+    box.append(el("b", null, `${fmt(g.mm_0_24h_before + g.mm_24_48h_before, 2)} mm`), ` rain in 2 days · ${g.station} gauge`);
     return new maplibregl.Marker({ element: box, anchor: "top", offset: [0, 10] }).setLngLat([g.lon, g.lat]).addTo(map);
   });
 }
@@ -1209,13 +1307,13 @@ function showAffected(s) {
 function renderAffected() {
   const box = document.getElementById("affected");
   if (!box || !impact) return;
-  const tag = el("span", "itag " + impact.band, `Estimated impact ${impact.score} · ${impact.band}`);
-  tag.title = `${impact.parts.map(([l, p]) => `${l} +${Math.round(p)}`).join(" · ")} · × ${impact.conf.toFixed(2)} ${impact.hasCase ? "agents' confidence" : "detector verdict"}. A rough guide: no spill volume or river flow data exists.`;
+  const tag = el("span", "itag " + impact.band, `Likely harm: ${impact.band} (${impact.score}/100)`);
+  tag.title = `${impact.parts.map(([l, p]) => `${l} +${Math.round(p)}`).join(" · ")} · × ${impact.conf.toFixed(2)} ${impact.hasCase ? "agents' confidence" : "rain check"}. A rough guide: we don't know how much sewage came out or how fast the river flows.`;
   const names = affectedNames.slice(0, 4).map(([n]) => n);
-  if (!impact.traced) return box.replaceChildren(tag, "No mapped river runs past this overflow within 1.5 km, so its downstream path isn't drawn.");
-  box.replaceChildren(tag, el("b", null, "Downstream, in red: "),
-    names.length ? names.join(" → ") + (affectedNames.length > 4 ? ` and ${affectedNames.length - 4} more` : "") : "unnamed watercourses",
-    `. Traced ${fmt(impact.traced)} km with the flow, to the edge of the 10 km ring. Upstream water isn't affected and isn't shown.`);
+  if (!impact.traced) return box.replaceChildren(tag, "No river on the map runs past this overflow, so we can't show where the sewage goes.");
+  box.replaceChildren(tag, el("b", null, "Water it could reach, in red: "),
+    names.length ? names.join(" → ") + (affectedNames.length > 4 ? ` and ${affectedNames.length - 4} more` : "") : "unnamed streams",
+    `. Followed ${fmt(impact.traced)} km downstream, up to 10 km out. Water upstream isn't at risk.`);
 }
 
 // ---------- Check your postcode (Andrew), on the same map ----------
@@ -1346,14 +1444,14 @@ if (DASH) {
 
 // ---------- Cases tab ----------
 const pctN = x => Math.round(x * 100);
-const views = { map: document.querySelector("main.body"), cases: document.getElementById("cases-view"), reports: document.getElementById("reports-view") };
+const views = { home: document.getElementById("home-view"), map: document.querySelector("main.body"), cases: document.getElementById("cases-view"), reports: document.getElementById("reports-view") };
 function show(hash) {
   let [v, id] = String(hash).split("/");
   if (v === "postcode" && DASH) { setTimeout(() => document.getElementById("pc").focus(), 0); v = "map"; }
   if (!views[v]) v = "map";
-  for (const [k, node] of Object.entries(views)) node.hidden = k !== v;
+  for (const [k, node] of Object.entries(views)) { const was = node.hidden; node.hidden = k !== v; if (was && !node.hidden) replay(node, "enter"); }
   document.querySelectorAll(".nav a").forEach(a => a.classList.toggle("on", a.dataset.view === v));
-  if (v === "map") map.resize(); else if (v === "cases") renderCases(); else if (v === "reports") renderReports();
+  if (v === "map") map.resize(); else if (v === "home") renderHome(); else if (v === "cases") renderCases(); else if (v === "reports") renderReports();
   if (v === "map" && id) {  // #map/<site id> opens that spill
     const s = sites.find(x => x.id === decodeURIComponent(id));
     // map.loaded() is false mid-flight too, and "load" only fires once, so track first load ourselves
@@ -1371,12 +1469,6 @@ const example = s => s.case && s.case.illustrative ? el("span", "chip", "Example
 function openInReports(s) { openReport = s; rejecting = false; errorText = ""; show("reports"); }
 const decidedN = () => sites.filter(s => s.case && ["approved", "sent", "rejected"].includes(decisionOf(s).status)).length;
 function openCase(s) { s.case && s.case.report ? openInReports(s) : openOnMap(s); }
-function swingTrack(from, to) {
-  const track = el("div", "track");
-  const at = (cls, x, w) => { const i = el("i", cls); i.style.left = `${x * 100}%`; if (w != null) i.style.width = `${w * 100}%`; return i; };
-  track.append(at("rail", 0), at("tick", .4), at("tick", .65), at("move", Math.min(from, to), Math.abs(to - from)), at("from", from), at("to", to));
-  return track;
-}
 function reportPill(s) {
   if (!s.case) return el("span", "co", "—");
   if (!s.case.report) return el("span", "rpill", "No report needed");
@@ -1385,14 +1477,14 @@ function reportPill(s) {
 }
 function renderFunnel() {
   const f = document.getElementById("funnel"), cased = sites.filter(s => s.case);
-  f.replaceChildren(...[[dry.length, "dry spills"], [cased.length, "checked by agents"],
-    [cased.filter(s => s.case.report).length, "packs drafted"], [decidedN(), "decided"]]
+  f.replaceChildren(...[[dry.length, "dry spills"], [cased.length, "checked by AI agents"],
+    [cased.filter(s => s.case.report).length, "reports drafted"], [decidedN(), "decided by a person"]]
     .map(([n, label]) => { const d = el("div"); d.append(el("b", null, n), el("span", null, label)); return d; }));
 }
 function renderFiles() {
   const box = document.getElementById("files");
   const cased = sites.filter(s => s.case).sort((a, b) => b.case.breach_confidence - a.case.breach_confidence);
-  if (!cased.length) return box.replaceChildren(el("p", "sub", "No agent cases yet. Run scripts/agents.py to investigate the top candidates."));
+  if (!cased.length) return box.replaceChildren(el("p", "sub", "Our AI agents haven't checked any spills yet."));
   box.replaceChildren(...cased.map(s => {
     const c = s.case, f = el("article", "file");
     const who = el("div"); who.append(el("h3", null, title(s.name)), el("div", "meta", siteLine(s)));
@@ -1400,27 +1492,25 @@ function renderFiles() {
     const big = el("div", "hrs", hrs(s)); big.append(el("small", null, " h"));
     const v = el("div", "verdict"); v.append(el("span", "vchip " + c.final_verdict, VERDICT_NAME[c.final_verdict] || c.final_verdict.replace(/_/g, " ")), reportPill(s));
     const sw = el("div", "swing2");
-    if (typeof c.skeptic_confidence === "number") {
-      sw.append("Skeptic ", el("b", null, `${pctN(c.skeptic_confidence)}%`), " → final ", el("b", null, `${pctN(c.breach_confidence)}%`), swingTrack(c.skeptic_confidence, c.breach_confidence));
-    } else sw.append("Final ", el("b", null, `${pctN(c.breach_confidence)}%`));
+    sw.append(el("b", null, `${pctN(c.breach_confidence)}%`), " sure");
     const standing = c.ruling?.objections_standing || [], refuted = c.ruling?.objections_refuted || [];
     const right = el("div"), objText = standing[0] ? standing[0].split(": ")[0] : c.strongest_objection;
-    if (objText) { const o = el("div", "obj"); o.append(el("i", null, standing[0] ? "Still standing: " : "Strongest objection: "), objText.replace(/\.?$/, ".")); right.append(o); }
+    if (objText) { const o = el("div", "obj"); o.append(el("i", null, standing[0] ? "Doubt still open: " : "Main doubt: "), objText.replace(/\.?$/, ".")); right.append(o); }
     const src = [`${c.n_sources ?? "?"} sources`];
-    if (c.citations) src.push(`${c.citations.verified}/${c.citations.checked} citations verified`);
-    src.push(`${refuted.length} objection${refuted.length === 1 ? "" : "s"} refuted`);
+    if (c.citations) src.push(`${c.citations.verified} of ${c.citations.checked} checked out`);
+    src.push(`${refuted.length} doubt${refuted.length === 1 ? "" : "s"} ruled out`);
     right.append(el("div", "src", src.join(" · ")));
     right.className = "objs";
-    const acts = el("div", "acts"), onMap = el("button", "tlink", "Map");
+    const acts = el("div", "acts"), onMap = el("button", "tlink", "Show on map");
     onMap.onclick = () => openOnMap(s); acts.append(onMap);
-    if (c.report) { const r = el("button", "tlink", "Evidence pack →"); r.onclick = () => openInReports(s); acts.append(r); }
+    if (c.report) { const r = el("button", "tlink", "Draft report →"); r.onclick = () => openInReports(s); acts.append(r); }
     f.append(who, big, v, sw, right, acts);
     return f;
   }));
 }
 // table of every dry spill (plus any agent case that's no longer dry): search, filter chips, company, sortable columns
 const tbl = { q: "", f: "all", co: "", sort: "hours", dir: -1, all: false };
-const TFILTERS = [["all", "All", () => true], ["checked", "Checked by agents", s => !!s.case],
+const TFILTERS = [["all", "All", () => true], ["checked", "Checked by AI agents", s => !!s.case],
   ["likely_breach", "Likely breach", s => s.case?.final_verdict === "likely_breach"],
   ["needs_review", "Needs review", s => s.case?.final_verdict === "needs_review"],
   ["likely_innocent", "Ruled innocent", s => s.case?.final_verdict === "likely_innocent"],
@@ -1439,7 +1529,7 @@ function renderTable() {
     const chips = el("span", "chips"); chips.style.display = "contents";
     bar.append(q, chips, co);
     const wrap = el("div", "tscroll"), t = el("table"), thead = el("thead"), tr = el("tr");
-    for (const [label, key] of [["#"], ["Site"], ["Hours", "hours"], ["Rain 48 h", "rain"], ["Agents' verdict"], ["Skeptic → final", "conf"], ["Report"]]) {
+    for (const [label, key] of [["#"], ["Site"], ["Hours", "hours"], ["Rain, 2 days", "rain"], ["Agents' verdict"], ["How sure", "conf"], ["Report"]]) {
       const th = el("th");
       if (key) { const b = el("button", null, label); b.dataset.key = key; b.onclick = () => { tbl.dir = tbl.sort === key ? -tbl.dir : -1; tbl.sort = key; renderRows2(); }; th.append(b); }
       else th.append(el("span", null, label));
@@ -1471,7 +1561,7 @@ function renderTable() {
       hb.append(bar, el("span", "num", `${hrs(s)} h`)); h.append(hb);
       const vd = el("td"); vd.append(s.case ? el("span", "vchip " + s.case.final_verdict, VERDICT_NAME[s.case.final_verdict] || "checked") : el("span", "co", "Not checked yet"));
       const sw = el("td");
-      if (s.case && typeof s.case.skeptic_confidence === "number") { const w = el("div", "swing"); w.append(swingTrack(s.case.skeptic_confidence, s.case.breach_confidence), el("span", "num co", `${pctN(s.case.skeptic_confidence)} → ${pctN(s.case.breach_confidence)}%`)); sw.append(w); }
+      if (s.case && typeof s.case.breach_confidence === "number") sw.append(el("span", "num", `${pctN(s.case.breach_confidence)}%`));
       else sw.append(el("span", "co", "—"));
       const rp = el("td"); rp.append(reportPill(s));
       r.append(el("td", "num co", rank.get(s) ?? "–"), nm, h, el("td", "num", s.rain48 == null ? "–" : `${fmt(s.rain48, 2)} mm`), vd, sw, rp);
@@ -1493,9 +1583,9 @@ function renderRepeats() {
     .sort((a, b) => b.length - a.length || String(b.at(-1).start).localeCompare(String(a.at(-1).start)));
   const since = H.runs.length ? day(H.runs.slice().sort()[0]) : "this run";
   document.getElementById("repeat-sub").textContent =
-    `Overflows with more than one dry-spill candidate, counted across ${H.runs.length} detector run${H.runs.length === 1 ? "" : "s"} since ${since}. Each spill counts once, however many runs saw it. Several candidates is a pattern worth a look, not proof of a breach.`;
+    `Overflows that have had more than one dry spill, across ${H.runs.length} data check${H.runs.length === 1 ? "" : "s"} since ${since}. Each spill is counted once. A repeat is a pattern worth a look, not proof of a breach.`;
   const box = document.getElementById("repeats");
-  if (!reps.length) return box.replaceChildren(el("p", "sub", "No overflow has had more than one dry-spill candidate yet. This list fills up as the detector keeps running: every build adds that run's spills to the record."));
+  if (!reps.length) return box.replaceChildren(el("p", "sub", "No overflow has had a second dry spill yet. This list grows each time the data is refreshed."));
   box.replaceChildren(...reps.map(es => {
     es.sort((a, b) => String(a.start).localeCompare(String(b.start)));
     const last = es.at(-1), live = sites.find(s => s.id === last.id);
@@ -1503,13 +1593,85 @@ function renderRepeats() {
     const head = el("span"); head.append(el("b", null, title(last.name)), " ", el("span", "meta", `${last.company} · ${last.id}`));
     const strip = el("div", "strip");
     for (const e of es.slice(-8)) strip.append(el("span", null, `${day(e.start)} · ${e.hours == null ? "?" : fmt(e.hours)} h`));
-    row.append(head, el("span", "meta", `${es.length} dry-spill candidates`), strip);
+    row.append(head, el("span", "meta", `${es.length} dry spills`), strip);
     if (live) row.onclick = () => openOnMap(live);
     return row;
   }));
 }
 function renderCases() { renderFunnel(); renderFiles(); renderTable(); renderRepeats(); }
 
+
+// ---------- Home tab (Kang 09:27: a dashboard home, with the best pieces of the Dashboard branch) ----------
+// Everything here is counted from this run's sites and the agents' saved cases; nothing is estimated.
+function renderHome() {
+  const cased = sites.filter(s => s.case), gauged = sites.filter(s => s.verdict !== "no_gauge");
+  const approved = sites.filter(s => s.case && ["approved", "sent"].includes(decisionOf(s).status)).length;
+  const sent = sites.filter(s => s.case && decisionOf(s).status === "sent").length;
+  document.getElementById("h-title").textContent = `${dry.length} dry spills in the last 2 days`;
+  const steps = [
+    ["Watch", sites.length, "overflows spilling in the last 2 days", "#map"],
+    ["Rain check", gauged.length, "with a rain gauge within 10 km", "#map"],
+    ["Flag", dry.length, "spilled with no rain nearby", "#cases"],
+    ["Investigate", cased.length, "checked by our AI agents", "#cases"],
+    ["Draft", cased.filter(s => s.case.report).length, "reports drafted", "#reports"],
+    ["Approve", api ? approved : "–", "approved by a person", "#reports"],
+    ["Send", api ? sent : "–", "sent to the Environment Agency", "#reports"]];
+  document.getElementById("pipe").replaceChildren(...steps.map(([k, n, label, href], i) => {
+    const li = el("li", i < 3 ? "det" : "inv"), a = el("a"); a.href = href;
+    a.append(el("span", "k", `${i + 1} · ${k}`), el("b", null, String(n)), el("span", "l", label));
+    li.append(a); return li;
+  }));
+  // By water company: dry spills against the rest, sorted by dry count
+  const co = {};
+  for (const s of sites) { const c = co[s.company] ||= { dry: 0, other: 0 }; s.verdict === "dry_spill_candidate" ? c.dry++ : c.other++; }
+  const rows = Object.entries(co).sort((a, b) => b[1].dry - a[1].dry || b[1].other - a[1].other);
+  const most = Math.max(...rows.map(([, c]) => c.dry + c.other));
+  const tbl = el("div", "bars");
+  for (const [name, c] of rows) {
+    const r = el("div", "bar"), track = el("span", "cotrack");
+    const d = el("i", "d"), o = el("i", "o"); d.style.width = `${100 * c.dry / most}%`; o.style.width = `${100 * c.other / most}%`;
+    track.append(d, o);
+    r.append(el("span", "n", name.replace(/ Water$| Utilities$/, "")), track, el("span", "v", `${c.dry} / ${c.dry + c.other}`));
+    r.title = `${name}: ${c.dry} dry of ${c.dry + c.other} spills`; tbl.append(r);
+  }
+  const key = el("p", "key"); key.append(el("i", "d"), "dry spill ", el("i", "o"), "rained nearby, or no gauge to tell");
+  document.getElementById("h-co").replaceChildren(tbl, key);
+  // When the spills started: 3-hour bins over the 48 h before the run
+  const end = new Date(RUN.run_at.replace(" ", "T")), BIN = 3, N = 16, bins = Array.from({ length: N }, () => ({ dry: 0, other: 0 }));
+  let older = 0;
+  for (const s of sites) {
+    if (!s.start) continue;
+    const h = (end - new Date(s.start.replace(" ", "T"))) / 36e5, k = N - 1 - Math.floor(h / BIN);
+    if (k < 0) { older++; continue; } if (k >= N) continue;
+    s.verdict === "dry_spill_candidate" ? bins[k].dry++ : bins[k].other++;
+  }
+  const top = Math.max(1, ...bins.map(b => b.dry + b.other)), chart = el("div", "cols");
+  bins.forEach((b, i) => {
+    const col = el("div", "col"), o = el("i", "o"), d = el("i", "d");
+    o.style.height = `${100 * b.other / top}%`; d.style.height = `${100 * b.dry / top}%`;
+    const t0 = new Date(end - (N - i) * BIN * 36e5);
+    col.title = `${t0.toLocaleString("en-GB", { weekday: "short", hour: "2-digit", minute: "2-digit" })}: ${b.dry} dry, ${b.other} other`;
+    col.append(o, d); chart.append(col);
+  });
+  const ax = el("div", "axis"); ax.append(el("span", null, "2 days ago"), el("span", null, "1 day ago"), el("span", null, when2(RUN.run_at.replace(" ", "T"))));
+  const box = [chart, ax];
+  if (older) box.push(el("p", "key", `${older} spill${older === 1 ? "" : "s"} started earlier and ${older === 1 ? "was" : "were"} still going.`));
+  document.getElementById("h-time").replaceChildren(...box);
+  // Agent cases, most likely breach first
+  const hc = document.getElementById("h-cases");
+  if (!cased.length) return hc.replaceChildren(el("p", "key", "Our AI agents haven't checked any spills yet."));
+  hc.replaceChildren(...cased.sort((a, b) => b.case.breach_confidence - a.case.breach_confidence).map(s => {
+    const c = s.case, b = el("button", "hcase");
+    const top = el("span", "t"); top.append(el("b", null, title(s.name)), el("span", "vchip " + c.final_verdict, VERDICT_NAME[c.final_verdict] || c.final_verdict.replace(/_/g, " ")));
+    const sw = el("span", "m");
+    sw.append(`${pctN(c.breach_confidence)}% sure`,
+      c.citations ? ` · ${c.citations.verified} of ${c.citations.checked} sources checked out` : " · no report drafted");
+    b.append(top, el("span", "m", siteLine(s)), sw);
+    const ex = example(s); if (ex) b.append(ex);
+    b.onclick = () => c.report ? openInReports(s) : openOnMap(s);
+    return b;
+  }));
+}
 // ---------- Reports tab ----------
 // Decisions live in andrew-site/decisions.json, read and written through andrew-site/serve.py.
 let decisions = {}, api = false, openReport = null, rejecting = false, saving = false, errorText = "";
@@ -1522,7 +1684,7 @@ const store = { get: k => { try { return localStorage.getItem(k) || ""; } catch 
                 set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };  // reviewer name: per-browser convenience only
 
 fetch("/api/decisions").then(r => r.ok ? r.json() : Promise.reject()).then(d => { decisions = d; api = true; })
-  .catch(() => {}).finally(() => { if (!views.cases.hidden) renderCases(); if (!views.reports.hidden) renderReports(); });
+  .catch(() => {}).finally(() => { if (!views.home.hidden) renderHome(); if (!views.cases.hidden) renderCases(); if (!views.reports.hidden) renderReports(); });
 
 function renderReports() {
   document.getElementById("api-off").hidden = api;
@@ -1624,7 +1786,7 @@ function renderDetail() {
     row("Rain", `${fmt(most, 1)} mm at most in the two days before, on ${s.gauges.length === 1 ? "the only gauge" : s.gauges.length === 2 ? "both gauges" : `all ${s.gauges.length} gauges`} within 10 km (`, gl, "). A dry day is under 0.25 mm.");
   } else row("Rain", "No rain gauge within 10 km.");
   const vd = el("span", "vchip " + c.final_verdict, VERDICT_NAME[c.final_verdict] || c.final_verdict.replace(/_/g, " "));
-  row("Verdict", vd, ` ${pctN(c.breach_confidence)}% likely a breach. The skeptic said ${pctN(c.skeptic_confidence)}%.`);
+  row("Verdict", vd, ` ${pctN(c.breach_confidence)}% likely a breach.`);
   const names = xs => { const ul = el("ul"); xs.forEach(x => ul.append(el("li", null, label(x)))); return ul; };
   const st = c.ruling && c.ruling.objections_standing || [], rf = c.ruling && c.ruling.objections_refuted || [];
   if (st.length) row("Still open", names(st));
@@ -1712,14 +1874,14 @@ function downloadPack(s, d) {
   const c = s.case, L = [];
   if (c.illustrative) L.push("> **EXAMPLE, NOT A REAL EVIDENCE PACK.** The agent text in this pack was made up to show the format. Do not send it.", "");
   L.push("# Evidence pack: possible dry-day sewage spill", "", `**${title(s.name)}** overflow, ${s.company} (${s.id})`, "",
-    `Reviewed and approved by ${d.approved_by} on ${when2(d.approved_at)}. Prepared with Sentinels.`, "",
+    `Reviewed and approved by ${d.approved_by} on ${when2(d.approved_at)}. Prepared with Sentinel.`, "",
     "## Report", "", d.report || c.report, "",
     "## The spill", "", `- Spill started: ${c.event_start}`,
     `- Discharging: ${s.hours == null ? "unknown (monitor offline)" : fmt(s.hours) + " hours"} at the time of the detector run (${when2(RUN.run_at.replace(" ", "T"))})`, "",
     "## Rain gauges within 10 km", "", "| Gauge | Distance | Rain, 24 h before | Rain, 24 to 48 h before | Data |", "|---|---|---|---|---|",
     ...s.gauges.map(g => `| ${g.station} | ${fmt(g.km)} km | ${fmt(g.mm_0_24h_before, 2)} mm | ${fmt(g.mm_24_48h_before, 2)} mm | https://environment.data.gov.uk/flood-monitoring/id/stations/${encodeURIComponent(g.station)} |`),
     "", "Under 0.25 mm in a 24-hour window counts as a dry day.", "",
-    "## Agents' assessment", "", `Final verdict: ${c.final_verdict.replace(/_/g, " ")}, ${pctN(c.breach_confidence)}% confidence that this is a genuine dry-day spill (the skeptic alone said ${pctN(c.skeptic_confidence)}%).`, "");
+    "## Agents' assessment", "", `Final verdict: ${c.final_verdict.replace(/_/g, " ")}, ${pctN(c.breach_confidence)}% confidence that this is a genuine dry-day spill.`, "");
   const items = (h, xs) => { if (xs && xs.length) L.push(`${h}:`, "", ...xs.map(x => `- ${x}`), ""); };
   items("Objections still standing", c.ruling && c.ruling.objections_standing);
   items("Objections refuted", c.ruling && c.ruling.objections_refuted);
@@ -1727,7 +1889,7 @@ function downloadPack(s, d) {
   if (srcs.length) L.push("## Sources", "", ...srcs.map(x => x.url ? `- [${x.name || x.url}](${x.url})` : `- ${x.name}`), "");
   L.push("---", "", "This is a report of a possible breach for investigation, not proof. Spill data is self-reported by the water company and rain gauges are sparse.");
   const a = el("a"); a.href = URL.createObjectURL(new Blob([L.join("\n")], { type: "text/markdown" }));
-  a.download = `sentinels-${c.illustrative ? "EXAMPLE-" : ""}evidence-pack-${s.id}.md`;
+  a.download = `sentinel-${c.illustrative ? "EXAMPLE-" : ""}evidence-pack-${s.id}.md`;
   document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
 
@@ -1792,7 +1954,7 @@ function downloadPack(s, d) {
     busy = false; go.disabled = false; q.focus(); log.scrollTop = turn.offsetTop - log.offsetTop;
   };
 }
-show(location.hash.slice(1) || "map");
+show(location.hash.slice(1) || "home");
 </script>
 </body>
 </html>

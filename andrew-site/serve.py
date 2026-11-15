@@ -1,4 +1,4 @@
-"""Serve Andrew's Sentinels page and save report decisions (approve / reject / sent) to a file.
+"""Serve Andrew's Sentinel page and save report decisions (approve / reject / sent) to a file.
 
     python andrew-site/serve.py          -> http://localhost:8000
 
@@ -149,6 +149,6 @@ if __name__ == "__main__":
     build = HERE / "build"
     if not (build / "index.html").exists():
         sys.exit("No page yet: run python andrew-site/build.py first.")
-    print(f"Sentinels on http://localhost:{PORT}  (decisions saved to {DECISIONS})")
+    print(f"Sentinel on http://localhost:{PORT}  (decisions saved to {DECISIONS})")
     print("Ask tab:", "Genie connected" if genie.configured() else "off (set DATABRICKS_HOST, DATABRICKS_TOKEN, GENIE_SPACE_ID)")
     ThreadingHTTPServer(("127.0.0.1", PORT), partial(Handler, directory=str(build))).serve_forever()

@@ -101,7 +101,11 @@ def skeptic_json(system: str, user: str, schema: dict) -> tuple[dict, str]:
             except Exception as e:  # noqa: BLE001 - wrong name / not enabled: try the next form
                 last_err = e
                 continue
-            return _parse_json(r.choices[0].message.content), model
+            try:
+                return _parse_json(r.choices[0].message.content), model
+            except ValueError as e:  # malformed JSON from the open model: fall back below instead of crashing
+                last_err = e
+                break
         print(f"Databricks skeptic model unavailable ({last_err}); falling back to {SKEPTIC_FALLBACK_MODEL}")
     resp = claude().messages.create(
         model=SKEPTIC_FALLBACK_MODEL, max_tokens=4000, system=system,
