@@ -240,6 +240,50 @@
   .detail details.srcs { margin-top: 14px; font-size: 13px; }
   .detail details.srcs summary { cursor: pointer; color: var(--navy); font-weight: 600; }
   .detail details.srcs ul { margin-top: 6px; }
+  /* Home tab (Kang 09:27): headline, pipeline strip, company bars, start-time chart, agent cases. Flat, ruled. */
+  .home { flex: 1; min-height: 0; overflow-y: auto; background: var(--paper); padding: 28px 36px 40px; }
+  .home h1 { margin: 0; font: 700 40px var(--serif); line-height: 1.1; }
+  .home .intro { margin: 8px 0 0; max-width: 640px; color: var(--muted); }
+  .home h2 { margin: 26px 0 8px; font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+  .hhead { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; }
+  .hgo { display: flex; gap: 10px; }
+  .hgo .btn { text-decoration: none; border-radius: 3px; }
+  .pipe { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--rule); }
+  .pipe li { border-left: 1px solid var(--rule); position: relative; }
+  .pipe li:first-child { border-left: 0; }
+  .pipe li::before { content: ""; position: absolute; left: 0; right: 0; top: -1px; height: 3px; background: var(--gold); }
+  .pipe li.inv::before { background: var(--navy); }
+  .pipe a { display: grid; align-content: start; gap: 2px; padding: 12px 14px 12px; color: inherit; text-decoration: none; height: 100%; transition: background .15s; }
+  .pipe li:first-child a { padding-left: 0; }
+  .pipe a:hover { background: #fff; }
+  .pipe .k { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .pipe b { font-size: 30px; line-height: 1.1; color: var(--navy); font-variant-numeric: tabular-nums; }
+  .pipe li:nth-child(3) b { color: var(--crimson); }
+  .pipe .l { font-size: 13px; color: var(--muted); line-height: 1.3; }
+  .hgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 36px; }
+  .bars { border-top: 1px solid var(--ink); }
+  .bar { display: grid; grid-template-columns: 110px minmax(0, 1fr) 52px; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--rule); font-size: 13.5px; }
+  .bar .cotrack { display: flex; height: 12px; }
+  .bar .cotrack i { display: block; height: 100%; transform-origin: left; animation: grow-x .6s cubic-bezier(.2,.7,.2,1) both; }
+  .bar .v { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); font-size: 12.5px; }
+  .home i.d { background: var(--crimson); } .home i.o { background: #a9b6c0; }
+  .key { margin: 8px 0 0; font-size: 12.5px; color: var(--muted); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .key i { display: inline-block; width: 10px; height: 10px; }
+  .key i.o { margin-left: 8px; }
+  .home .cols { display: flex; align-items: flex-end; gap: 3px; height: 262px; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); padding-top: 8px; }
+  .home .col { flex: 1; height: 100%; display: flex; flex-direction: column-reverse; }
+  .home .col i { display: block; transform-origin: bottom; animation: grow-y .6s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes grow-x { from { transform: scaleX(0); } } @keyframes grow-y { from { transform: scaleY(0); } }
+  @media (prefers-reduced-motion: reduce) { .bar .cotrack i, .home .col i { animation: none; } }
+  .axis { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--muted); margin-top: 4px; }
+  .hcase { display: grid; gap: 2px; width: 100%; text-align: left; padding: 10px 0; background: none; border: 0; border-bottom: 1px solid var(--rule); font: inherit; color: inherit; cursor: pointer; transition: padding .15s, background .15s; }
+  .hcase:first-child { border-top: 1px solid var(--ink); }
+  .hcase:hover { background: #fff; padding-left: 8px; }
+  .hcase .t { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+  .hcase .m { font-size: 13px; color: var(--muted); }
+  body.dash .home .vchip { border-radius: 3px; font-size: 12px; padding: 2px 8px; }
+  @media (max-width: 1100px) { .pipe { grid-template-columns: repeat(4, minmax(0, 1fr)); } .pipe li:nth-child(5) { border-left: 0; } .pipe li:nth-child(5) a { padding-left: 0; } .hgrid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 700px) { .home { padding: 20px 16px 32px; } .home h1 { font-size: 30px; } .pipe { grid-template-columns: 1fr 1fr; } .pipe li:nth-child(odd) { border-left: 0; } .pipe li:nth-child(odd) a { padding-left: 0; } .pipe li:nth-child(5) { border-left: 0; } .hgrid { grid-template-columns: 1fr; } .hgo { width: 100%; } }
   /* Reports brief (Kang 09:22: shorter, plainer). Ruled key/value rows; full pack folded below. */
   .brief { display: grid; grid-template-columns: 110px minmax(0, 1fr); margin: 18px 0 0; border-top: 1px solid var(--ink); font-size: 14.5px; line-height: 1.5; }
   .brief dt, .brief dd { margin: 0; padding: 9px 0; border-bottom: 1px solid var(--rule); }
@@ -516,7 +560,7 @@
 <header class="top">
   <div class="brand">
     <span class="logo">Sentinel</span>
-    <nav class="nav"><a href="#map" data-view="map" class="on">Map</a><a href="#cases" data-view="cases">Cases</a><a href="#reports" data-view="reports">Reports</a></nav>
+    <nav class="nav"><a href="#home" data-view="home">Home</a><a href="#map" data-view="map" class="on">Map</a><a href="#cases" data-view="cases">Cases</a><a href="#reports" data-view="reports">Reports</a></nav>
   </div>
   <div class="top-right"><span class="updated" id="updated"></span><button class="check dash-only" id="pc-go">Check your postcode</button></div>
 </header>
@@ -590,6 +634,19 @@
     <div class="near" id="near" hidden aria-live="polite"></div>
     <p class="foot">A candidate, not proof. A person approves any report before it is sent.</p>
   </aside>
+</main>
+<main class="home" id="home-view" hidden>
+  <div class="hhead">
+    <div><h1 id="h-title"></h1><p class="intro">Storm overflows may only spill sewage in heavy rain. These spilled when every rain gauge within 10 km had under 0.25 mm on each of the two days before.</p></div>
+    <div class="hgo"><a class="btn" href="#map">Open the map</a><a class="btn ghost" href="#postcode">Check your postcode</a></div>
+  </div>
+  <h2>From live feeds to a report a person signs off</h2>
+  <ol class="pipe" id="pipe"></ol>
+  <div class="hgrid">
+    <section><h2>By water company</h2><div id="h-co"></div></section>
+    <section><h2>When the spills started</h2><div id="h-time"></div></section>
+    <section><h2>Checked by the agents</h2><div id="h-cases"></div></section>
+  </div>
 </main>
 <main class="cases" id="cases-view" hidden>
   <div class="chead">
@@ -1346,14 +1403,14 @@ if (DASH) {
 
 // ---------- Cases tab ----------
 const pctN = x => Math.round(x * 100);
-const views = { map: document.querySelector("main.body"), cases: document.getElementById("cases-view"), reports: document.getElementById("reports-view") };
+const views = { home: document.getElementById("home-view"), map: document.querySelector("main.body"), cases: document.getElementById("cases-view"), reports: document.getElementById("reports-view") };
 function show(hash) {
   let [v, id] = String(hash).split("/");
   if (v === "postcode" && DASH) { setTimeout(() => document.getElementById("pc").focus(), 0); v = "map"; }
   if (!views[v]) v = "map";
   for (const [k, node] of Object.entries(views)) node.hidden = k !== v;
   document.querySelectorAll(".nav a").forEach(a => a.classList.toggle("on", a.dataset.view === v));
-  if (v === "map") map.resize(); else if (v === "cases") renderCases(); else if (v === "reports") renderReports();
+  if (v === "map") map.resize(); else if (v === "home") renderHome(); else if (v === "cases") renderCases(); else if (v === "reports") renderReports();
   if (v === "map" && id) {  // #map/<site id> opens that spill
     const s = sites.find(x => x.id === decodeURIComponent(id));
     // map.loaded() is false mid-flight too, and "load" only fires once, so track first load ourselves
@@ -1510,6 +1567,78 @@ function renderRepeats() {
 }
 function renderCases() { renderFunnel(); renderFiles(); renderTable(); renderRepeats(); }
 
+
+// ---------- Home tab (Kang 09:27: a dashboard home, with the best pieces of the Dashboard branch) ----------
+// Everything here is counted from this run's sites and the agents' saved cases; nothing is estimated.
+function renderHome() {
+  const cased = sites.filter(s => s.case), gauged = sites.filter(s => s.verdict !== "no_gauge");
+  const approved = sites.filter(s => s.case && ["approved", "sent"].includes(decisionOf(s).status)).length;
+  const sent = sites.filter(s => s.case && decisionOf(s).status === "sent").length;
+  document.getElementById("h-title").textContent = `${dry.length} dry spills in 48 hours`;
+  const steps = [
+    ["Watch", sites.length, "overflows spilling in the last 48 h", "#map"],
+    ["Rain check", gauged.length, "with a rain gauge within 10 km", "#map"],
+    ["Flag", dry.length, "dry spills", "#cases"],
+    ["Investigate", cased.length, "checked by three agents", "#cases"],
+    ["Draft", cased.filter(s => s.case.report).length, "evidence packs written", "#reports"],
+    ["Approve", api ? approved : "–", "approved by a person", "#reports"],
+    ["Send", api ? sent : "–", "sent to the regulator", "#reports"]];
+  document.getElementById("pipe").replaceChildren(...steps.map(([k, n, label, href], i) => {
+    const li = el("li", i < 3 ? "det" : "inv"), a = el("a"); a.href = href;
+    a.append(el("span", "k", `${i + 1} · ${k}`), el("b", null, String(n)), el("span", "l", label));
+    li.append(a); return li;
+  }));
+  // By water company: dry spills against the rest, sorted by dry count
+  const co = {};
+  for (const s of sites) { const c = co[s.company] ||= { dry: 0, other: 0 }; s.verdict === "dry_spill_candidate" ? c.dry++ : c.other++; }
+  const rows = Object.entries(co).sort((a, b) => b[1].dry - a[1].dry || b[1].other - a[1].other);
+  const most = Math.max(...rows.map(([, c]) => c.dry + c.other));
+  const tbl = el("div", "bars");
+  for (const [name, c] of rows) {
+    const r = el("div", "bar"), track = el("span", "cotrack");
+    const d = el("i", "d"), o = el("i", "o"); d.style.width = `${100 * c.dry / most}%`; o.style.width = `${100 * c.other / most}%`;
+    track.append(d, o);
+    r.append(el("span", "n", name.replace(/ Water$| Utilities$/, "")), track, el("span", "v", `${c.dry} / ${c.dry + c.other}`));
+    r.title = `${name}: ${c.dry} dry of ${c.dry + c.other} spills`; tbl.append(r);
+  }
+  const key = el("p", "key"); key.append(el("i", "d"), "dry spill ", el("i", "o"), "rain nearby or no gauge");
+  document.getElementById("h-co").replaceChildren(tbl, key);
+  // When the spills started: 3-hour bins over the 48 h before the run
+  const end = new Date(RUN.run_at.replace(" ", "T")), BIN = 3, N = 16, bins = Array.from({ length: N }, () => ({ dry: 0, other: 0 }));
+  let older = 0;
+  for (const s of sites) {
+    if (!s.start) continue;
+    const h = (end - new Date(s.start.replace(" ", "T"))) / 36e5, k = N - 1 - Math.floor(h / BIN);
+    if (k < 0) { older++; continue; } if (k >= N) continue;
+    s.verdict === "dry_spill_candidate" ? bins[k].dry++ : bins[k].other++;
+  }
+  const top = Math.max(1, ...bins.map(b => b.dry + b.other)), chart = el("div", "cols");
+  bins.forEach((b, i) => {
+    const col = el("div", "col"), o = el("i", "o"), d = el("i", "d");
+    o.style.height = `${100 * b.other / top}%`; d.style.height = `${100 * b.dry / top}%`;
+    const t0 = new Date(end - (N - i) * BIN * 36e5);
+    col.title = `${t0.toLocaleString("en-GB", { weekday: "short", hour: "2-digit", minute: "2-digit" })}: ${b.dry} dry, ${b.other} other`;
+    col.append(o, d); chart.append(col);
+  });
+  const ax = el("div", "axis"); ax.append(el("span", null, "48 h before the run"), el("span", null, "24 h"), el("span", null, when2(RUN.run_at.replace(" ", "T"))));
+  const box = [chart, ax];
+  if (older) box.push(el("p", "key", `${older} spill${older === 1 ? "" : "s"} started earlier and ${older === 1 ? "was" : "were"} still going.`));
+  document.getElementById("h-time").replaceChildren(...box);
+  // Agent cases, most likely breach first
+  const hc = document.getElementById("h-cases");
+  if (!cased.length) return hc.replaceChildren(el("p", "key", "No agent cases yet."));
+  hc.replaceChildren(...cased.sort((a, b) => b.case.breach_confidence - a.case.breach_confidence).map(s => {
+    const c = s.case, b = el("button", "hcase");
+    const top = el("span", "t"); top.append(el("b", null, title(s.name)), el("span", "vchip " + c.final_verdict, VERDICT_NAME[c.final_verdict] || c.final_verdict.replace(/_/g, " ")));
+    const sw = el("span", "m");
+    sw.append(typeof c.skeptic_confidence === "number" ? `Skeptic ${pctN(c.skeptic_confidence)}% → final ${pctN(c.breach_confidence)}%` : `Final ${pctN(c.breach_confidence)}%`,
+      c.citations ? ` · ${c.citations.verified}/${c.citations.checked} citations verified` : " · no report drafted");
+    b.append(top, el("span", "m", siteLine(s)), sw);
+    const ex = example(s); if (ex) b.append(ex);
+    b.onclick = () => c.report ? openInReports(s) : openOnMap(s);
+    return b;
+  }));
+}
 // ---------- Reports tab ----------
 // Decisions live in andrew-site/decisions.json, read and written through andrew-site/serve.py.
 let decisions = {}, api = false, openReport = null, rejecting = false, saving = false, errorText = "";
@@ -1522,7 +1651,7 @@ const store = { get: k => { try { return localStorage.getItem(k) || ""; } catch 
                 set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };  // reviewer name: per-browser convenience only
 
 fetch("/api/decisions").then(r => r.ok ? r.json() : Promise.reject()).then(d => { decisions = d; api = true; })
-  .catch(() => {}).finally(() => { if (!views.cases.hidden) renderCases(); if (!views.reports.hidden) renderReports(); });
+  .catch(() => {}).finally(() => { if (!views.home.hidden) renderHome(); if (!views.cases.hidden) renderCases(); if (!views.reports.hidden) renderReports(); });
 
 function renderReports() {
   document.getElementById("api-off").hidden = api;
@@ -1792,7 +1921,7 @@ function downloadPack(s, d) {
     busy = false; go.disabled = false; q.focus(); log.scrollTop = turn.offsetTop - log.offsetTop;
   };
 }
-show(location.hash.slice(1) || "map");
+show(location.hash.slice(1) || "home");
 </script>
 </body>
 </html>
