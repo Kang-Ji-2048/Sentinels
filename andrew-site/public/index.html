@@ -554,6 +554,45 @@
   body.dash .askbox #ask-log { max-height: none; flex: 1; }
   body.dash .askbox .ask-body { flex: 1; overflow: hidden; }
   @media (max-width: 900px) { body.dash .askbox { right: 16px; bottom: 16px; } }
+  /* Polish pass (Kang 09:22): one flat system across tabs. Square 3px corners, thin rules instead of shadows on
+     cards; floating map controls keep one light shadow so they read over the map. Short, quiet motion. */
+  body.dash { background: var(--paper); }
+  body.dash .mcard, body.dash .side { border-color: var(--rule); border-radius: 3px; box-shadow: none; }
+  body.dash .mcard .map, body.dash .rows, body.dash .side .case { border-radius: 3px; }
+  body.dash .rows { border-color: var(--rule); }
+  body.dash .row { border-top-color: #e3e8e2; }
+  body.dash .side .case { background: var(--paper); border-color: var(--rule); border-top: 3px solid var(--navy); }
+  body.dash .seg, body.dash .seg a, body.dash .badge, body.dash .row .no, body.dash .vchip, .pill, body.dash .cact .btn,
+  body.dash .gauge-label, .gauge-label, .site-label, .count, .reset, body.dash .mcard .reset, .askbox .api-off, .askbox input, .askbox .btn, .turn pre,
+  body.dash .askbox.closed, body.dash .askbox.closed .ask-toggle, .askbox .chips button, body.dash.wide .pclose { border-radius: 3px; }
+  body.dash .askbox { border-radius: 3px; }
+  body.dash .askbox:not(.closed) .ask-toggle, .askbox:not(.closed) .ask-toggle { border-radius: 3px 3px 0 0; }
+  body.dash .mctrl, body.dash .mcard .key, body.dash .pcbox, body.dash .tour, body.dash .mcard .reset, body.dash .gauge-label, .count {
+    border-radius: 3px; box-shadow: 0 1px 3px rgba(18, 53, 91, .16); }
+  body.dash .askbox.closed .ask-toggle { box-shadow: 0 1px 3px rgba(18, 53, 91, .2); }
+  body.dash .askbox:not(.closed) { box-shadow: 0 6px 20px rgba(18, 53, 91, .18); }
+  body.dash.wide .mcard { border-radius: 3px; }
+  body.dash.wide .side { box-shadow: 0 6px 20px rgba(18, 53, 91, .18); }
+  .btn { border-radius: 3px; transition: background .15s, color .15s, border-color .15s, transform .1s; }
+  .btn:not(:disabled):hover { background: #0d2846; border-color: #0d2846; }
+  .btn.ghost:not(:disabled):hover, .btn.danger:not(:disabled):hover { background: #fff; }
+  .btn:not(:disabled):active, .check:active, body.dash .tour:active { transform: translateY(1px); }
+  .check { transition: filter .15s; } .check:hover { filter: brightness(.95); }
+  body.dash .row, .queue .pick, .file, .ctable tr { transition: background .15s, border-color .15s; }
+  .tlink { transition: color .15s; }
+  /* Motion: views fade up on open, list rows stagger in, the case card cross-fades when the spill changes. */
+  @keyframes rise { from { opacity: 0; transform: translateY(6px); } }
+  @keyframes fade { from { opacity: 0; } }
+  .enter { animation: fade .22s ease-out; }
+  .enter .pipe li, .enter .hgrid > section, .enter .file, .enter .queue .pick, .enter .funnel > div, .enter .brief { animation: rise .35s cubic-bezier(.2, .7, .2, 1) both; }
+  .enter .pipe li:nth-child(2), .enter .file:nth-child(2), .enter .queue .pick:nth-child(2), .enter .funnel > div:nth-child(2), .enter .hgrid > section:nth-child(2) { animation-delay: .04s; }
+  .enter .pipe li:nth-child(3), .enter .file:nth-child(3), .enter .queue .pick:nth-child(3), .enter .funnel > div:nth-child(3), .enter .hgrid > section:nth-child(3) { animation-delay: .08s; }
+  .enter .pipe li:nth-child(4), .enter .funnel > div:nth-child(4) { animation-delay: .12s; }
+  .enter .pipe li:nth-child(5) { animation-delay: .16s; } .enter .pipe li:nth-child(6) { animation-delay: .2s; } .enter .pipe li:nth-child(7) { animation-delay: .24s; }
+  .swap > * { animation: rise .3s cubic-bezier(.2, .7, .2, 1) both; }
+  .swap > :nth-child(2) { animation-delay: .03s; } .swap > :nth-child(3) { animation-delay: .06s; } .swap > :nth-child(n+4) { animation-delay: .09s; }
+  .detail details.fold[open] > :not(summary) { animation: rise .25s ease-out both; }
+  @media (prefers-reduced-motion: reduce) { .enter, .enter *, .swap > *, .detail details.fold[open] > * { animation: none !important; } }
 </style>
 </head>
 <body>
@@ -704,6 +743,7 @@ let pulse = 0;
 const VERDICT_NAME = { likely_breach: "likely breach", needs_review: "needs review", likely_innocent: "ruled innocent" };
 const VERDICT_RGB = { likely_breach: [200, 16, 46], needs_review: [138, 104, 0], likely_innocent: [18, 53, 91] };
 const verdictLine = k => `${VERDICT_NAME[k.final_verdict] || k.final_verdict.replace(/_/g, " ")} · ${Math.round(k.breach_confidence * 100)}%`;
+const replay = (node, cls) => { node.classList.remove(cls); void node.offsetWidth; node.classList.add(cls); };  // restart a CSS animation
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
 const title = s => s === s.toUpperCase() ? s.toLowerCase().replace(/\b\w/g, c => c.toUpperCase()) : s;
 const fmt = (x, d = 1) => x == null ? "n/a" : x.toFixed(d);
@@ -1062,6 +1102,7 @@ function renderCaseDash(c, s, preview = false) {
   if (!preview) { const aff = el("div", "affect"); aff.id = "affected"; aff.append("Finding the water nearby…"); out.push(aff); }
   if (!preview && pcBack) { const b = el("button", "tlink back", `← Back to spills near ${pcBack.r.postcode}`); b.onclick = () => showPc(pcBack); out.unshift(b); }
   c.replaceChildren(...out, more);
+  if (c.dataset.sid !== s.id) { c.dataset.sid = s.id; replay(c, "swap"); }  // fade the card in when the spill changes
   if (!preview && impact && impact.siteId === s.id) renderAffected();
 }
 // The agent conversation, in the order it happened. All text is model or web output: textContent only.
@@ -1408,7 +1449,7 @@ function show(hash) {
   let [v, id] = String(hash).split("/");
   if (v === "postcode" && DASH) { setTimeout(() => document.getElementById("pc").focus(), 0); v = "map"; }
   if (!views[v]) v = "map";
-  for (const [k, node] of Object.entries(views)) node.hidden = k !== v;
+  for (const [k, node] of Object.entries(views)) { const was = node.hidden; node.hidden = k !== v; if (was && !node.hidden) replay(node, "enter"); }
   document.querySelectorAll(".nav a").forEach(a => a.classList.toggle("on", a.dataset.view === v));
   if (v === "map") map.resize(); else if (v === "home") renderHome(); else if (v === "cases") renderCases(); else if (v === "reports") renderReports();
   if (v === "map" && id) {  // #map/<site id> opens that spill
