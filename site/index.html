@@ -29,7 +29,7 @@
 <section class="hero">
   <p class="eyebrow">IMPERIAL AI HACKATHON · 2026</p>
   <h1>About <em>40</em> sewage spills a day happen on dry days.<br>Almost none are caught.</h1>
-  <p class="lede">Agents that catch them live, check their own work, and draft the report to the regulator.</p>
+  <p class="lede">So we built agents that catch them as they happen, check each other's work, and write the report to the regulator. A person signs off.</p>
   <div class="stats" id="stats">
     <div><span class="num" data-k="recent_spills">150</span><span class="lbl">spills started in 48&nbsp;h</span></div>
     <div><span class="num hot" data-k="dry">73</span><span class="lbl">dry-day spills in 48&nbsp;h</span></div>
@@ -69,22 +69,22 @@
   <div class="steps">
     <div class="step" data-step="0"><div class="card"><p class="section-label">§1 · Observations</p>
       <h3>Every storm overflow in England</h3>
-      <p>Nine water companies publish near-real-time overflow status. We pull all of them, then keep the
+      <p>Nine water companies publish live overflow status. We pull all of them and keep the
         <b data-k="recent_spills">157</b> that started spilling in the last 48 hours.</p>
     </div></div>
     <div class="step" data-step="1"><div class="card">
-      <h3>Joined to live rainfall</h3>
-      <p>Each spill is linked to the three nearest Environment Agency rain gauges within 10 km.
-        Blue spills had rain nearby, so they are probably allowed.</p>
+      <h3>Checked against real rainfall</h3>
+      <p>For each spill we look at the three nearest Environment Agency rain gauges within 10 km.
+        Blue ones had rain nearby, so they're probably allowed.</p>
     </div></div>
     <div class="step" data-step="2"><div class="card">
       <h3>The dry ones stand out</h3>
-      <p><b class="hot" data-k="dry">73</b> spills began when every nearby gauge saw under 0.25 mm of rain
-        in both of the two days before. One wet gauge is enough to clear a spill, so the rule is conservative.</p>
+      <p><b class="hot" data-k="dry">73</b> spills started when every nearby gauge had less than 0.25 mm of rain
+        on each of the two days before. If even one gauge was wet, we let the spill go, so we're erring on the side of caution.</p>
     </div></div>
     <div class="step" data-step="3"><div class="card">
       <h3>The case we follow</h3>
-      <p>One dry-day spill, followed through the agents below.</p>
+      <p>We'll take one of these dry-day spills and follow it all the way through the agents.</p>
     </div></div>
   </div>
 </section>
@@ -93,7 +93,7 @@
   <div class="wrap">
     <p class="section-label">§2 · Methods</p>
     <h2>How it works</h2>
-    <p class="sub">One scheduled Databricks job hands suspicious spills to five agents. Every step is traced in MLflow.</p>
+    <p class="sub">A Databricks job runs on a schedule and hands anything suspicious to a team of five agents. Every step is traced in MLflow, so you can see exactly what each one did.</p>
 
     <figure class="fig"><p class="cell-out">Out [2]:</p>
     <div class="flow">
@@ -128,8 +128,8 @@
 
     <figcaption class="caption">Fig. 2 — Pipeline and agent team, one scheduled Databricks job</figcaption></figure>
 
-    <p class="why">The skeptic runs on a different model, so the team can't just agree with itself.
-      Every fact the evidence agent states links to a source, and every verdict is saved, so repeat offenders show up over time.</p>
+    <p class="why">The skeptic runs on a different model on purpose, so the agents can't all just agree with each other.
+      Anything the evidence agent claims comes with a link to its source. And every verdict gets saved, so the sites that keep doing it start to show up.</p>
   </div>
 </section>
 
@@ -137,7 +137,7 @@
   <div class="wrap narrow">
     <p class="section-label">§3 · Results</p>
     <h2>Dry-day spill candidates by company</h2>
-    <p class="sub" id="companies-sub">Spills that started in the 48 hours before the run with no meaningful rain at any nearby gauge.</p>
+    <p class="sub" id="companies-sub">Spills that started in the 48 hours before the run, with no real rain at any gauge nearby.</p>
     <figure class="fig"><p class="cell-out">Out [3]:</p><div id="bars" class="bars"></div>
     <figcaption class="caption" id="bars-cap">Fig. 3 — Dry-day spill candidates by water company</figcaption></figure>
   </div>
@@ -161,23 +161,23 @@
       <div class="agents" id="case-agents">
         <div class="panel ag-panel" data-agent="investigator">
           <h4><span class="stepno">2</span>Investigator <small>Claude</small></h4>
-          <div class="body pending">Builds the case for a breach from the data and the site's history in memory.</div>
+          <div class="body pending">Builds the case that this was a breach, using the data and what we already know about the site.</div>
         </div>
         <div class="panel ag-panel sk" data-agent="skeptic">
           <h4><span class="stepno">3</span>Skeptic <small>different model</small></h4>
-          <div class="body pending">Looks for innocent explanations: sensor fault, rain the gauges missed, pump failure, tidal outfall. Scores how likely a real breach is.</div>
+          <div class="body pending">Tries to find an innocent reason: a faulty sensor, rain the gauges missed, a pump failure, a tidal outfall. Then scores how likely it is to be a real breach.</div>
         </div>
         <div class="panel ag-panel lk" data-agent="evidence">
           <h4><span class="stepno">4</span>Evidence agent <small>Linkup</small></h4>
-          <div class="body pending">Searches the live web to test both sides: local news, bathing closures, past fines, reported works.</div>
+          <div class="body pending">Searches the web for anything that backs up either side: local news, beach closures, past fines, works going on.</div>
         </div>
         <div class="panel ag-panel ad" data-agent="adjudicator">
           <h4><span class="stepno">5</span>Adjudicator <small>Claude</small></h4>
-          <div class="body pending">Weighs the skeptic's objections against the cited evidence: which are refuted, which still stand. Sets the final confidence.</div>
+          <div class="body pending">Goes through the skeptic's objections one by one against the evidence, decides which hold up, and sets the final confidence.</div>
         </div>
         <div class="panel ag-panel" data-agent="drafter">
           <h4><span class="stepno">6</span>Drafter <small>Claude</small></h4>
-          <div class="body pending">Writes the evidence pack and a draft message to the Environment Agency, for a human to approve.</div>
+          <div class="body pending">Writes up the evidence pack and a draft message to the Environment Agency. A person reads it before anything goes out.</div>
         </div>
       </div>
     </div>
