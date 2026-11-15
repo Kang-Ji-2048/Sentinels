@@ -32,10 +32,13 @@ and the Environment Agency's rain gauges. It flags any spill that started when e
    a possible breach. A human approves it before anything is sent.
 6. **Citation verifier (Linkup fetch)** re-opens every cited page and checks it really says what the pack claims.
 
-In our real run on 14 Nov, the Carnon River overflow in Cornwall (South West Water) had been discharging for 21
-hours with 0.0 mm of rain at both nearby gauges. The skeptic gave 0.42. The evidence agent found the region was in
-severe drought a week earlier (BBC) and that the river has a history of dry-day spills (Surfers Against Sewage).
-The adjudicator settled on 0.62, needs review, and all 9 of 9 cited claims were confirmed by re-reading the pages.
+In our real run on 15 Nov, the Dawdon Dene Beck overflow in County Durham (Northumbrian Water) had been
+discharging for 16 hours with 0.0 mm of rain at a gauge only 0.8 km away. The skeptic still raised pump failure,
+tides and groundwater. The evidence agent found an independent copy of the monitor data confirming one continuous
+16.6-hour discharge, and a local forecast describing those days as dry and frosty. The adjudicator refuted the
+sensor-fault and missed-rain objections, kept the unverified ones standing, and settled on 0.80: likely breach.
+The citation verifier confirmed 7 of 10 cited claims and flagged the other 3 for the human reviewer. Across 8 cases
+that run produced 4 likely breaches, 2 needing review and 2 likely innocent.
 
 Results land in Delta tables. A Genie agent and an AI/BI dashboard let anyone ask "which water company has the
 most dry spills right now?" in plain English, and a 3D map shows every dry spill with the agents' conversation.
@@ -58,7 +61,7 @@ most dry spills right now?" in plain English, and a 3D map shows every dry spill
 - Offline monitors made spills look like they lasted days. Durations for offline monitors are now unknown
   instead of guessed.
 - Early runs cited weak web pages (an events listing as a weather source). We added source rules and then a
-  citation verifier that re-reads every page, which is what produced the 9 of 9 result.
+  citation verifier that re-reads every page and flags claims its page does not support.
 - At first the skeptic stopped every case. We moved the decision to an adjudicator that weighs the skeptic's
   objections against the web evidence.
 
