@@ -1,6 +1,6 @@
 # Devpost submission draft (paste each section into the matching Devpost field)
 
-**Name:** Sentinels
+**Name:** Sentinel
 
 **Tagline:** Autonomous agents that catch sewage spills on dry days, check their own work, and draft the report to the regulator.
 
@@ -17,7 +17,7 @@ a regulator can act on.
 
 ## What it does
 
-Every 15 minutes Sentinels pulls the live status of about 13,000 storm overflows from 8 English water companies
+Every 15 minutes Sentinel pulls the live status of about 13,000 storm overflows from 8 English water companies
 and the Environment Agency's rain gauges. It flags any spill that started when every gauge within 10 km saw under
 0.25 mm of rain in each of the two days before. A team of agents then works each case:
 

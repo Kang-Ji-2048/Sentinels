@@ -1,6 +1,6 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC # Sentinels 02: detect (silver + gold)
+# MAGIC # Sentinel 02: detect (silver + gold)
 # MAGIC * **silver_spill_events**: one row per discharge event (site + start time), merged across snapshots.
 # MAGIC * **silver_rain_readings**: 15-minute readings for the gauges near recent spills.
 # MAGIC * **gold_dry_spill_candidates**: events where every gauge within 10 km saw < 0.25 mm in each of the two 24 h windows before the spill.

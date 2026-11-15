@@ -1,6 +1,6 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC # Sentinels 00: setup
+# MAGIC # Sentinel 00: setup
 # MAGIC Run once. Creates the schema and checks that this workspace can reach the live data and APIs.
 # MAGIC Free Edition only allows outbound traffic to a list of trusted domains, so check this first.
 

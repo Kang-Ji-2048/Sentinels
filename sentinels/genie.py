@@ -1,4 +1,4 @@
-"""Ask the Sentinels Genie agent (Databricks AI/BI Genie) a question from outside Databricks.
+"""Ask the Sentinel Genie agent (Databricks AI/BI Genie) a question from outside Databricks.
 
 Used by the site's local server so visitors can ask follow-up questions in plain English
 ("which company has the most dry spills?"). Genie writes the SQL against our gold tables and views,

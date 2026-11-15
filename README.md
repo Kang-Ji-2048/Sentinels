@@ -1,4 +1,4 @@
-# Sentinels
+# Sentinel
 
 **Autonomous agents that catch sewage spills on dry days, check their own work, and draft the report to the regulator.**
 
@@ -6,7 +6,7 @@
 
 Storm overflows are only allowed to discharge sewage when heavy rain would otherwise flood homes. When an overflow spills on a **dry day**, it may be breaching its permit. In 2025 England had 291,492 storm overflow spills ([Environment Agency](https://www.gov.uk/government/news/fewer-and-shorter-storm-overflow-spills-in-2025-new-monitoring-data-shows)). Water companies' own figures, obtained by The Times, showed almost 15,000 dry-day spills in 2025, lasting 157,803 hours: about 40 a day ([The Times via East Devon Watch](https://eastdevonwatch.org/2026/03/17)). Water companies now publish near-real-time overflow status, but nobody joins that data to rainfall as it happens, checks for innocent explanations, and turns a suspicious spill into evidence someone can act on.
 
-Sentinels does this as a pipeline on Databricks plus a team of agents:
+Sentinel does this as a pipeline on Databricks plus a team of agents:
 
 1. **Watch.** Pull live overflow status from every water company and rainfall from the Environment Agency.
 2. **Flag.** Mark spills that started with no meaningful rain nearby.
